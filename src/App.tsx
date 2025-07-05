@@ -5,8 +5,6 @@ import { LoadingOverlay, Center } from "@mantine/core";
 
 const App: React.FC = () => {
   const routing = useRoutes(routes);
-  console.log(routing,"routing")
-
   return (
     <Suspense
       fallback={

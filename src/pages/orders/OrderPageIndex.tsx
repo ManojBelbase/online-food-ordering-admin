@@ -1,212 +1,117 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Text } from "@mantine/core";
-import { IconPlus, IconEye, IconEdit, IconTrash } from "@tabler/icons-react";
-import DataTable from "../../components/GlobalComponents/DataTable";
+import { IconPlus } from "@tabler/icons-react";
 import PageHeader from "../../components/GlobalComponents/PageHeader";
+import DataTable from "../../components/GlobalComponents/DataTable";
+import { useOrderDeleteModal } from "../../hooks/useDeleteModal";
+import { DateFormatter } from "../../components/GlobalComponents/DateFormatter";
 import StatusBadge from "../../components/GlobalComponents/StatusBadge";
-import { useModal, useConfirmModal } from "../../contexts/ModalContext";
-import type { TableColumn, TableAction, PaginationInfo } from "../../types/ui";
+import TableActions, { createViewAction, createEditAction, createDeleteAction } from "../../components/GlobalComponents/TableActions";
+import ViewOrder from "./Compoents/ViewOrder";
+import { useOrders } from "../../hooks/useOrders";
+import type { OrderDisplay } from "../../config/orderTableConfig";
 
-interface OrderDisplay {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  itemsCount: number;
-  total: number;
-  status:
-    | "pending"
-    | "confirmed"
-    | "preparing"
-    | "ready"
-    | "out_for_delivery"
-    | "delivered"
-    | "cancelled";
-  createdAt: string;
-  deliveryAddress: string;
-}
 
 const OrderPageIndex: React.FC = () => {
   const navigate = useNavigate();
-  const { openModal } = useModal();
-  const { openConfirmModal } = useConfirmModal();
-  const [orders, setOrders] = useState<OrderDisplay[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [pagination, setPagination] = useState<PaginationInfo>({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 0,
-  });
+  const { deleteOrder } = useOrderDeleteModal();
 
-  // Mock data for demonstration
-  const mockOrders: OrderDisplay[] = [
-    {
-      id: "1",
-      orderNumber: "ORD-001",
-      customerName: "John Doe",
-      customerEmail: "john@example.com",
-      itemsCount: 3,
-      total: 45.99,
-      status: "pending",
-      createdAt: "2024-01-15T10:30:00Z",
-      deliveryAddress: "123 Main St, City, State",
-    },
-    {
-      id: "2",
-      orderNumber: "ORD-002",
-      customerName: "Jane Smith",
-      customerEmail: "jane@example.com",
-      itemsCount: 2,
-      total: 32.5,
-      status: "preparing",
-      createdAt: "2024-01-15T11:15:00Z",
-      deliveryAddress: "456 Oak Ave, City, State",
-    },
-    {
-      id: "3",
-      orderNumber: "ORD-003",
-      customerName: "Bob Johnson",
-      customerEmail: "bob@example.com",
-      itemsCount: 5,
-      total: 78.25,
-      status: "delivered",
-      createdAt: "2024-01-15T09:45:00Z",
-      deliveryAddress: "789 Pine Rd, City, State",
-    },
-  ];
+  const {
+    orders,
+    loading,
+    selectedOrder,
+    viewOrderOpened,
+    pagination,
+    loadOrders,
+    setPagination,
+    handleViewOrder,
+    handleCloseViewOrder,
+  } = useOrders();
 
-  useEffect(() => {
-    loadOrders();
-  }, [pagination.page, pagination.limit]);
-
-  const loadOrders = async () => {
-    setLoading(true);
-    try {
-      setTimeout(() => {
-        setOrders(mockOrders);
-        setPagination((prev) => ({
-          ...prev,
-          total: mockOrders.length,
-          totalPages: Math.ceil(mockOrders.length / prev.limit),
-        }));
-        setLoading(false);
-      }, 1000);
-    } catch (error: any) {
-      console.error("Error loading orders:", error);
-      setLoading(false);
-    }
-  };
-
-  const columns: TableColumn<OrderDisplay>[] = [
-    {
-      key: "orderNumber",
-      label: "Order #",
-      sortable: true,
-      width: 120,
-    },
-    {
-      key: "customerName",
-      label: "Customer",
-      sortable: true,
-    },
-    {
-      key: "customerEmail",
-      label: "Email",
-      sortable: true,
-    },
-    {
-      key: "items",
-      label: "Items",
-      align: "center",
-      width: 80,
-    },
-    {
-      key: "total",
-      label: "Total",
-      align: "right",
-      width: 100,
-      render: (value) => `$${value.toFixed(2)}`,
-    },
+  const orderFilters = useMemo(() => [
     {
       key: "status",
       label: "Status",
-      align: "center",
-      width: 120,
-      render: (value) => <StatusBadge status={value} type="order" />,
+      type: "select" as const,
+      options: [
+        { label: "Pending", value: "pending" },
+        { label: "Confirmed", value: "confirmed" },
+        { label: "Preparing", value: "preparing" },
+        { label: "Ready", value: "ready" },
+        { label: "Out for Delivery", value: "out_for_delivery" },
+        { label: "Delivered", value: "delivered" },
+        { label: "Cancelled", value: "cancelled" },
+      ],
+      placeholder: "Filter by status",
     },
     {
-      key: "createdAt",
-      label: "Date",
-      sortable: true,
-      width: 120,
-      render: (value) => new Date(value).toLocaleDateString(),
+      key: "customerName",
+      label: "Customer Name",
+      type: "text" as const,
+      placeholder: "Search by customer name",
     },
-  ];
 
-  const actions: TableAction<OrderDisplay>[] = [
-    {
-      label: "View Details",
-      icon: <IconEye size={16} />,
-      onClick: (order) => {
-        openModal({
-          title: `Order ${order.orderNumber}`,
-          size: "lg",
-          body: (
-            <div>
-              <Text>
-                <strong>Customer:</strong> {order.customerName}
-              </Text>
-              <Text>
-                <strong>Email:</strong> {order.customerEmail}
-              </Text>
-              <Text>
-                <strong>Items:</strong> {order.itemsCount}
-              </Text>
-              <Text>
-                <strong>Total:</strong> ${order.total.toFixed(2)}
-              </Text>
-              <Text>
-                <strong>Status:</strong> {order.status}
-              </Text>
-              <Text>
-                <strong>Address:</strong> {order.deliveryAddress}
-              </Text>
-              <Text>
-                <strong>Date:</strong>{" "}
-                {new Date(order.createdAt).toLocaleString()}
-              </Text>
-            </div>
+  ], []);
+
+  const handleFiltersChange = useCallback((filters: Record<string, any>) => {
+    console.log("Applied filters:", filters);
+    
+  }, []);
+
+
+  const handleEditOrder = useCallback((order: OrderDisplay) => {
+    navigate(`/orders/edit/${order.id}`);
+  }, [navigate]);
+
+  const handleDeleteOrder = useCallback((order: OrderDisplay) => {
+    deleteOrder(order.orderNumber, () => {
+      console.log("Delete order:", order);
+      // Add your actual delete logic here
+      // For example: deleteOrderById(order.id);
+    });
+  }, [deleteOrder]);
+
+  const tableData = useMemo(() => {
+    return {
+      columns: [
+        { title: "SN", key: "sn", },
+        { title: "Order #", key: "orderNumber", },
+        { title: "Customer", key: "customerName"},
+        { title: "Email", key: "customerEmail"  },
+        { title: "Items", key: "itemsCount"},
+        { title: "Total", key: "total"},
+        { title: "Status", key: "status" },
+        { title: "Date", key: "createdAt" },
+        { title: "Action", key: "action",} 
+      ],
+      rows:
+        orders?.map((order: OrderDisplay, index: number) => ({
+          id: order?.id,
+          sn: index + 1,
+          orderNumber: order.orderNumber,
+          customerName: order.customerName,
+          customerEmail: order.customerEmail,
+          itemsCount: order.itemsCount,
+          total: `$${order.total.toFixed(2)}`,
+          status: (
+            <StatusBadge status={order.status} type="order" />
           ),
-        });
-      },
-    },
-    {
-      label: "Edit Order",
-      icon: <IconEdit size={16} />,
-      onClick: (order) => {
-        navigate(`/orders/edit/${order.id}`);
-      },
-    },
-    {
-      label: "Delete Order",
-      icon: <IconTrash size={16} />,
-      color: "red",
-      onClick: (order) => {
-        openConfirmModal({
-          title: "Delete Order",
-          message: `Are you sure you want to delete order ${order.orderNumber}? This action cannot be undone.`,
-          onConfirm: () => {
-            console.log("Delete order:", order);
-          },
-        });
-      },
-    },
-  ];
+          createdAt: <DateFormatter date={order.createdAt}  />,
+          action: (
+            <TableActions
+              actions={[
+                createViewAction(() => handleViewOrder(order)),
+                createEditAction(() => handleEditOrder(order)),
+                createDeleteAction(() => handleDeleteOrder(order)),
+              ]}
+            />
+          ),
+        })) || [],
+    };
+  }, [orders, handleViewOrder, handleEditOrder, handleDeleteOrder]);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <PageHeader
         title="Orders Management"
         subtitle="Manage and track all customer orders from this dashboard"
@@ -221,19 +126,28 @@ const OrderPageIndex: React.FC = () => {
       />
 
       <DataTable
-        data={orders}
-        columns={columns}
-        actions={actions}
+        data={tableData.rows}
+        columns={tableData.columns}
         pagination={pagination}
-        onPageChange={(page) => setPagination((prev) => ({ ...prev, page }))}
-        onLimitChange={(limit) =>
+        onPageChange={(page: number) => setPagination((prev) => ({ ...prev, page }))}
+        onLimitChange={(limit: number) =>
           setPagination((prev) => ({ ...prev, limit, page: 1 }))
         }
         onRefresh={loadOrders}
         loading={loading}
         title="All Orders"
         searchPlaceholder="Search orders..."
-        // alternateRows={true}
+        alternateRows={true}
+        align="center"
+        filters={orderFilters}
+        showFilters={false}
+        onFiltersChange={handleFiltersChange}
+      />
+
+      <ViewOrder
+        order={selectedOrder}
+        opened={viewOrderOpened}
+        onClose={handleCloseViewOrder}
       />
     </div>
   );

@@ -4,4 +4,6 @@ export const ROUTES = {
   HOME: "/",
   DASHBOARD: "dashboard",
   ORDERS: "orders",
+  PROFILE: "/profile",
+  THEME_TEST: "/theme-test",
 };

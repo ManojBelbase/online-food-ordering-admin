@@ -58,7 +58,6 @@ const LoginPage: React.FC = () => {
     },
   });
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate(from, { replace: true });
@@ -68,7 +67,6 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (values: LoginFormValues) => {
     try {
       const success = await login(values.email, values.password);
-
       if (success) {
         notifications.show({
           title: 'Login Successful',
@@ -76,7 +74,6 @@ const LoginPage: React.FC = () => {
           color: 'green',
           icon: <IconCheck size={16} />,
         });
-        // Navigation will be handled by useEffect when isAuthenticated changes
       } else {
         notifications.show({
           title: 'Login Failed',

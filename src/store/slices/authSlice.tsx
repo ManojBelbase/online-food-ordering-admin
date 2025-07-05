@@ -40,7 +40,7 @@ export const loginUser = createAsyncThunk(
 }}
 ); 
 
-const authSlice = createSlice({
+export const authSlice = createSlice({
 name:"auth",
 initialState,
 reducers:{

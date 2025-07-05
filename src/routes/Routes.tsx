@@ -9,9 +9,12 @@ const ComponentsIndex = lazy(
   () => import("../pages/dashboard/ComponentsIndex")
 );
 const OrderPageIndex = lazy(() => import("../pages/orders/OrderPageIndex"));
-const CreateOrderPage = lazy(() => import("../pages/orders/CreateOrderPage"));
+const CreateOrderPage = lazy(() => import("../pages/orders/Compoents/CreateOrderPage.tsx"));
 const LoginPage = lazy(() => import("../auth/LoginPage"));
 const AddMenuItemPage = lazy(() => import("../pages/Menu/AddMenuItemPage"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage"));
+const NotificationsPage = lazy(() => import("../pages/NotificationsPage"));
+const ThemeTestPage = lazy(() => import("../pages/ThemeTestPage"));
 
 const publicRoutes: RouteObject[] = [
   {
@@ -38,6 +41,9 @@ const protectedRoutes: RouteObject[] = [
       { path: "orders/processing", element: <div>Processing Orders</div> },
       { path: "orders/completed", element: <div>Completed Orders</div> },
       { path: "orders/cancelled", element: <div>Cancelled Orders</div> },
+
+      // Profile
+      { path: ROUTES.PROFILE.substring(1), element: <ProfilePage /> },
 
       // Menu Management
       { path: "menu/categories", element: <div>Menu Categories</div> },
@@ -67,7 +73,10 @@ const protectedRoutes: RouteObject[] = [
       { path: "analytics/revenue", element: <div>Revenue Trends</div> },
 
       // Notifications
-      { path: "notifications", element: <div>Notifications</div> },
+      { path: "notifications", element: <NotificationsPage /> },
+
+      // Theme Test
+      { path: "theme-test", element: <ThemeTestPage /> },
 
       // Settings
       { path: "settings/general", element: <div>General Settings</div> },

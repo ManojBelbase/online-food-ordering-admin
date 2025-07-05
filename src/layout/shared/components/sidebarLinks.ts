@@ -9,6 +9,8 @@ import {
   IconBell,
   IconUserCog,
   IconChefHat,
+  IconUser,
+  IconPalette,
 } from "@tabler/icons-react";
 import { ROUTES } from "../../../constants/frontendRoutes";
 
@@ -108,5 +110,15 @@ export const sidebarLinks = [
       { label: "Staff Management", to: "/users/staff" },
       { label: "Roles & Permissions", to: "/users/roles" },
     ],
+  },
+  {
+    label: "Profile",
+    to: ROUTES.PROFILE,
+    icon: IconUser,
+  },
+  {
+    label: "Theme Test",
+    to: ROUTES.THEME_TEST,
+    icon: IconPalette,
   },
 ];

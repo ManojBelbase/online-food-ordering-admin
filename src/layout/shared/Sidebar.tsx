@@ -1,10 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, Group, Avatar, Text } from "@mantine/core";
+import { NavLink, Group, Avatar, Text, Tooltip } from "@mantine/core";
 import { IconChevronDown, IconHotelService } from "@tabler/icons-react";
 import { NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { sidebarLinks } from "./components/sidebarLinks";
 import { useTheme } from "../../contexts/ThemeContext";
 
+// Custom hook for responsive behavior
+const useResponsive = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  return { isMobile, isTablet };
+};
 
 interface SidebarProps {
   isOpen: boolean;
@@ -15,6 +34,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const location = useLocation();
   const { theme } = useTheme();
+  const { isMobile, isTablet } = useResponsive();
+
+  // Determine sidebar display mode
+  const isCollapsed = isTablet && !isOpen; // Show icons only on tablet when closed
+  const isHidden = (isMobile && !isOpen) || (!isMobile && !isTablet && !isOpen); // Hide on mobile when closed OR desktop when closed
+  const sidebarWidth = isCollapsed ? 80 : 300;
 
 
   const toggleDropdown = (label: string) => {
@@ -37,37 +62,59 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     });
   }, [location.pathname]);
 
+  if (isHidden) {
+    return null;
+  }
+
   return (
     <div
       style={{
         backgroundColor: theme.colors.sidebarBackground,
         height: "100vh",
-        width: isOpen ? "300px" : "0px",
+        width: `${sidebarWidth}px`,
         transition: "width 0.3s ease, background-color 0.3s ease",
-        overflow: "hidden",
+        overflow: isCollapsed ? "visible" : "hidden",
         position: "fixed",
         top: 0,
         left: 0,
         zIndex: 1000,
-        boxShadow: isOpen ? theme.shadows.lg : "none",
+        boxShadow: theme.shadows.lg,
       }}
     >
-      <NavLink
-        component={RouterNavLink}
-        to="/"
-        label="Online Food Ordering"
-        leftSection={<IconHotelService size={16} />}
-        styles={{
-          root: {
-            color: theme.colors.sidebarText,
-            fontSize: "16px",
-            padding: "10px",
-            "&:hover": {
-              backgroundColor: theme.colors.sidebarHover,
+      {isCollapsed ? (
+        <Tooltip label="Online Food Ordering" position="right">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "60px",
+              color: theme.colors.sidebarText,
+              cursor: "pointer",
+            }}
+            onClick={() => window.location.href = "/"}
+          >
+            <IconHotelService size={24} />
+          </div>
+        </Tooltip>
+      ) : (
+        <NavLink
+          component={RouterNavLink}
+          to="/"
+          label="Online Food Ordering"
+          leftSection={<IconHotelService size={16} />}
+          styles={{
+            root: {
+              color: theme.colors.sidebarText,
+              fontSize: "16px",
+              padding: "10px",
+              "&:hover": {
+                backgroundColor: theme.colors.sidebarHover,
+              },
             },
-          },
-        }}
-      />
+          }}
+        />
+      )}
 
       <div style={{ marginTop: "10px" }}>
         {sidebarLinks.map((item) => {
@@ -83,69 +130,118 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
           return (
             <div key={item.label}>
-              {item.children ? (
-                <NavLink
-                  label={item.label}
-                  leftSection={Icon && <Icon size={16} />}
-                  rightSection={
-                    <IconChevronDown
-                      size={16}
-                      style={{
-                        transform:
-                          openDropdown === item.label
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
-                        transition: "transform 0.3s ease",
+              {isCollapsed ? (
+                // Collapsed state - show only icons with tooltips
+                <Tooltip label={item.label} position="right">
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "48px",
+                      marginBottom: "5px",
+                      backgroundColor: isActive
+                        ? theme.colors.sidebarActive
+                        : "transparent",
+                      color: isActive
+                        ? theme.colors.sidebarTextActive
+                        : theme.colors.sidebarText,
+                      cursor: "pointer",
+                      borderRadius: "4px",
+                      transition: "all 0.2s ease",
+                    }}
+                    onClick={() => {
+                      if (item.children) {
+                        // For items with children, navigate to first child or toggle
+                        if (item.children.length > 0) {
+                          window.location.href = item.children[0].to;
+                        }
+                      } else {
+                        window.location.href = item.to;
+                      }
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.backgroundColor = theme.colors.sidebarHover;
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }
+                    }}
+                  >
+                    {Icon && <Icon size={20} />}
+                  </div>
+                </Tooltip>
+              ) : (
+                // Expanded state - show full navigation
+                <>
+                  {item.children ? (
+                    <NavLink
+                      label={item.label}
+                      leftSection={Icon && <Icon size={16} />}
+                      rightSection={
+                        <IconChevronDown
+                          size={16}
+                          style={{
+                            transform:
+                              openDropdown === item.label
+                                ? "rotate(180deg)"
+                                : "rotate(0deg)",
+                            transition: "transform 0.3s ease",
+                          }}
+                        />
+                      }
+                      onClick={() => toggleDropdown(item.label)}
+                      active={isActive}
+                      styles={{
+                        root: {
+                          color: isActive
+                            ? theme.colors.sidebarTextActive
+                            : theme.colors.sidebarText,
+                          marginBottom: "5px",
+                          backgroundColor: isActive
+                            ? theme.colors.sidebarActive
+                            : "transparent",
+                          "&:hover": {
+                            backgroundColor: isActive
+                              ? theme.colors.sidebarActive
+                              : theme.colors.sidebarHover,
+                          },
+                          cursor: "pointer",
+                        },
                       }}
                     />
-                  }
-                  onClick={() => toggleDropdown(item.label)}
-                  active={isActive}
-                  styles={{
-                    root: {
-                      color: isActive
-                        ? theme.colors.sidebarTextActive
-                        : theme.colors.sidebarText,
-                      marginBottom: "5px",
-                      backgroundColor: isActive
-                        ? theme.colors.sidebarActive
-                        : "transparent",
-                      "&:hover": {
-                        backgroundColor: isActive
-                          ? theme.colors.sidebarActive
-                          : theme.colors.sidebarHover,
-                      },
-                      cursor: "pointer",
-                    },
-                  }}
-                />
-              ) : (
-                <NavLink
-                  component={RouterNavLink}
-                  to={item.to}
-                  label={item.label}
-                  leftSection={Icon && <Icon size={16} />}
-                  active={isActive}
-                  styles={{
-                    root: {
-                      color: isActive
-                        ? theme.colors.sidebarTextActive
-                        : theme.colors.sidebarText,
-                      marginBottom: "5px",
-                      backgroundColor: isActive
-                        ? theme.colors.sidebarActive
-                        : "transparent",
-                      "&:hover": {
-                        backgroundColor: isActive
-                          ? theme.colors.sidebarActive
-                          : theme.colors.sidebarHover,
-                      },
-                    },
-                  }}
-                />
+                  ) : (
+                    <NavLink
+                      component={RouterNavLink}
+                      to={item.to}
+                      label={item.label}
+                      leftSection={Icon && <Icon size={16} />}
+                      active={isActive}
+                      styles={{
+                        root: {
+                          color: isActive
+                            ? theme.colors.sidebarTextActive
+                            : theme.colors.sidebarText,
+                          marginBottom: "5px",
+                          backgroundColor: isActive
+                            ? theme.colors.sidebarActive
+                            : "transparent",
+                          "&:hover": {
+                            backgroundColor: isActive
+                              ? theme.colors.sidebarActive
+                              : theme.colors.sidebarHover,
+                          },
+                        },
+                      }}
+                    />
+                  )}
+                </>
               )}
 
-              {item.children && openDropdown === item.label && (
+              {!isCollapsed && item.children && openDropdown === item.label && (
                 <>
                   {item.children.map((child) => {
                     const isChildActive =
