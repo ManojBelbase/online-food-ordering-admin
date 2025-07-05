@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./shared/Sidebar";
 import Navbar from "./shared/Navbar";
+import { useTheme } from "../contexts/ThemeContext";
 
 const Layout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { theme } = useTheme();
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
@@ -15,8 +17,10 @@ const Layout: React.FC = () => {
       style={{
         display: "flex",
         minHeight: "100vh",
-        backgroundColor: "#1A1B1E",
+        backgroundColor: theme.colors.background,
+        transition: "background-color 0.3s ease",
       }}
+      className="bg-red-400"
     >
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
@@ -26,16 +30,19 @@ const Layout: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           marginLeft: isSidebarOpen ? 300 : 0,
-          transition: "margin-left 0.3s",
+          transition: "margin-left 0.3s ease",
         }}
+        className="gap-2"
       >
         <Navbar onHamburgerClick={toggleSidebar} />
         <main
           style={{
             flex: 1,
-            padding: "20px",
+            padding: "10px",
             overflowY: "auto",
-            color: "white",
+            color: theme.colors.textPrimary,
+            backgroundColor: theme.colors.background,
+            transition: "color 0.3s ease, background-color 0.3s ease",
           }}
         >
           <Outlet />

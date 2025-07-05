@@ -5,14 +5,22 @@ import { Notifications } from "@mantine/notifications";
 import App from "./App";
 import "@mantine/core/styles.css";
 import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { ModalProvider } from "./contexts/ModalContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MantineProvider>
-      <Notifications position="top-right" zIndex={2077} />
       <BrowserRouter>
-        <Notifications position="top-right" zIndex={2077} />
-        <App />
+        <AuthProvider>
+          <ThemeProvider>
+            <ModalProvider>
+              <Notifications position="top-right" zIndex={2077} />
+              <App />
+            </ModalProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </BrowserRouter>
     </MantineProvider>
   </React.StrictMode>
