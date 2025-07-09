@@ -23,12 +23,13 @@ import {
   IconCheck,
   IconX,
 } from "@tabler/icons-react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../redux/hooks";
+import { updateUser } from "../../redux/slices/authSlice";
 import { useTheme } from "../../contexts/ThemeContext";
 import { notifications } from "@mantine/notifications";
 
 const ProfileInfoTab: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user, dispatch } = useAuth();
   const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -45,10 +46,10 @@ const ProfileInfoTab: React.FC = () => {
 
   const handleSave = () => {
     try {
-      updateUser({
+      dispatch(updateUser({
         name: formData.name,
         email: formData.email,
-      });
+      }));
       setIsEditing(false);
 
       notifications.show({

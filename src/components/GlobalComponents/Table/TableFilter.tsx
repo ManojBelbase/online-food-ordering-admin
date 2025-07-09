@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { IconFilterOff } from "@tabler/icons-react";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../../contexts/ThemeContext";
 
 // Filter option interface
 export interface FilterOption {

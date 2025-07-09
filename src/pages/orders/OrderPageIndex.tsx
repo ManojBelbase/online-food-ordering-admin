@@ -1,9 +1,7 @@
 import React, { useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { IconPlus } from "@tabler/icons-react";
 import PageHeader from "../../components/GlobalComponents/PageHeader";
-import DataTable from "../../components/GlobalComponents/DataTable";
-import { useOrderDeleteModal } from "../../hooks/useDeleteModal";
+import DataTable from "../../components/GlobalComponents/Table/DataTable";
+// Removed useOrderDeleteModal - no API calls for now
 import { DateFormatter } from "../../components/GlobalComponents/DateFormatter";
 import StatusBadge from "../../components/GlobalComponents/StatusBadge";
 import TableActions, { createViewAction, createEditAction, createDeleteAction } from "../../components/GlobalComponents/TableActions";
@@ -13,8 +11,6 @@ import type { OrderDisplay } from "../../config/orderTableConfig";
 
 
 const OrderPageIndex: React.FC = () => {
-  const navigate = useNavigate();
-  const { deleteOrder } = useOrderDeleteModal();
 
   const {
     orders,
@@ -54,35 +50,33 @@ const OrderPageIndex: React.FC = () => {
   ], []);
 
   const handleFiltersChange = useCallback((filters: Record<string, any>) => {
-    console.log("Applied filters:", filters);
-    
-  }, []);
+    console.log("🔧 Applied filters:", filters);
+    console.log("📊 Sample order data:", orders?.[0]);
+  }, [orders]);
 
 
   const handleEditOrder = useCallback((order: OrderDisplay) => {
-    navigate(`/orders/edit/${order.id}`);
-  }, [navigate]);
+    console.log("Edit order:", order);
+    // TODO: Implement edit functionality when API is ready
+  }, []);
 
   const handleDeleteOrder = useCallback((order: OrderDisplay) => {
-    deleteOrder(order.orderNumber, () => {
-      console.log("Delete order:", order);
-      // Add your actual delete logic here
-      // For example: deleteOrderById(order.id);
-    });
-  }, [deleteOrder]);
+    console.log("Delete order:", order);
+    // TODO: Implement delete functionality when API is ready
+  }, []);
 
   const tableData = useMemo(() => {
     return {
       columns: [
-        { title: "SN", key: "sn", },
-        { title: "Order #", key: "orderNumber", },
-        { title: "Customer", key: "customerName"},
-        { title: "Email", key: "customerEmail"  },
-        { title: "Items", key: "itemsCount"},
-        { title: "Total", key: "total"},
-        { title: "Status", key: "status" },
-        { title: "Date", key: "createdAt" },
-        { title: "Action", key: "action",} 
+        { title: "SN", key: "sn", sortable: false },
+        { title: "Order #", key: "orderNumber", sortable: true },
+        { title: "Customer", key: "customerName", sortable: true },
+        { title: "Email", key: "customerEmail", sortable: true },
+        { title: "Items", key: "itemsCount", sortable: true },
+        { title: "Total", key: "total", sortable: true },
+        { title: "Status", key: "statusDisplay", sortable: false }, // Use display field
+        { title: "Date", key: "createdAtDisplay", sortable: false }, // Use display field
+        { title: "Action", key: "action", sortable: false }
       ],
       rows:
         orders?.map((order: OrderDisplay, index: number) => ({
@@ -93,10 +87,13 @@ const OrderPageIndex: React.FC = () => {
           customerEmail: order.customerEmail,
           itemsCount: order.itemsCount,
           total: `$${order.total.toFixed(2)}`,
-          status: (
+          // 🔧 Store raw status for filtering, rendered component for display
+          status: order.status, // Raw status for filtering
+          statusDisplay: (
             <StatusBadge status={order.status} type="order" />
           ),
-          createdAt: <DateFormatter date={order.createdAt}  />,
+          createdAt: order.createdAt, // Raw date for filtering
+          createdAtDisplay: <DateFormatter date={order.createdAt}  />,
           action: (
             <TableActions
               actions={[
@@ -114,15 +111,7 @@ const OrderPageIndex: React.FC = () => {
     <div>
       <PageHeader
         title="Orders Management"
-        subtitle="Manage and track all customer orders from this dashboard"
-        actions={[
-          {
-            label: "New Order",
-            onClick: () => navigate("/orders/create"),
-            icon: <IconPlus size={16} />,
-            variant: "filled",
-          },
-        ]}
+        subtitle="View and track all customer orders from this dashboard"
       />
 
       <DataTable
@@ -140,9 +129,12 @@ const OrderPageIndex: React.FC = () => {
         alternateRows={true}
         align="center"
         filters={orderFilters}
-        showFilters={false}
+        showFilters={false} // Keep false to use toggle button
         onFiltersChange={handleFiltersChange}
+      
       />
+
+   
 
       <ViewOrder
         order={selectedOrder}

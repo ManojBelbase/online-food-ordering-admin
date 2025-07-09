@@ -33,5 +33,5 @@ export const DateFormatter: React.FC<DateFormatterProps> = ({
   return <span>{formatDate(date, format)}</span>;
 };
 
-// Optional alias
-export const DateForamtter = DateFormatter;
+// Default export for consistency
+export default DateFormatter;

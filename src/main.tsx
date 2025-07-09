@@ -10,32 +10,46 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { MantineThemeProvider } from "./components/MantineThemeProvider";
 import { ModalProvider } from "./contexts/ModalContext";
-import { AuthProvider } from "./contexts/AuthContext";
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import {  appStore, persistor } from "./redux/store/store";
+import LoadingSpinner from "./components/GlobalComponents/LoadingSpinner";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
+      <Provider store={appStore}>
         <ThemeProvider>
           <MantineThemeProvider>
-            <ModalProvider>
-              <Notifications
-                position="top-right"
-                zIndex={2077}
-                limit={5}
-                containerWidth={400}
-                styles={{
-                  notification: {
-                    marginTop: '10px',
-                    marginRight: '20px',
-                  }
-                }}
-              />
-              <App />
-            </ModalProvider>
+            <PersistGate
+              loading={
+                <LoadingSpinner
+                  variant="detailed"
+                  message="Initializing Food Ordering Admin..."
+                  fullScreen={true}
+                />
+              }
+              persistor={persistor}
+            >
+              <ModalProvider>
+                <Notifications
+                  position="top-right"
+                  zIndex={2077}
+                  limit={5}
+                  containerWidth={400}
+                  styles={{
+                    notification: {
+                      marginTop: '10px',
+                      marginRight: '20px',
+                    }
+                  }}
+                />
+                <App />
+              </ModalProvider>
+            </PersistGate>
           </MantineThemeProvider>
         </ThemeProvider>
-      </AuthProvider>
+      </Provider>
     </BrowserRouter>
   </React.StrictMode>
 );

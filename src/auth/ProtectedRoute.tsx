@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { LoadingOverlay, Center } from "@mantine/core";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../redux/hooks";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

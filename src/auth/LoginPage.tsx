@@ -9,9 +9,6 @@ import {
   Text,
   Container,
   Stack,
-  Divider,
-  Badge,
-  Group,
   LoadingOverlay,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -24,7 +21,9 @@ import {
   IconAlertCircle,
 } from "@tabler/icons-react";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useAppDispatch, useAuth } from "../redux/hooks";
+import { loginUser } from "../server-action/api/authThunk";
+import { loginValidators } from "../validation/authValidation";
 
 interface LoginFormValues {
   email: string;
@@ -35,7 +34,9 @@ const LoginPage: React.FC = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const dispatch = useAppDispatch();
+
+  const { loading, error, isAuthenticated } = useAuth();
 
   const from = location.state?.from?.pathname || "/";
 
@@ -44,18 +45,7 @@ const LoginPage: React.FC = () => {
       email: "",
       password: "",
     },
-    validate: {
-      email: (value) => {
-        if (!value) return "Email is required";
-        if (!/^\S+@\S+$/.test(value)) return "Invalid email format";
-        return null;
-      },
-      password: (value) => {
-        if (!value) return "Password is required";
-        if (value.length < 6) return "Password must be at least 6 characters";
-        return null;
-      },
-    },
+    validate: loginValidators,
   });
 
   useEffect(() => {
@@ -66,18 +56,20 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (values: LoginFormValues) => {
     try {
-      const success = await login(values.email, values.password);
-      if (success) {
+      const result = await dispatch(loginUser(values));
+
+      if (loginUser.fulfilled.match(result)) {
         notifications.show({
           title: 'Login Successful',
           message: 'Welcome back!',
           color: 'green',
           icon: <IconCheck size={16} />,
         });
-      } else {
+        navigate(from, { replace: true });
+      } else if (loginUser.rejected.match(result)) {
         notifications.show({
           title: 'Login Failed',
-          message: 'Invalid credentials. Please try again.',
+          message: result.payload as string || 'Invalid credentials',
           color: 'red',
           icon: <IconAlertCircle size={16} />,
         });
@@ -115,7 +107,7 @@ const LoginPage: React.FC = () => {
           }}
         >
           <LoadingOverlay
-            visible={isLoading}
+            visible={loading}
             overlayProps={{ radius: "sm", blur: 2 }}
           />
           <Stack gap="md">
@@ -133,37 +125,6 @@ const LoginPage: React.FC = () => {
                 Sign in to your Food Ordering Admin account
               </Text>
             </div>
-
-            <Divider />
-
-            {/* Demo Credentials */}
-            <div>
-              <Text
-                size="sm"
-                fw={500}
-                style={{ color: theme.colors.textPrimary, marginBottom: "8px" }}
-              >
-                Demo Credentials:
-              </Text>
-              <Group gap="xs" mb="xs">
-                <Badge variant="light" color="blue">
-                  Admin
-                </Badge>
-                <Text size="xs" style={{ color: theme.colors.textSecondary }}>
-                  admin@foodorder.com / admin123
-                </Text>
-              </Group>
-              <Group gap="xs">
-                <Badge variant="light" color="green">
-                  Manager
-                </Badge>
-                <Text size="xs" style={{ color: theme.colors.textSecondary }}>
-                  manager@foodorder.com / manager123
-                </Text>
-              </Group>
-            </div>
-
-            <Divider />
 
             <form onSubmit={form.onSubmit(handleSubmit)}>
               <Stack gap="md">
@@ -216,7 +177,8 @@ const LoginPage: React.FC = () => {
                 <Button
                   type="submit"
                   fullWidth
-                  leftSection={<IconLogin size={16} />}
+                  loading={loading}
+                  leftSection={!loading ? <IconLogin size={16} /> : undefined}
                   style={{
                     backgroundColor: theme.colors.primary,
                     "&:hover": {
@@ -224,8 +186,14 @@ const LoginPage: React.FC = () => {
                     },
                   }}
                 >
-                  Sign In
+                  {loading ? 'Signing In...' : 'Sign In'}
                 </Button>
+
+                {error && (
+                  <Text size="sm" c="red" ta="center">
+                    {error}
+                  </Text>
+                )}
               </Stack>
             </form>
           </Stack>

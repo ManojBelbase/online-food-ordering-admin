@@ -37,23 +37,7 @@ export const useDeleteModal = () => {
 };
 
 // Convenience functions for common delete operations
-export const useOrderDeleteModal = () => {
-  const { openDeleteModal } = useDeleteModal();
-
-  const deleteOrder = useCallback(
-    (orderNumber: string, onConfirm: () => void) => {
-      openDeleteModal({
-        title: "Delete Order",
-        itemName: orderNumber,
-        itemType: "order",
-        onConfirm,
-      });
-    },
-    [openDeleteModal]
-  );
-
-  return { deleteOrder };
-};
+// Removed useOrderDeleteModal - no order API operations for now
 
 export const useUserDeleteModal = () => {
   const { openDeleteModal } = useDeleteModal();

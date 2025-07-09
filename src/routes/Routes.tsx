@@ -2,19 +2,61 @@ import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 import { ROUTES } from "../constants/frontendRoutes.ts";
 import ProtectedRoute from "../auth/ProtectedRoute.tsx";
+import withSuspense, { withPageLoader, withSkeleton } from "../utils/withSuspense";
 
-const Layout = lazy(() => import("../layout/Layout"));
-const HomePage = lazy(() => import("../pages/Home/HomePage"));
-const ComponentsIndex = lazy(
-  () => import("../pages/dashboard/ComponentsIndex")
+// 🚀 Lazy load components with withSuspense HOC for better loading UX
+const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
+  message: "Loading application layout...",
+  type: "spinner"
+});
+
+const HomePage = withPageLoader(
+  lazy(() => import("../pages/Home/HomePage")),
+  "Loading home page..."
 );
-const OrderPageIndex = lazy(() => import("../pages/orders/OrderPageIndex"));
-const CreateOrderPage = lazy(() => import("../pages/orders/Compoents/CreateOrderPage.tsx"));
-const LoginPage = lazy(() => import("../auth/LoginPage"));
-const AddMenuItemPage = lazy(() => import("../pages/Menu/AddMenuItemPage"));
-const ProfilePage = lazy(() => import("../pages/ProfilePage"));
-const NotificationsPage = lazy(() => import("../pages/NotificationsPage"));
-const ThemeTestPage = lazy(() => import("../pages/ThemeTestPage"));
+
+const ComponentsIndex = withPageLoader(
+  lazy(() => import("../pages/dashboard/ComponentsIndex")),
+  "Loading dashboard..."
+);
+
+const OrderPageIndex = withSkeleton(
+  lazy(() => import("../pages/orders/OrderPageIndex"))
+);
+
+// CreateOrderPage removed - keeping only table display
+
+const LoginPage = withPageLoader(
+  lazy(() => import("../auth/LoginPage")),
+  "Loading login..."
+);
+
+const AddMenuItemPage = withPageLoader(
+  lazy(() => import("../pages/Menu/AddMenuItemPage")),
+  "Loading menu form..."
+);
+
+const ProfilePage = withPageLoader(
+  lazy(() => import("../pages/ProfilePage")),
+  "Loading profile..."
+);
+
+const NotificationsPage = withPageLoader(
+  lazy(() => import("../pages/NotificationsPage")),
+  "Loading notifications..."
+);
+
+const ThemeTestPage = withPageLoader(
+  lazy(() => import("../pages/ThemeTestPage")),
+  "Loading theme test..."
+);
+
+const NotFoundPage = withSuspense(lazy(() => import("../pages/NotFoundPage")), {
+  message: "Page not found...",
+  type: "custom"
+});
+
+// ✅ All components now use withSuspense HOC for consistent loading UX
 
 const publicRoutes: RouteObject[] = [
   {
@@ -35,12 +77,6 @@ const protectedRoutes: RouteObject[] = [
       { index: true, element: <HomePage /> },
       { path: "components", element: <ComponentsIndex /> },
       { path: ROUTES.ORDERS, element: <OrderPageIndex /> },
-      { path: "orders/create", element: <CreateOrderPage /> },
-      { path: "orders/edit/:id", element: <CreateOrderPage /> },
-      { path: "orders/pending", element: <div>Pending Orders</div> },
-      { path: "orders/processing", element: <div>Processing Orders</div> },
-      { path: "orders/completed", element: <div>Completed Orders</div> },
-      { path: "orders/cancelled", element: <div>Cancelled Orders</div> },
 
       // Profile
       { path: ROUTES.PROFILE.substring(1), element: <ProfilePage /> },
@@ -91,7 +127,12 @@ const protectedRoutes: RouteObject[] = [
   },
 ];
 
-// Combine all routes
-const routes: RouteObject[] = [...publicRoutes, ...protectedRoutes];
+// 404 Not Found Route (must be last)
+const notFoundRoute: RouteObject = {
+  path: "*",
+  element: <NotFoundPage />,
+};
+
+const routes: RouteObject[] = [...publicRoutes, ...protectedRoutes, notFoundRoute];
 
 export { routes };

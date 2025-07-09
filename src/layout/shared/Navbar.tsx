@@ -27,7 +27,8 @@ import {
   IconNotification,
 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../redux/hooks";
+import { logoutAsync } from "../../server-action/api/authThunk";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../constants/frontendRoutes";
 import ThemeToggle from "../../components/ThemeToggle";
@@ -59,7 +60,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
-  const { user, logout } = useAuth();
+  const { user, dispatch } = useAuth();
   const navigate = useNavigate();
   const [notificationsOpened, setNotificationsOpened] = useState(false);
 
@@ -93,9 +94,15 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutAsync());
+      navigate("/login");
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Force navigation even if logout fails
+      navigate("/login");
+    }
   };
 
   const handleProfileClick = () => {
@@ -304,7 +311,7 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
               {!isMobile && (
                 <Group gap={4}>
                   <Text size="sm" fw={500} style={{ color: theme.colors.textPrimary }}>
-                    {user?.name}
+                    {user?.name || user?.email?.split('@')[0] || 'User'}
                   </Text>
                   <IconChevronDown size={14} style={{ color: theme.colors.textSecondary }} />
                 </Group>
