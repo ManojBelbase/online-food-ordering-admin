@@ -137,53 +137,7 @@ export interface PageHeaderProps {
 // BUSINESS DOMAIN TYPES
 // ============================================================================
 
-// Order Types
-export interface Order {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone?: string;
-  items: OrderItem[];
-  itemsCount: number;
-  subtotal: number;
-  tax: number;
-  deliveryFee: number;
-  total: number;
-  status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  paymentMethod: PaymentMethod;
-  createdAt: string;
-  updatedAt: string;
-  deliveryAddress: DeliveryAddress;
-  estimatedDeliveryTime?: string;
-  actualDeliveryTime?: string;
-  notes?: string;
-  specialInstructions?: string;
-}
-
-export interface OrderItem {
-  id: string;
-  menuItemId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  customizations?: string[];
-  notes?: string;
-}
-
-export interface DeliveryAddress {
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-}
-
+// Order Display Types (for table only - no API operations)
 export type OrderStatus =
   | "pending"
   | "confirmed"
@@ -193,35 +147,11 @@ export type OrderStatus =
   | "delivered"
   | "cancelled";
 
-export type PaymentStatus =
+  export type PaymentStatus =
   | "pending"
   | "paid"
   | "failed"
   | "refunded"
   | "partially_refunded";
 
-export type PaymentMethod =
-  | "credit_card"
-  | "debit_card"
-  | "paypal"
-  | "cash_on_delivery"
-  | "bank_transfer";
-
-// Order Form Types
-export interface OrderFormData {
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  deliveryAddress: DeliveryAddress;
-  items: OrderFormItem[];
-  paymentMethod: PaymentMethod;
-  specialInstructions?: string;
-  scheduledDeliveryTime?: string;
-}
-
-export interface OrderFormItem {
-  menuItemId: string;
-  quantity: number;
-  customizations?: string[];
-  notes?: string;
-}
+// ============================================================================

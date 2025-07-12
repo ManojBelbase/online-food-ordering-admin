@@ -27,7 +27,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Auto-generate breadcrumbs if not provided
   const generateBreadcrumbs = () => {
     if (breadcrumbs) return breadcrumbs;
 
@@ -39,7 +38,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       currentPath += `/${segment}`;
       const isLast = index === pathSegments.length - 1;
 
-      // Capitalize and format segment
       const label = segment
         .split("-")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -70,9 +68,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       style={{
         backgroundColor: theme.colors.surface,
         border: `1px solid ${theme.colors.border}`,
-        borderRadius: "8px",
-        padding: "20px",
-        marginBottom: "20px",
+        padding: "14px",
+        marginBottom: "14px",
+        borderRadius: "4px",
       }}
     >
       {/* Breadcrumbs */}
@@ -138,8 +136,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               order={1}
               style={{
                 color: theme.colors.textPrimary,
-                fontSize: "28px",
-                fontWeight: 700,
+                fontSize: "24px",
+                fontWeight: 600,
                 lineHeight: 1.2,
                 marginBottom: subtitle ? "4px" : 0,
               }}
@@ -150,9 +148,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             {subtitle && (
               <Text
                 size="md"
+              
                 style={{
                   color: theme.colors.textSecondary,
                   lineHeight: 1.4,
+                  fontSize: "16px",
                 }}
               >
                 {subtitle}
