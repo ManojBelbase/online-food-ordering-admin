@@ -4,6 +4,8 @@ import { Notifications } from "@mantine/notifications";
 import App from "./App";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/dropzone/styles.css";
+import "@mantine/dates/styles.css";
 import "./styles/notifications.css";
 import "./styles/global-theme.css";
 import { BrowserRouter } from "react-router-dom";
@@ -14,13 +16,17 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import {  appStore, persistor } from "./redux/store/store";
 import LoadingSpinner from "./components/GlobalComponents/LoadingSpinner";
+import { QueryProvider } from "./providers/QueryProvider";
+import { PermissionsProvider } from "./contexts/PermissonContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={appStore}>
-        <ThemeProvider>
-          <MantineThemeProvider>
+<PermissionsProvider>
+      <BrowserRouter>
+    <Provider store={appStore}>
+        <QueryProvider>
+          <ThemeProvider>
+            <MantineThemeProvider>
             <PersistGate
               loading={
                 <LoadingSpinner
@@ -47,9 +53,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 <App />
               </ModalProvider>
             </PersistGate>
-          </MantineThemeProvider>
-        </ThemeProvider>
+            </MantineThemeProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </Provider>
-    </BrowserRouter>
+  
+      </BrowserRouter>
+</PermissionsProvider>
   </React.StrictMode>
 );

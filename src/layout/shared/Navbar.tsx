@@ -27,11 +27,11 @@ import {
   IconNotification,
 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useAuth } from "../../redux/hooks";
+import { useAuth } from "../../redux/useAuth";
 import { logoutAsync } from "../../server-action/api/authThunk";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../../constants/frontendRoutes";
 import ThemeToggle from "../../components/ThemeToggle";
+import { FRONTENDROUTES } from "../../constants/frontendRoutes";
 
 // Custom hook for responsive behavior
 const useResponsive = () => {
@@ -64,7 +64,6 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
   const navigate = useNavigate();
   const [notificationsOpened, setNotificationsOpened] = useState(false);
 
-  // Mock notifications data
   const notifications = [
     {
       id: 1,
@@ -106,7 +105,7 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
   };
 
   const handleProfileClick = () => {
-    navigate(ROUTES.PROFILE);
+    navigate(FRONTENDROUTES.PROFILE);
   };
 
   return (

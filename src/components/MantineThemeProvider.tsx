@@ -31,7 +31,6 @@ export const MantineThemeProvider: React.FC<MantineThemeProviderProps> = ({ chil
       ] as const,
     },
     other: {
-      // Pass our custom theme colors to Mantine components
       customColors: theme.colors,
     },
   };

@@ -23,7 +23,7 @@ import {
   IconCheck,
   IconX,
 } from "@tabler/icons-react";
-import { useAuth } from "../../redux/hooks";
+import { useAuth } from "../../redux/useAuth";
 import { updateUser } from "../../redux/slices/authSlice";
 import { useTheme } from "../../contexts/ThemeContext";
 import { notifications } from "@mantine/notifications";

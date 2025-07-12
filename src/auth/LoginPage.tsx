@@ -21,7 +21,7 @@ import {
   IconAlertCircle,
 } from "@tabler/icons-react";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAppDispatch, useAuth } from "../redux/hooks";
+import { useAppDispatch, useAuth } from "../redux/useAuth";
 import { loginUser } from "../server-action/api/authThunk";
 import { loginValidators } from "../validation/authValidation";
 

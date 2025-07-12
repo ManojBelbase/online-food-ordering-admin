@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { mockOrders, type OrderDisplay } from "../config/orderTableConfig";
+import { mockOrders, type OrderDisplay } from "../config/orderTableConfig.tsx";
 import type { PaginationInfo } from "../types/ui";
 
 interface OrdersState {
@@ -87,7 +87,7 @@ export const useOrders = (): UseOrdersReturn => {
 
   useEffect(() => {
     loadOrders();
-  }, [state.pagination.page, state.pagination.limit, loadOrders]);
+  }, [loadOrders]);
 
   return {
     ...state,

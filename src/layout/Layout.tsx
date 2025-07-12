@@ -29,10 +29,9 @@ const Layout: React.FC = () => {
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
 
-  // Auto-adjust sidebar state based on screen size
   useEffect(() => {
     if (isMobile) {
-      setIsSidebarOpen(false); // Close sidebar on mobile by default
+      setIsSidebarOpen(false);
     } else if (isTablet) {
       setIsSidebarOpen(false); // Show icons only on tablet by default
     } else {

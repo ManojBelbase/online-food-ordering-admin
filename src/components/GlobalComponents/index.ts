@@ -12,3 +12,6 @@ export { default as TableHeader } from './Table/TableHeader';
 export { default as TableBody } from './Table/TableBody';
 export { default as TablePagination } from './TablePagination';
 export { default as TableControls } from './Table/TableControls';
+
+// Form Components
+export * from '../Forms';

@@ -1,16 +1,18 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
+import { Modal } from "@mantine/core";
 import PageHeader from "../../components/GlobalComponents/PageHeader";
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
-// Removed useOrderDeleteModal - no API calls for now
 import { DateFormatter } from "../../components/GlobalComponents/DateFormatter";
 import StatusBadge from "../../components/GlobalComponents/StatusBadge";
 import TableActions, { createViewAction, createEditAction, createDeleteAction } from "../../components/GlobalComponents/TableActions";
 import ViewOrder from "./Compoents/ViewOrder";
 import { useOrders } from "../../hooks/useOrders";
-import type { OrderDisplay } from "../../config/orderTableConfig";
+import type { OrderDisplay } from "../../config/orderTableConfig.tsx";
+import { IconPlus } from "@tabler/icons-react";
 
 
 const OrderPageIndex: React.FC = () => {
+  const [createOrderOpened, setCreateOrderOpened] = useState(false);
 
   const {
     orders,
@@ -62,7 +64,6 @@ const OrderPageIndex: React.FC = () => {
 
   const handleDeleteOrder = useCallback((order: OrderDisplay) => {
     console.log("Delete order:", order);
-    // TODO: Implement delete functionality when API is ready
   }, []);
 
   const tableData = useMemo(() => {
@@ -112,6 +113,14 @@ const OrderPageIndex: React.FC = () => {
       <PageHeader
         title="Orders Management"
         subtitle="View and track all customer orders from this dashboard"
+        actions={[
+          {
+            label: "Create Order",
+            onClick: () => setCreateOrderOpened(true),
+            icon: <IconPlus size={16} />,
+            variant: "filled",
+          },
+        ]}
       />
 
       <DataTable
@@ -141,6 +150,31 @@ const OrderPageIndex: React.FC = () => {
         opened={viewOrderOpened}
         onClose={handleCloseViewOrder}
       />
+
+      {/* Create Order Modal */}
+      <Modal
+        opened={createOrderOpened}
+        onClose={() => setCreateOrderOpened(false)}
+        title="Create New Order"
+        size="xl"
+        centered
+        styles={{
+          body: {
+            maxHeight: '70vh',
+            overflow: 'auto',
+            marginTop: '20px',
+            borderRadius: '8px',
+          },
+          root: {
+            zIndex: 1000,
+          },
+        }}
+      >
+        {/* <CreateOrderForm
+          onSuccess={() => setCreateOrderOpened(false)}
+          onCancel={() => setCreateOrderOpened(false)}
+        /> */}
+      </Modal>
     </div>
   );
 };
