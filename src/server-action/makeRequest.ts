@@ -20,6 +20,7 @@ makeRequest.interceptors.request.use((config) => {
   const token = Cookies.get("accessToken");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  
   }
 
   config.headers['Content-Type'] = 'application/json';
@@ -89,7 +90,6 @@ makeRequest.interceptors.response.use(
             newRefreshToken =
               res.data.data.refreshToken || res.data.data.refresh_token;
           } else {
-            // Fallback - log the actual structure
             console.error("Unexpected response structure:", res.data);
             throw new Error(
               "Invalid response structure from refresh token endpoint"
@@ -129,7 +129,6 @@ makeRequest.interceptors.response.use(
           return Promise.reject(err);
         }
       } else {
-        // Wait for token refresh to finish
         return new Promise((resolve) => {
           failedQueue.push((token: string) => {
             error.config.headers.Authorization = `Bearer ${token}`;

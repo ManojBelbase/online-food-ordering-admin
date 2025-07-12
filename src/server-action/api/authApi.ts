@@ -23,8 +23,6 @@ export const authApi = createApi({
             async onQueryStarted(_,{queryFulfilled}){
                 try{
                     const result = await queryFulfilled;
-                    // Since you're using loginUser thunk, you don't need to dispatch here
-                    // The thunk handles the state updates automatically
                     console.log('Login successful:', result.data);
                 }catch(error){
                     console.log('Login error:', error);
