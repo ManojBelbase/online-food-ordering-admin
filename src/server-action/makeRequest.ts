@@ -45,7 +45,6 @@ makeRequest.interceptors.response.use(
       message === "Token has expired"
     ) {
       const refreshToken = Cookies.get("refreshToken");
-
       if (!refreshToken) {
         logoutCallback?.();
         notifications.show({
@@ -76,7 +75,6 @@ makeRequest.interceptors.response.use(
             }
           );
 
-          // Handle different response structures
           let accessToken, newRefreshToken;
 
           if (res.data?.accessToken || res.data?.access_token) {

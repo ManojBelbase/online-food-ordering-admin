@@ -2,11 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 import { makeRequest } from "../makeRequest";
 import Cookies from "js-cookie";
+import type { Auth, LoginCredentials } from "../../types/auth";
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
+
 
 export const loginUser = createAsyncThunk<
   {

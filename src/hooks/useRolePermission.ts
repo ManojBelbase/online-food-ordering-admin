@@ -1,10 +1,11 @@
-// hooks/useRolePermissions.ts
 import { usePermissions } from "../contexts/PermissonContext";
 import { useAuth } from "../redux/useAuth";
 
 export const useRolePermissions = () => {
   const { user } = useAuth();
   const { permissions } = usePermissions();
+
+  console.log()
 
   const hasPermission = (path: string): boolean => {
     const requiredRoles = permissions[path] || [];

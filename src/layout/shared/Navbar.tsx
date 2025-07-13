@@ -61,6 +61,7 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
   const { user, dispatch } = useAuth();
+  console.log(user,"user")
   const navigate = useNavigate();
   const [notificationsOpened, setNotificationsOpened] = useState(false);
 

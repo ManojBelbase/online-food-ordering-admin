@@ -16,3 +16,8 @@ declare namespace Auth {
     error: string | null;
   }
 }
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}

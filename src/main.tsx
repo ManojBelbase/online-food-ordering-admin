@@ -57,7 +57,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           </ThemeProvider>
         </QueryProvider>
       </Provider>
-  
       </BrowserRouter>
 </PermissionsProvider>
   </React.StrictMode>
