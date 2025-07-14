@@ -9,12 +9,15 @@ declare namespace Auth {
     avatar?: string;
   }
 
-  interface AuthState {
-    user: User | null;
-    token: string | null;
-    loading: boolean;
-    error: string | null;
-  }
+export interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+  loadingLogin: boolean;
+  loadingSignup: boolean;
+  errorLogin: string | null;
+  errorSignup: string | null;
+  isInitialized: boolean;
+}
 }
 
 export interface LoginCredentials {

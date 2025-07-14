@@ -5,6 +5,7 @@ export const FRONTENDROUTES = {
   DASHBOARD: "dashboard",
   ORDERS: "orders",
   PROFILE: "/profile",
+  MENU:'/menu',
   THEME_TEST: "/theme-test",
 
   CATEGORY:"/category",

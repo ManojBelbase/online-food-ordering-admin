@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  const { loading, error, isAuthenticated } = useAuth();
+  const { loadingLogin, errorLogin, isAuthenticated } = useAuth();
 
   const from = location.state?.from?.pathname || "/";
 
@@ -107,7 +107,7 @@ const LoginPage: React.FC = () => {
           }}
         >
           <LoadingOverlay
-            visible={loading}
+            visible={loadingLogin}
             overlayProps={{ radius: "sm", blur: 2 }}
           />
           <Stack gap="md">
@@ -177,8 +177,8 @@ const LoginPage: React.FC = () => {
                 <Button
                   type="submit"
                   fullWidth
-                  loading={loading}
-                  leftSection={!loading ? <IconLogin size={16} /> : undefined}
+                  loading={loadingLogin}
+                  leftSection={!loadingLogin ? <IconLogin size={16} /> : undefined}
                   style={{
                     backgroundColor: theme.colors.primary,
                     "&:hover": {
@@ -186,12 +186,12 @@ const LoginPage: React.FC = () => {
                     },
                   }}
                 >
-                  {loading ? 'Signing In...' : 'Sign In'}
+                  {loadingLogin ? 'Signing In...' : 'Sign In'}
                 </Button>
 
-                {error && (
+                {errorLogin && (
                   <Text size="sm" c="red" ta="center">
-                    {error}
+                    {errorLogin}
                   </Text>
                 )}
               </Stack>

@@ -12,12 +12,11 @@ import {
 import { rootReducer } from '../reducers';
 import { authApi } from '../../server-action/api/authApi';
 
-// 🔧 Persistence Configuration
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"], // Only persist essential data
-  blacklist: [authApi.reducerPath], // Don't persist API cache
+  whitelist: ["auth"],
+  blacklist: [authApi.reducerPath], 
   version: 1,
 };
 

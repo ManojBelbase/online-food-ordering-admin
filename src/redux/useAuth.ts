@@ -23,7 +23,7 @@ export const useAuth = () => {
     ...auth,
     user,
     isAuthenticated,
-    isLoading: auth.loading,
+    isLoading: auth.loadingLogin,
     dispatch,
   };
 };

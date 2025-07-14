@@ -28,10 +28,10 @@ import {
 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../redux/useAuth";
-import { logoutAsync } from "../../server-action/api/authThunk";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../components/ThemeToggle";
 import { FRONTENDROUTES } from "../../constants/frontendRoutes";
+import { logout } from "../../redux/slices/authSlice";
 
 // Custom hook for responsive behavior
 const useResponsive = () => {
@@ -96,7 +96,7 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutAsync());
+      await dispatch(logout());
       navigate("/login");
     } catch (error) {
       console.error('Logout failed:', error);

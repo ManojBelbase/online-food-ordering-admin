@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { FRONTENDROUTES } from "../constants/frontendRoutes";
+import { Roles } from "../constant/roles";
 
 interface RoutePermissions {
   [path: string]: string[];
@@ -15,38 +16,11 @@ const PermissionsContext = createContext<PermissionsContextType | undefined>(und
 const initialPermissions: RoutePermissions = {
   "/": [],
   "/components": ["admin"],
-  "/orders": ["admin"],
   "/orders/create": ["admin"],
-  "/orders/pending": ["admin"],
-  "/orders/processing": ["admin"],
-  "/orders/completed": ["admin"],
-  "/orders/cancelled": ["admin"],
   [FRONTENDROUTES.PROFILE]: [],
-  [FRONTENDROUTES.CATEGORY]: ["admin",'user'],
+  [FRONTENDROUTES.CATEGORY]: [Roles.USER],
   "/menu": ["admin"],
-  "/menu/categories": ["admin"],
-  "/menu/items": ["admin"],
-  "/menu/add-item": ["admin"],
-  "/menu/inventory": ["admin"],
-  "/customers": ["admin"],
-  "/customers/reviews": ["admin"],
-  "/customers/loyalty": ["admin"],
-  "/delivery/areas": ["admin"],
-  "/delivery/staff": ["admin"],
-  "/delivery/tracking": ["admin"],
-  "/payments": ["admin"],
-  "/payments/transactions": ["admin"],
-  "/payments/methods": ["admin"],
-  "/payments/refunds": ["admin"],
-  "/analytics": ["admin"],
-  "/analytics/sales": ["admin"],
-  "/analytics/customers": ["admin"],
-  "/analytics/menu": ["admin"],
-  "/analytics/revenue": ["admin"],
-  "/notifications": [],
-  "/theme-test": [],
-  "/users/roles": ["admin"],
- [FRONTENDROUTES.PERMISSION]:[]
+ [FRONTENDROUTES.PERMISSION]:["admin"]
 };
 
 export const PermissionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

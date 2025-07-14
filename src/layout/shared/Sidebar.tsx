@@ -1,4 +1,3 @@
-// components/layouts/Sidebar.tsx
 import React, { useState } from "react";
 import { Tooltip, NavLink, Group, Avatar, Text } from "@mantine/core";
 import { IconHotelService } from "@tabler/icons-react";

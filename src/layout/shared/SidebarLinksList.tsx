@@ -21,7 +21,6 @@ export const SidebarLinksList: React.FC<Props> = ({
   const { theme } = useTheme();
   const { filterItemsByRole, hasPermission } = useRolePermissions();
 
-  // Filter sidebar links based on user permissions
   const filteredLinks = filterItemsByRole(sidebarLinks);
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export const SidebarLinksList: React.FC<Props> = ({
       {filteredLinks.map((item) => {
         const Icon = item.icon;
         
-        // Filter children based on permissions
         const filteredChildren = (item.children || []).filter(
           (child:any) => hasPermission(child.to)
         );

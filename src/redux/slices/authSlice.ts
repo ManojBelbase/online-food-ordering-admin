@@ -1,69 +1,91 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import { loginUser, logoutAsync } from "../../server-action/api/authThunk";
 import type { Auth } from "../../types/auth";
+import { loginUser, signupUser } from "../../server-action/api/authThunk";
 
 const initialState: Auth.AuthState = {
   user: null,
-  token: null,
-  loading: false,
-  error: null,
+  accessToken: null,
+  loadingLogin: false,
+  loadingSignup: false,
+  errorLogin: null,
+  errorSignup: null,
+  isInitialized: false,
 };
 
-export const authSlice = createSlice({
+const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     logout: (state) => {
       state.user = null;
-      state.token = null;
-      state.loading = false;
-      state.error = null;
+      state.accessToken = null;
+      state.loadingLogin = false;
+      state.loadingSignup = false;
+      state.errorLogin = null;
+      state.errorSignup = null;
+      // Remove accessToken from localStorage
+      localStorage.removeItem("accessToken");
     },
-    clearError: (state) => {
-      state.error = null;
+    clearSignupError: (state) => {
+      state.errorSignup = null;
     },
-    updateUser: (state, action: PayloadAction<Partial<Auth.User>>) => {
-      if (state.user) {
-        state.user = { ...state.user, ...action.payload };
-      }
+    clearLoginError: (state) => {
+      state.errorLogin = null;
+    },
+    initializeAuth: (state) => {
+      state.isInitialized = true;
+    },
+    refreshToken: (state, action) => {
+      state.accessToken = action.payload.accessToken;
+      state.user = action.payload.user;
+      localStorage.setItem("accessToken", action.payload.accessToken);
     },
   },
 
   extraReducers: (builder) => {
+    // Login User
     builder
       .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loadingLogin = true;
+        state.errorLogin = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.loading = false;
+        state.accessToken = action.payload.accessToken;
+        state.loadingLogin = false;
+        // Store accessToken in localStorage
+        localStorage.setItem("accessToken", action.payload.accessToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Login failed";
+        state.loadingLogin = false;
+        state.errorLogin = action.payload || "Unknown error occurred";
+      });
+
+    // Signup User
+    builder
+      .addCase(signupUser.pending, (state) => {
+        state.loadingSignup = true;
+        state.errorSignup = null;
       })
-      // Logout async thunk
-      .addCase(logoutAsync.pending, (state) => {
-        state.loading = true;
+      .addCase(signupUser.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.loadingSignup = false;
+        // Store accessToken in localStorage
+        localStorage.setItem("accessToken", action.payload.accessToken);
       })
-      .addCase(logoutAsync.fulfilled, (state) => {
-        state.user = null;
-        state.token = null;
-        state.loading = false;
-        state.error = null;
-      })
-      .addCase(logoutAsync.rejected, (state, action) => {
-        // Even if logout API fails, clear the state
-        state.user = null;
-        state.token = null;
-        state.loading = false;
-        state.error = action.payload || "Logout failed";
+      .addCase(signupUser.rejected, (state, action) => {
+        state.loadingSignup = false;
+        state.errorSignup = action.payload || "Unknown error occurred";
       });
   },
 });
 
-export const { logout, clearError, updateUser } = authSlice.actions;
+export const {
+  logout,
+  clearSignupError,
+  clearLoginError,
+  initializeAuth,
+  refreshToken,
+} = authSlice.actions;
 export default authSlice.reducer;

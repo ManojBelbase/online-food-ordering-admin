@@ -13,7 +13,7 @@ export const baseApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL || 'https://food-ordering-backend-axbt.onrender.com/api/v1/',
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
+      const token = (getState() as RootState).auth.accessToken;
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -54,7 +54,7 @@ export const baseApi = createApi({
 const baseQueryWithRetry = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL || 'https://food-ordering-backend-axbt.onrender.com/api/v1/',
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.token;
+    const token = (getState() as RootState).auth.accessToken;
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
     }
