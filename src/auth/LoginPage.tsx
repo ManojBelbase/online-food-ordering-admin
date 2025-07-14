@@ -67,6 +67,7 @@ const LoginPage: React.FC = () => {
         });
         navigate(from, { replace: true });
       } else if (loginUser.rejected.match(result)) {
+
         notifications.show({
           title: 'Login Failed',
           message: result.payload as string || 'Invalid credentials',
@@ -76,7 +77,7 @@ const LoginPage: React.FC = () => {
       }
     } catch (error) {
       notifications.show({
-        title: 'Login Failed',
+        title: 'Login Failedfdfd',
         message: 'An error occurred during login',
         color: 'red',
         icon: <IconAlertCircle size={16} />,

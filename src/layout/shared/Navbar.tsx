@@ -33,7 +33,6 @@ import ThemeToggle from "../../components/ThemeToggle";
 import { FRONTENDROUTES } from "../../constants/frontendRoutes";
 import { logout } from "../../redux/slices/authSlice";
 
-// Custom hook for responsive behavior
 const useResponsive = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -99,8 +98,6 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
       await dispatch(logout());
       navigate("/login");
     } catch (error) {
-      console.error('Logout failed:', error);
-      // Force navigation even if logout fails
       navigate("/login");
     }
   };

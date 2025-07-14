@@ -38,7 +38,6 @@ makeRequest.interceptors.response.use(
   async (error) => {
     const originalReq = error.config;
     const status = error.response?.status;
-
     if (status === 401 && !originalReq._retry) {
       originalReq._retry = true;
 
@@ -57,15 +56,12 @@ makeRequest.interceptors.response.use(
 
       isRefreshing = true;
       try {
-        // call refresh endpoint (cookie sent automatically)
         const { data } = await axios.post(
           `${import.meta.env.VITE_API_URL}auth/refresh-token`,
           {},
           { withCredentials: true }
         );
         const newToken = data.accessToken;
-
-        // ✅ Update Redux state with proper action
         appStore.dispatch(
           refreshToken({
             user: data.user,
@@ -78,9 +74,7 @@ makeRequest.interceptors.response.use(
         return makeRequest(originalReq);
       } catch (err) {
         processQueue(err as Error, null);
-
         appStore.dispatch(logout());
-
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -88,5 +82,5 @@ makeRequest.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+}
 );
