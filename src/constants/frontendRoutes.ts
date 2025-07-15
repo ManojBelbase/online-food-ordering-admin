@@ -7,6 +7,7 @@ export const FRONTENDROUTES = {
   PROFILE: "/profile",
   MENU:'/menu',
   THEME_TEST: "/theme-test",
+  CUSTOMER:'/customer',
 
   CATEGORY:"/category",
 

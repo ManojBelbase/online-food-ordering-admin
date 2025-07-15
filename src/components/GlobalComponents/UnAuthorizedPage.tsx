@@ -6,7 +6,7 @@ const UnauthorizedPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: "3rem", textAlign: "center" }}>
+    <div style={{ padding: "3rem", textAlign: "center", margin:"auto"}}>
       <Text size="xl">
         🚫 You are not authorized to access this page.
       </Text>

@@ -19,6 +19,11 @@ interface ISidebarLinks {
 export const sidebarLinks: ISidebarLinks[] = [
   { label: "Dashboard", to: "/", icon: IconDashboard },
   {
+    label:'Customer',
+    to:FRONTENDROUTES.CUSTOMER,
+    icon:IconUser,
+  },
+  {
     label: "Orders",
     to: FRONTENDROUTES.ORDERS,
     icon: IconShoppingCart,

@@ -1,39 +1,38 @@
-import { usePermissions } from "../contexts/PermissonContext";
+// hooks/useRolePermissions.ts
 import { useAuth } from "../redux/useAuth";
+import { routePermissions } from "../routes/permission";
 
 export const useRolePermissions = () => {
   const { user } = useAuth();
-  const { permissions } = usePermissions();
-
-  console.log()
 
   const hasPermission = (path: string): boolean => {
-    const requiredRoles = permissions[path] || [];
-    
-    // If no roles required, allow access
+    const requiredRoles = routePermissions[path] || [];
+    console.log(`Checking permission for ${path}:`, requiredRoles, user?.role);
+
     if (requiredRoles.length === 0) {
-      return true;
+      return !!user;
     }
-    
-    // Check if user has required role
-    return requiredRoles.includes(user?.role ?? "");
+
+    if (!user || !user.role) {
+      return false;
+    }
+
+    return requiredRoles.includes(user.role);
   };
 
   const filterItemsByRole = (items: any[]) => {
-    return items.filter(item => {
+    return items.filter((item) => {
       if (item.to && !hasPermission(item.to)) {
         return false;
       }
-      
-      // Filter children if they exist
+
       if (item.children) {
-        const filteredChildren = item.children.filter((child: any) => 
+        const filteredChildren = item.children.filter((child: any) =>
           hasPermission(child.to)
         );
-        // Only show parent if it has accessible children
-        return filteredChildren.length > 0;
+        return filteredChildren.length > 0 || hasPermission(item.to);
       }
-      
+
       return true;
     });
   };
