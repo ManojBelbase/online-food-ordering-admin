@@ -31,7 +31,7 @@ import { useAuth } from "../../redux/useAuth";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../components/ThemeToggle";
 import { FRONTENDROUTES } from "../../constants/frontendRoutes";
-import { logout } from "../../redux/slices/authSlice";
+import { logout } from "../../server-action/authSlice";
 
 const useResponsive = () => {
   const [isMobile, setIsMobile] = useState(false);

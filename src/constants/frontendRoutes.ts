@@ -3,11 +3,12 @@ export const FRONTENDROUTES = {
   LOGIN: "/login",
   HOME: "/",
   DASHBOARD: "dashboard",
+  CUSTOMER:'/customer',
+  GLOBAL_CATEGORY:'/global-category',
+  
   ORDERS: "orders",
   PROFILE: "/profile",
   MENU:'/menu',
-  THEME_TEST: "/theme-test",
-  CUSTOMER:'/customer',
 
   CATEGORY:"/category",
 

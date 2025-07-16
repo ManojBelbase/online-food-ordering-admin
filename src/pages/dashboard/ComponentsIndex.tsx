@@ -148,20 +148,7 @@ const ComponentsIndex: React.FC = () => {
       <PageHeader
         title="Components & Forms Index"
         subtitle="Navigate to all available pages, forms, and tables in the system"
-        actions={[
-          {
-            label: "Create Order",
-            onClick: () => navigate("/orders/create"),
-            icon: <IconPlus size={16} />,
-            variant: "filled",
-          },
-          {
-            label: "View Orders",
-            onClick: () => navigate("/orders"),
-            icon: <IconTable size={16} />,
-            variant: "outline",
-          },
-        ]}
+       
       />
 
       <Grid>

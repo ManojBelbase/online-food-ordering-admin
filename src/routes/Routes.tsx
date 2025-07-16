@@ -7,6 +7,7 @@ import { FRONTENDROUTES } from "../constants/frontendRoutes.ts";
 import CategoryPageIndex from "../pages/Category/CategoryPageIndex.tsx";
 import CustomerPageIndex from "../pages/Customer/CustomerPageIndex.tsx";
 import UnauthorizedPage from "../components/GlobalComponents/UnAuthorizedPage.tsx";
+import GlobalCategoryIndex from "../pages/Global-Category/GlobalCategoryIndex.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
   message: "Loading application layout...",
@@ -70,6 +71,7 @@ const protectedRoutes: RouteObject[] = [
     children: [
       { index: true, element: <HomePage /> },
       { path: "components", element: <ComponentsIndex /> },
+      {path:FRONTENDROUTES.GLOBAL_CATEGORY, element:<GlobalCategoryIndex/>},
       { path: FRONTENDROUTES.CUSTOMER, element: <CustomerPageIndex /> },
       { path: FRONTENDROUTES.ORDERS, element: <OrderPageIndex /> },
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },

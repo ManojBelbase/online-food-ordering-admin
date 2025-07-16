@@ -1,9 +1,9 @@
 import { createApiConfig } from "../../config/APIConfig";
 
-interface User {
+interface IUser {
   _id: string;
   name: string;
   email: string;
 }
 
-export const userApi = createApiConfig<User>("users", "User", []);
+export const userApi = createApiConfig<IUser>("users", "User", []);

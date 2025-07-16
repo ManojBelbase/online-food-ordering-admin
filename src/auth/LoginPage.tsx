@@ -22,7 +22,7 @@ import {
 } from "@tabler/icons-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAppDispatch, useAuth } from "../redux/useAuth";
-import { loginUser } from "../server-action/api/authThunk";
+import { loginUser } from "../server-action/authThunk";
 import { loginValidators } from "../validation/authValidation";
 
 interface LoginFormValues {

@@ -6,6 +6,7 @@ import {
   IconChefHat,
   IconUser,
   IconLock,
+  IconCategory2,
 } from "@tabler/icons-react";
 import { FRONTENDROUTES } from "../constants/frontendRoutes";
 
@@ -22,6 +23,11 @@ export const sidebarLinks: ISidebarLinks[] = [
     label:'Customer',
     to:FRONTENDROUTES.CUSTOMER,
     icon:IconUser,
+  },
+  {
+    label:"Global Category",
+    to:FRONTENDROUTES.GLOBAL_CATEGORY,
+    icon:IconCategory2
   },
   {
     label: "Orders",

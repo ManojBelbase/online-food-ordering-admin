@@ -41,12 +41,34 @@ const TableBody: React.FC<TableBodyProps> = ({
 
   const defaultRenderCell = useCallback((column: TableColumn, row: any) => {
     const value = row[column.key];
+    const isImageField = ["image", "photo", "avatar", "icon"].some((key) =>
+      column.key.toLowerCase().includes(key)
+    );
+
+    if (
+      isImageField &&
+      typeof value === "string" &&
+      (value.startsWith("data:image") || value.startsWith("http") || value.startsWith("/"))
+    ) {
+      return (
+        <img
+          src={value}
+          alt="img"
+          style={{
+            width: 40,
+            height: 40,
+            objectFit: "cover",
+            borderRadius: 6,
+          }}
+        />
+      );
+    }
+
     return value;
   }, []);
 
   const cellRenderer = renderCell || defaultRenderCell;
 
-  // Virtual scrolling calculations
   const visibleItems = useMemo(() => {
     if (!virtualized) return data;
 
@@ -65,13 +87,14 @@ const TableBody: React.FC<TableBodyProps> = ({
     }));
   }, [data, virtualized, scrollTop, virtualHeight, itemHeight]);
 
-  // Handle row click
-  const handleRowClick = useCallback((row: any, index: number) => {
-    onRowClick?.(row, index);
-  }, [onRowClick]);
+  const handleRowClick = useCallback(
+    (row: any, index: number) => {
+      onRowClick?.(row, index);
+    },
+    [onRowClick]
+  );
 
   if (virtualized) {
-    // Virtualized table body
     return (
       <div
         style={{
@@ -157,7 +180,6 @@ const TableBody: React.FC<TableBodyProps> = ({
     );
   }
 
-  // Regular table body
   return (
     <Table.Tbody>
       {data.length === 0 ? (
@@ -166,7 +188,7 @@ const TableBody: React.FC<TableBodyProps> = ({
             colSpan={columns.length}
             style={{
               textAlign: "center",
-              padding: "40px",
+              padding: 40,
               color: theme.colors.textSecondary,
             }}
           >
@@ -189,7 +211,7 @@ const TableBody: React.FC<TableBodyProps> = ({
                     textAlign: columnAlign,
                     borderBottom: `1px solid ${theme.colors.border}`,
                     color: theme.colors.textPrimary,
-                    paddingInline: "14px",
+                    paddingInline: 14,
                   }}
                 >
                   {cellRenderer(column, row)}

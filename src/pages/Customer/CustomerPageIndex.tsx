@@ -14,11 +14,13 @@ const CustomerPageIndex = () => {
       columns: [
         { title: "Sn", key: "sn" },
         { title: "Full Name", key: "name" },
+        { title: "Email", key: "email" },
         { title: "Role", key: "role" },
       ],
       rows: data?.map((user: any, index: number) => ({
         sn: index + 1,
         name: `${user.name}`,
+        email:user.email,
         role:<StatusBadge status={user?.role}/>
 
       })) || [],
@@ -29,7 +31,6 @@ const CustomerPageIndex = () => {
     <div>
       <PageHeader
         title="Customer"
-        subtitle="Customer lists"
         onClick={() => setOpanModal(true)}
         actionVariant="outline"
       />

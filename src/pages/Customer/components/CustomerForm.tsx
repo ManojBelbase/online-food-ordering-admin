@@ -1,9 +1,89 @@
+import React from "react";
+import { Button, Stack } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconUserPlus, IconMail, IconLock } from "@tabler/icons-react";
+import { useTheme } from "../../../contexts/ThemeContext";
+import { FormInput, FormSelect, type SelectOption } from "../../../components/Forms";
+import { useAppDispatch } from "../../../redux/useAuth";
+import { signupUser, type SignupCredentials } from "../../../server-action/authThunk";
 
-const CustomerForm = () => {
-    
+
+const CustomerForm: React.FC = () => {
+const { theme } = useTheme();
+const dispatch = useAppDispatch();
+
+const roleOptions: SelectOption[] = [
+  { value: "user", label: "User" },
+  { value: "restaurant", label: "Restaurant" },
+  { value: "delivery", label: "Delivery" },
+];
+
+  const form = useForm<SignupCredentials>({
+    initialValues: {
+      email: "",
+      password: "",
+      role: "customer", 
+    },
+    validate: {
+      email: (value) => (/^\S+@\S+\.\S+$/.test(value) ? null : "Invalid email"),
+      password: (value) =>
+        value.length >= 6 ? null : "Password must be at least 6 characters",
+      role: (value) => (value ? null : "Role is required"),
+    },
+  });
+
+  const handleSubmit = async (values: SignupCredentials) => {
+    try {
+       await dispatch(signupUser(values));
+    } catch (error) {
+        
+    }
+  };
+
   return (
-    <div>Customer form</div>
-  )
-}
+    <form onSubmit={form.onSubmit(handleSubmit)}>
+      <Stack gap="md">
+        <FormInput
+          label="Email"
+          type="email"
+          placeholder="Enter email"
+          leftSection={<IconMail size={16} />}
+          {...form.getInputProps("email")}
+        />
 
-export default CustomerForm
+        <FormInput
+          label="Password"
+          type="password"
+          placeholder="Enter password"
+          leftSection={<IconLock size={16} />}
+          {...form.getInputProps("password")}
+        />
+
+        <FormSelect
+          label="Role"
+          placeholder="Select Role"
+          data={roleOptions}
+          leftSection={<IconUserPlus size={16} />}
+          {...form.getInputProps("role")}
+          
+        />
+
+        <Button
+          type="submit"
+          fullWidth
+          leftSection={<IconUserPlus size={16} />}
+          style={{
+            backgroundColor: theme.colors.primary,
+            "&:hover": {
+              backgroundColor: theme.colors.primaryHover,
+            },
+          }}
+        >
+          Create Customer
+        </Button>
+      </Stack>
+    </form>
+  );
+};
+
+export default CustomerForm;

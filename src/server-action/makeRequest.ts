@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from "axios";
 import { appStore } from "../redux/store/store";
-import { logout, refreshToken } from "../redux/slices/authSlice";
+import { logout, refreshToken } from "./authSlice";
 
 let isRefreshing = false;
 let failedQueue: Array<(token: string) => void> = [];
@@ -19,6 +19,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_REACT_APP_API_URL,
   withCredentials: true,
+  
 });
 
 makeRequest.interceptors.request.use((config: InternalAxiosRequestConfig) => {

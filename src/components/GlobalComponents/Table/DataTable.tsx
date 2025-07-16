@@ -276,10 +276,35 @@ const DataTable: React.FC<DataTableProps> = ({
   ]);
 
   const filteredAndSortedData = processedData.data;
+
+  // Custom renderCell to handle image rendering
   const renderCell = useCallback(
     (column: TableColumn, row: any) => {
       const value = row[column.key];
-      return value;
+      const isImageField = ["image", "photo", "avatar", "icon"].some((key) =>
+        column.key.toLowerCase().includes(key)
+      );
+
+      if (
+        isImageField &&
+        typeof value === "string" &&
+        (value.startsWith("data:image") || value.startsWith("http") || value.startsWith("/"))
+      ) {
+        return (
+          <img
+            src={value}
+            alt="img"
+            style={{
+              width: 40,
+              height: 40,
+              objectFit: "cover",
+              borderRadius: 6,
+            }}
+          />
+        );
+      }
+
+      return value; // Fallback to default rendering for non-image fields
     },
     []
   );
@@ -347,7 +372,6 @@ const DataTable: React.FC<DataTableProps> = ({
                 backgroundColor: theme.colors.backgroundSecondary,
                 color: theme.colors.textPrimary,
                 borderBottom: `1px solid ${theme.colors.border}`,
-                fontWeight: 600,
               },
               td: {
                 borderBottom: `1px solid ${theme.colors.border}`,

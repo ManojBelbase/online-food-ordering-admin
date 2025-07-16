@@ -1,18 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import type { Auth } from "../../types/auth";
-import { makeRequest } from "../makeRequest";
+import type { Auth } from "../types/auth";
+import { makeRequest } from "./makeRequest";
 
 interface LoginCredentials {
   email: string;
   password: string;
 }
 
-interface SignupCredentials {
+export interface SignupCredentials {
   email: string;
   password: string;
-  phone: string;
-  name: string;
+  role: string;
 }
 
 export const loginUser = createAsyncThunk<
@@ -47,14 +46,18 @@ export const signupUser = createAsyncThunk<
   }
 >(
   "auth/signupUser",
-  async ({ email, password, phone, name }: SignupCredentials, thunkAPI) => {
+  async ({ email, password, role }: SignupCredentials, thunkAPI) => {
     try {
       const res = await makeRequest.post("auth/signup", {
         email,
         password,
-        phone,
-        name,
-      });
+        role,
+        
+      },{
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
       return res.data;
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;

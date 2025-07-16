@@ -1,14 +1,14 @@
 import React from 'react';
-import { TextInput, PasswordInput, NumberInput, Textarea } from '@mantine/core';
+import { TextInput, PasswordInput, NumberInput, Textarea, Switch } from '@mantine/core';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface FormInputProps {
   label: string;
   placeholder?: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'textarea';
+  type?: 'text' | 'email' | 'password' | 'number' | 'textarea' | "toggle";
   required?: boolean;
   error?: string;
-  value?: string | number;
+  value?: string | number ;
   onChange?: (value: string | number) => void;
   onBlur?: () => void;
   disabled?: boolean;
@@ -163,6 +163,33 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
             type="email"
             onChange={handleTextChange}
             ref={ref as React.Ref<HTMLInputElement>}
+          />
+        );
+        case 'toggle':
+        return (
+          <Switch
+            label={label}
+            type='toggle'
+            checked={!!value}
+            onChange={(event) => onChange?.(event?.currentTarget?.checked as any)}
+            disabled={disabled}
+            readOnly={readonly}
+            size={size}
+            radius={radius}
+            description={description}
+            color={theme.colors.primary}
+            styles={{
+              label: {
+                color: theme.colors.textPrimary,
+                fontWeight: 500,
+                marginBottom: 8,
+              },
+              description: {
+                color: theme.colors.textSecondary,
+              },
+            }}
+            className={className}
+            {...other}
           />
         );
 

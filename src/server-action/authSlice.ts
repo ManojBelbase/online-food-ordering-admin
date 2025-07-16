@@ -1,6 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { Auth } from "../../types/auth";
-import { loginUser, signupUser } from "../../server-action/api/authThunk";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { AxiosError } from "axios";
+import { makeRequest } from "./makeRequest";
+import type { Auth } from "../types/auth";
 
 const initialState: Auth.AuthState = {
   user: null,
@@ -11,6 +12,39 @@ const initialState: Auth.AuthState = {
   errorSignup: null,
   isInitialized: false,
 };
+
+// Define thunks in the same file
+export const loginUser = createAsyncThunk<
+  { user: Auth.User; accessToken: string },
+  { email: string; password: string },
+  { rejectValue: string }
+>("auth/loginUser", async ({ email, password }, thunkAPI) => {
+  try {
+    const res = await makeRequest.post("auth/login", { email, password });
+    return res.data;
+  } catch (err: unknown) {
+    const error = err as AxiosError<{ message: string }>;
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || "Login failed"
+    );
+  }
+});
+
+export const signupUser = createAsyncThunk<
+  { user: Auth.User; accessToken: string },
+  { email: string; password: string; role: string },
+  { rejectValue: string }
+>("auth/signupUser", async ({ email, password, role }, thunkAPI) => {
+  try {
+    const res = await makeRequest.post("auth/signup", { email, password, role });
+    return res.data;
+  } catch (err: unknown) {
+    const error = err as AxiosError<{ message: string }>;
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || "Signup failed"
+    );
+  }
+});
 
 const authSlice = createSlice({
   name: "auth",
@@ -23,7 +57,6 @@ const authSlice = createSlice({
       state.loadingSignup = false;
       state.errorLogin = null;
       state.errorSignup = null;
-      // Remove accessToken from localStorage
       localStorage.removeItem("accessToken");
     },
     clearSignupError: (state) => {
@@ -41,7 +74,6 @@ const authSlice = createSlice({
       localStorage.setItem("accessToken", action.payload.accessToken);
     },
   },
-
   extraReducers: (builder) => {
     // Login User
     builder
@@ -53,7 +85,6 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.loadingLogin = false;
-        // Store accessToken in localStorage
         localStorage.setItem("accessToken", action.payload.accessToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -71,7 +102,6 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.loadingSignup = false;
-        // Store accessToken in localStorage
         localStorage.setItem("accessToken", action.payload.accessToken);
       })
       .addCase(signupUser.rejected, (state, action) => {
