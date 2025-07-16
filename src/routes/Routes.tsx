@@ -5,7 +5,7 @@ import ProtectedRoute from "../auth/ProtectedRoute.tsx";
 import withSuspense, { withPageLoader, withSkeleton } from "../utils/withSuspense";
 import { FRONTENDROUTES } from "../constants/frontendRoutes.ts";
 import CategoryPageIndex from "../pages/Category/CategoryPageIndex.tsx";
-import CustomerPageIndex from "../pages/Custumer/CustomerPageIndex.tsx";
+import CustomerPageIndex from "../pages/Customer/CustomerPageIndex.tsx";
 import UnauthorizedPage from "../components/GlobalComponents/UnAuthorizedPage.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {

@@ -11,17 +11,27 @@ import {
   Box,
   Button,
 } from "@mantine/core";
-import { IconArrowLeft, IconChevronRight } from "@tabler/icons-react";
+import { IconArrowLeft, IconChevronRight, IconPlus } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import type { PageHeaderProps } from "../../types/ui";
+
+interface PageHeaderProps {
+  title: string;
+  subtitle?: string;
+  breadcrumbs?: Array<{ label: string; href?: string; active?: boolean }>;
+  showBackButton?: boolean;
+  onBack?: () => void;
+  onClick?: () => void;
+  actionVariant?: "filled" | "outline" | "light" | "subtle";
+}
 
 const PageHeader: React.FC<PageHeaderProps> = ({
   title,
   subtitle,
   breadcrumbs,
-  actions,
   showBackButton = false,
   onBack,
+  onClick,
+  actionVariant = "filled",
 }) => {
   const { theme } = useTheme();
   const navigate = useNavigate();
@@ -142,13 +152,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
                 marginBottom: subtitle ? "4px" : 0,
               }}
             >
-              {title}
+              {title} List
             </Title>
 
             {subtitle && (
               <Text
                 size="md"
-              
                 style={{
                   color: theme.colors.textSecondary,
                   lineHeight: 1.4,
@@ -161,36 +170,23 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           </div>
         </Group>
 
-        {/* Actions */}
-        {actions && (
-          <Group gap="sm">
-            {Array.isArray(actions)
-              ? actions.map((action, index) => (
-                  <Button
-                    key={index}
-                    leftSection={action.icon}
-                    onClick={action.onClick}
-                    variant={action.variant || "filled"}
-                    style={{
-                      backgroundColor:
-                        action.variant === "filled"
-                          ? action.color || theme.colors.primary
-                          : undefined,
-                      borderColor:
-                        action.variant === "outline"
-                          ? action.color || theme.colors.primary
-                          : undefined,
-                      color:
-                        action.variant === "outline"
-                          ? action.color || theme.colors.primary
-                          : undefined,
-                    }}
-                  >
-                    {action.label}
-                  </Button>
-                ))
-              : actions}
-          </Group>
+        {/* Action Button */}
+        {onClick && (
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={onClick}
+            variant={actionVariant}
+            style={{
+              backgroundColor:
+                actionVariant === "filled" ? theme.colors.primary : undefined,
+              borderColor:
+                actionVariant === "outline" ? theme.colors.primary : undefined,
+              color:
+                actionVariant === "outline" ? theme.colors.primary : undefined,
+            }}
+          >
+            Add {title}
+          </Button>
         )}
       </Flex>
     </Box>

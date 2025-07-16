@@ -1,5 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-import { API_BASE_URL } from '../../constant/constant';
+import { API_BASE_URL } from '../../constants/constant';
 // login using RTK Query (currently not used)
 export const authApi = createApi({
     reducerPath:"authApi",

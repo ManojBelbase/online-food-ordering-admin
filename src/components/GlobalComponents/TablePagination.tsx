@@ -24,8 +24,8 @@ const TablePagination: React.FC<TablePaginationProps> = ({
   pagination,
   onPageChange,
   onLimitChange,
-  filteredCount,
-  totalCount,
+  filteredCount = 0,
+  totalCount = 0,
   virtualized = false,
   showPageSizeSelector = true,
 }) => {
@@ -36,7 +36,7 @@ const TablePagination: React.FC<TablePaginationProps> = ({
     return (
       <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
         <Text size="sm" c="dimmed">
-          Showing {filteredCount || 0} of {totalCount || 0} entries
+          Showing {filteredCount} of {totalCount} entries
           {filteredCount !== totalCount && " (filtered)"}
           {" • Virtualized mode for optimal performance"}
         </Text>
@@ -44,12 +44,20 @@ const TablePagination: React.FC<TablePaginationProps> = ({
     );
   }
 
-  if (!pagination || !onPageChange) {
-    return null;
+  // If no pagination is provided, render nothing
+  if (!pagination) {
+    return (
+      <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
+        <Text size="sm" c="dimmed">
+          Showing {filteredCount} of {totalCount} entries
+          {filteredCount !== totalCount && " (filtered)"}
+        </Text>
+      </div>
+    );
   }
 
   const { page, limit, total, totalPages } = pagination;
-  const startItem = ((page - 1) * limit) + 1;
+  const startItem = total > 0 ? (page - 1) * limit + 1 : 0;
   const endItem = Math.min(page * limit, total);
 
   const getPageNumbers = () => {
@@ -99,7 +107,7 @@ const TablePagination: React.FC<TablePaginationProps> = ({
         {/* Info Text */}
         <Text size="sm" c="dimmed">
           Showing {startItem} to {endItem} of {total} entries
-          {filteredCount !== undefined && filteredCount !== total && (
+          {filteredCount !== totalCount && totalCount !== undefined && (
             <span> (filtered from {totalCount} total)</span>
           )}
         </Text>
@@ -133,56 +141,58 @@ const TablePagination: React.FC<TablePaginationProps> = ({
           )}
 
           {/* Pagination Controls */}
-          <Group gap="xs">
-            {/* Previous Button */}
-            <ActionIcon
-              variant="subtle"
-              size="sm"
-              disabled={page === 1}
-              onClick={() => onPageChange(page - 1)}
-              style={{
-                color: page === 1 ? theme.colors.textSecondary : theme.colors.textPrimary,
-              }}
-            >
-              <IconChevronLeft size={14} />
-            </ActionIcon>
+          {onPageChange && (
+            <Group gap="xs">
+              {/* Previous Button */}
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                disabled={page === 1}
+                onClick={() => onPageChange(page - 1)}
+                style={{
+                  color: page === 1 ? theme.colors.textSecondary : theme.colors.textPrimary,
+                }}
+              >
+                <IconChevronLeft size={14} />
+              </ActionIcon>
 
-            {/* Page Numbers */}
-            {pageNumbers.map((pageNum, index) => (
-              <React.Fragment key={index}>
-                {pageNum === "..." ? (
-                  <Text size="sm" c="dimmed" px="xs">
-                    ...
-                  </Text>
-                ) : (
-                  <ActionIcon
-                    variant={pageNum === page ? "filled" : "subtle"}
-                    size="sm"
-                    onClick={() => onPageChange(pageNum as number)}
-                    style={{
-                      backgroundColor: pageNum === page ? theme.colors.primary : "transparent",
-                      color: pageNum === page ? "white" : theme.colors.textPrimary,
-                    }}
-                  >
-                    {pageNum}
-                  </ActionIcon>
-                )}
-              </React.Fragment>
-            ))}
+              {/* Page Numbers */}
+              {pageNumbers.map((pageNum, index) => (
+                <React.Fragment key={index}>
+                  {pageNum === "..." ? (
+                    <Text size="sm" c="dimmed" px="xs">
+                      ...
+                    </Text>
+                  ) : (
+                    <ActionIcon
+                      variant={pageNum === page ? "filled" : "subtle"}
+                      size="sm"
+                      onClick={() => onPageChange(pageNum as number)}
+                      style={{
+                        backgroundColor: pageNum === page ? theme.colors.primary : "transparent",
+                        color: pageNum === page ? "white" : theme.colors.textPrimary,
+                      }}
+                    >
+                      {pageNum}
+                    </ActionIcon>
+                  )}
+                </React.Fragment>
+              ))}
 
-            {/* Next Button */}
-            <ActionIcon
-              variant="subtle"
-              size="sm"
-              disabled={page === totalPages}
-              onClick={() => onPageChange(page + 1)}
-              style={{
-                color: page === totalPages ? theme.colors.textSecondary : theme.colors.textPrimary,
-              }}
-            >
-              <IconChevronRight size={14} />
-            </ActionIcon>
-          </Group>
+              {/* Next Button */}
+              <ActionIcon
+                variant="subtle"
+                size="sm"
+                disabled={page === totalPages}
+                onClick={() => onPageChange(page + 1)}
+                style={{
+                  color: page === totalPages ? theme.colors.textSecondary : theme.colors.textPrimary,
+                }}
+              >
+                <IconChevronRight size={14} />
+              </ActionIcon>
+            </Group>
+          )}
         </Group>
       </Group>
     </div>

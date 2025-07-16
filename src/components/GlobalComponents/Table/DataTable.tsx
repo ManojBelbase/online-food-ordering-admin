@@ -44,23 +44,22 @@ interface DataTableProps {
   virtualHeight?: number;
   itemHeight?: number;
   onRowClick?: (row: any, index: number) => void;
-
   // 🎯 API Integration props
-  apiMode?: boolean; // Enable API-based operations
-  onApiSearch?: (query: string) => void; // API search handler
-  onApiFilter?: (filters: Record<string, any>) => void; // API filter handler
-  onApiSort?: (column: string, direction: "asc" | "desc") => void; // API sort handler
-  currentSearch?: string; // Current search from API
-  currentFilters?: Record<string, any>; // Current filters from API
-  currentSort?: { column: string; direction: "asc" | "desc" }; // Current sort from API
+  apiMode?: boolean;
+  onApiSearch?: (query: string) => void;
+  onApiFilter?: (filters: Record<string, any>) => void;
+  onApiSort?: (column: string, direction: "asc" | "desc") => void;
+  currentSearch?: string;
+  currentFilters?: Record<string, any>;
+  currentSort?: { column: string; direction: "asc" | "desc" };
 }
 
 const DataTable: React.FC<DataTableProps> = ({
-  data,
+  data = [], // Default to empty array
   columns,
-  pagination,
-  onPageChange,
-  onLimitChange,
+  pagination: externalPagination,
+  onPageChange: externalOnPageChange,
+  onLimitChange: externalOnLimitChange,
   onRefresh,
   loading = false,
   title,
@@ -85,6 +84,50 @@ const DataTable: React.FC<DataTableProps> = ({
 }) => {
   const { theme } = useTheme();
 
+  // 🎯 Local pagination state for frontend mode
+  const [localPage, setLocalPage] = useState(externalPagination?.page || 1);
+  const [localLimit, setLocalLimit] = useState(externalPagination?.limit || 10);
+
+  // Determine pagination settings
+  const isFrontendMode = !apiMode;
+  const pagination = useMemo(() => {
+    if (apiMode && externalPagination) {
+      // API mode: Use external pagination
+      return externalPagination;
+    }
+    // Frontend mode: Calculate pagination based on data
+    const total = data.length;
+    const totalPages = Math.ceil(total / localLimit);
+    return {
+      page: localPage,
+      limit: localLimit,
+      total,
+      totalPages,
+    };
+  }, [apiMode, externalPagination, data, localPage, localLimit]);
+
+  // 🎯 Smart event handlers for pagination
+  const handlePageChange = useCallback(
+    (page: number) => {
+      if (isFrontendMode) {
+        setLocalPage(page);
+      }
+      externalOnPageChange?.(page);
+    },
+    [isFrontendMode, externalOnPageChange]
+  );
+
+  const handleLimitChange = useCallback(
+    (limit: number) => {
+      if (isFrontendMode) {
+        setLocalLimit(limit);
+        setLocalPage(1); // Reset to page 1 when limit changes
+      }
+      externalOnLimitChange?.(limit);
+    },
+    [isFrontendMode, externalOnLimitChange]
+  );
+
   // 🎯 Smart state management - API mode vs Frontend mode
   const [searchQuery, setSearchQuery] = useState(apiMode ? currentSearch : "");
   const [sortColumn, setSortColumn] = useState<string | null>(
@@ -103,52 +146,66 @@ const DataTable: React.FC<DataTableProps> = ({
   const isApiMode = apiMode && (onApiSearch || onApiFilter || onApiSort);
 
   // 🎯 Smart event handlers - API mode vs Frontend mode
-  const handleSort = useCallback((column: TableColumn) => {
-    if (!column.sortable) return;
+  const handleSort = useCallback(
+    (column: TableColumn) => {
+      if (!column.sortable) return;
 
-    const newDirection =
-      sortColumn === column.key && sortDirection === "asc" ? "desc" : "asc";
+      const newDirection =
+        sortColumn === column.key && sortDirection === "asc" ? "desc" : "asc";
 
-    if (isApiMode && onApiSort) {
-      // API mode: Call API handler
-      onApiSort(column.key, newDirection);
-    } else {
-      // Frontend mode: Update local state
-      setSortColumn(column.key);
-      setSortDirection(newDirection);
-    }
-  }, [sortColumn, sortDirection, isApiMode, onApiSort]);
+      if (isApiMode && onApiSort) {
+        // API mode: Call API handler
+        onApiSort(column.key, newDirection);
+      } else {
+        // Frontend mode: Update local state
+        setSortColumn(column.key);
+        setSortDirection(newDirection);
+      }
+    },
+    [sortColumn, sortDirection, isApiMode, onApiSort]
+  );
 
-  const handleSearch = useCallback((query: string) => {
-    if (isApiMode && onApiSearch) {
-      // API mode: Call API handler
-      onApiSearch(query);
-    } else {
-      // Frontend mode: Update local state
-      setSearchQuery(query);
-    }
-  }, [isApiMode, onApiSearch]);
+  const handleSearch = useCallback(
+    (query: string) => {
+      if (isApiMode && onApiSearch) {
+        // API mode: Call API handler
+        onApiSearch(query);
+      } else {
+        // Frontend mode: Update local state
+        setSearchQuery(query);
+        setLocalPage(1); // Reset to page 1 on search
+      }
+    },
+    [isApiMode, onApiSearch]
+  );
 
-  const handleFiltersChange = useCallback((newFilters: Record<string, any>) => {
-    if (isApiMode && onApiFilter) {
-      // API mode: Call API handler
-      onApiFilter(newFilters);
-    } else {
-      // Frontend mode: Update local state
-      setFilterValues(newFilters);
-    }
-    onFiltersChange?.(newFilters);
-  }, [isApiMode, onApiFilter, onFiltersChange]);
+  const handleFiltersChange = useCallback(
+    (newFilters: Record<string, any>) => {
+      if (isApiMode && onApiFilter) {
+        // API mode: Call API handler
+        onApiFilter(newFilters);
+      } else {
+        // Frontend mode: Update local state
+        setFilterValues(newFilters);
+        setLocalPage(1); // Reset to page 1 on filter change
+      }
+      onFiltersChange?.(newFilters);
+    },
+    [isApiMode, onApiFilter, onFiltersChange]
+  );
 
   const toggleFilters = useCallback(() => {
     setFiltersVisible(!filtersVisible);
   }, [filtersVisible]);
 
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    if (virtualized) {
-      setScrollTop(e.currentTarget.scrollTop);
-    }
-  }, [virtualized]);
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      if (virtualized) {
+        setScrollTop(e.currentTarget.scrollTop);
+      }
+    },
+    [virtualized]
+  );
 
   const processedData = useMemo(() => {
     if (isApiMode) {
@@ -157,6 +214,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
     let result = [...data];
 
+    // Apply search
     if (searchQuery) {
       result = result.filter((row) =>
         columns.some((column) =>
@@ -166,6 +224,8 @@ const DataTable: React.FC<DataTableProps> = ({
         )
       );
     }
+
+    // Apply filters
     Object.entries(filterValues).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         result = result.filter((row) => {
@@ -180,6 +240,8 @@ const DataTable: React.FC<DataTableProps> = ({
         });
       }
     });
+
+    // Apply sorting
     if (sortColumn) {
       result.sort((a, b) => {
         const aValue = a[sortColumn];
@@ -193,20 +255,34 @@ const DataTable: React.FC<DataTableProps> = ({
 
     const totalCount = result.length;
 
-    if (pagination && !virtualized) {
+    // Apply pagination
+    if (!virtualized) {
       const startIndex = (pagination.page - 1) * pagination.limit;
       const endIndex = startIndex + pagination.limit;
       result = result.slice(startIndex, endIndex);
     }
 
     return { data: result, totalCount };
-  }, [isApiMode, data, searchQuery, filterValues, sortColumn, sortDirection, columns, pagination, virtualized]);
+  }, [
+    isApiMode,
+    data,
+    searchQuery,
+    filterValues,
+    sortColumn,
+    sortDirection,
+    columns,
+    pagination,
+    virtualized,
+  ]);
 
   const filteredAndSortedData = processedData.data;
-  const renderCell = useCallback((column: TableColumn, row: any) => {
-    const value = row[column.key];
-    return value;
-  }, []);
+  const renderCell = useCallback(
+    (column: TableColumn, row: any) => {
+      const value = row[column.key];
+      return value;
+    },
+    []
+  );
 
   return (
     <Paper
@@ -262,7 +338,6 @@ const DataTable: React.FC<DataTableProps> = ({
           />
         </div>
       ) : (
-
         <Table.ScrollContainer minWidth={800}>
           <Table
             striped={false}
@@ -311,8 +386,8 @@ const DataTable: React.FC<DataTableProps> = ({
       )}
       <TablePagination
         pagination={pagination}
-        onPageChange={onPageChange}
-        onLimitChange={onLimitChange}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
         filteredCount={processedData.totalCount}
         totalCount={data.length}
         virtualized={virtualized}

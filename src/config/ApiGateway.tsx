@@ -6,7 +6,7 @@ import axios from "axios";
 // export const network = "http://62.72.42.129:8100/api/v1/en";
 
 export const VITE_REACT_APP_API_URL =
-  "https://college-event-manager-7.onrender.com/api/";
+  "https://food-ordering-backend-36ba.vercel.app/api/v1/";
 
 export const apiClient = axios.create({
   baseURL: VITE_REACT_APP_API_URL,

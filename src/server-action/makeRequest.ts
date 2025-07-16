@@ -17,7 +17,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 export const makeRequest: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_REACT_APP_API_URL,
   withCredentials: true,
 });
 
@@ -57,7 +57,7 @@ makeRequest.interceptors.response.use(
       isRefreshing = true;
       try {
         const { data } = await axios.post(
-          `${import.meta.env.VITE_API_URL}auth/refresh-token`,
+          `${import.meta.env.VITE_REACT_APP_API_URL}auth/refresh-token`,
           {},
           { withCredentials: true }
         );

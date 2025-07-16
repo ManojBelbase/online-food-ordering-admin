@@ -35,7 +35,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             persistor={persistor}
           >
             <BrowserRouter>
-              <QueryProvider>
+              <QueryProvider >
                 <ModalProvider>
                   <Notifications
                     position="top-right"

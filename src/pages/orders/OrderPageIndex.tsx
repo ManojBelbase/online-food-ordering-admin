@@ -8,7 +8,6 @@ import TableActions, { createViewAction, createEditAction, createDeleteAction } 
 import ViewOrder from "./Compoents/ViewOrder";
 import { useOrders } from "../../hooks/useOrders";
 import type { OrderDisplay } from "../../config/orderTableConfig.tsx";
-import { IconPlus } from "@tabler/icons-react";
 
 
 const OrderPageIndex: React.FC = () => {
@@ -111,18 +110,11 @@ const OrderPageIndex: React.FC = () => {
   return (
     <div>
       <PageHeader
-        title="Orders Management"
-        subtitle="View and track all customer orders from this dashboard"
-        actions={[
-          {
-            label: "Create Order",
-            onClick: () => setCreateOrderOpened(true),
-            icon: <IconPlus size={16} />,
-            variant: "filled",
-          },
-        ]}
-      />
-
+  title="Customer"
+  subtitle="Customer lists"
+  onClick={() => setCreateOrderOpened(true)}
+  actionVariant="outline" 
+/>
       <DataTable
         data={tableData.rows}
         columns={tableData.columns}
@@ -138,7 +130,7 @@ const OrderPageIndex: React.FC = () => {
         alternateRows={true}
         align="center"
         filters={orderFilters}
-        showFilters={false} // Keep false to use toggle button
+        showFilters={false} 
         onFiltersChange={handleFiltersChange}
       
       />

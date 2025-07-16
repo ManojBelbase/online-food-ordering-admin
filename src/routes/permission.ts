@@ -1,7 +1,7 @@
 // constants/permissions.ts
 
-import { Roles } from "../constant/roles";
 import { FRONTENDROUTES } from "../constants/frontendRoutes";
+import { Roles } from "../constants/roles";
 
 export const routePermissions: { [path: string]: string[] } = {
   "/": [], // Public route, no roles required
@@ -9,7 +9,7 @@ export const routePermissions: { [path: string]: string[] } = {
   [FRONTENDROUTES.PROFILE]: [], 
   [FRONTENDROUTES.CATEGORY]: [Roles.USER],
   [FRONTENDROUTES.MENU]: [Roles.ADMIN],
-  [FRONTENDROUTES.PERMISSION]: ["admin"],
+  [FRONTENDROUTES.PERMISSION]: [Roles.ADMIN],
   [FRONTENDROUTES.ORDERS]: [Roles.USER, Roles.USER],
   "/payments": ["admin"],
   "/payments/transactions": ["admin"],

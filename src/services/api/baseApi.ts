@@ -11,7 +11,7 @@ export const API_TAGS = {
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL || 'https://food-ordering-backend-axbt.onrender.com/api/v1/',
+    baseUrl: import.meta.env.VITE_REACT_APP_API_URL || 'https://food-ordering-backend-axbt.onrender.com/api/v1/',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.accessToken;
       if (token) {
@@ -52,7 +52,7 @@ export const baseApi = createApi({
 
 // Enhanced base query with retry logic
 const baseQueryWithRetry = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_URL || 'https://food-ordering-backend-axbt.onrender.com/api/v1/',
+  baseUrl: import.meta.env.VITE_REACT_APP_API_URL || 'https://food-ordering-backend-axbt.onrender.com/api/v1/',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
     if (token) {
@@ -78,7 +78,6 @@ export const enhancedBaseQuery = async (args: any, api: any, extraOptions: any) 
           return result;
         }
 
-        // Retry on server errors (5xx) or network errors
         if (attempt < maxRetries - 1) {
           attempt++;
           await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
@@ -98,7 +97,5 @@ export const enhancedBaseQuery = async (args: any, api: any, extraOptions: any) 
   }
 };
 
-// Export hooks for components
 export const {
-  // Will be populated by individual API slices
 } = baseApi;

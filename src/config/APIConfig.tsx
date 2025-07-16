@@ -40,7 +40,6 @@ export function createApiConfig<T>(
     queryParams?: Record<string, any>,
     options?: Partial<UseQueryOptions<T[], Error>>
   ) => {
-    // Create a stable query key by stringifying the params
     const stableQueryKey = queryParams ? JSON.stringify(queryParams) : "all";
 
     return useQuery({
