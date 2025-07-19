@@ -1,43 +1,25 @@
-import React, { useState, useCallback } from 'react';
-import {
-  Group,
-  Text,
-  Stack,
-  Image,
-  ActionIcon,
-  Paper,
-} from '@mantine/core';
-import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
-import {
-  IconUpload,
-  IconPhoto,
-  IconX,
-  IconTrash,
-  IconEye,
-} from '@tabler/icons-react';
+import React, { useState } from 'react';
+import { Group, Text, Stack, Image, ActionIcon, Paper, LoadingOverlay } from '@mantine/core';
+import { Dropzone, MIME_TYPES, type FileWithPath } from '@mantine/dropzone';
+import { IconUpload, IconPhoto, IconX, IconTrash, IconEye } from '@tabler/icons-react';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface FormImageUploadProps {
   label: string;
   description?: string;
-  value?: string; // single image URL string
-  onChange?: (url: string) => void;
+  value?: string | string[]; 
+  onChange?: (value: string | string[]) => void; // Update onChange to handle array or string
+  uploadApi?: (file: File) => Promise<string | { url?: string; imageUrl?: string }>;
   error?: string;
   required?: boolean;
   disabled?: boolean;
-  maxSize?: number; // in bytes
+  maxSize?: number;
   withAsterisk?: boolean;
   className?: string;
   previewSize?: number;
+  multiple?: boolean; // New prop to enable multiple uploads
+  onBlur?: () => void;
 }
-
-const toBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
 
 export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadProps>(
   (
@@ -46,186 +28,243 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
       description,
       value = '',
       onChange,
+      uploadApi,
       error,
       required = false,
       disabled = false,
-      maxSize = 5 * 1024 * 1024, // 5MB default
+      maxSize = 5 * 1024 * 1024,
       withAsterisk,
       className,
       previewSize = 120,
+      multiple = false, // Default to false
+      onBlur,
       ...others
     },
     ref
   ) => {
     const { theme } = useTheme();
     const [dragActive, setDragActive] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [imageUrls, setImageUrls] = useState<string[]>(Array.isArray(value) ? value : value ? [value] : []); // Manage multiple URLs
 
-    const handleDrop = useCallback(
-      async (files: File[]) => {
-        if (disabled) return;
-        const file = files[0];
-        if (file.size > maxSize) {
-          // optionally show error or ignore
-          return;
+    const handleFileDrop = async (files: FileWithPath[]) => {
+      if (!uploadApi || !onChange || files.length === 0) return;
+
+      setUploading(true);
+      const newImageUrls: string[] = [];
+
+      try {
+        for (const file of files) {
+          const response = await uploadApi(file);
+          const imageUrl =
+            typeof response === 'string'
+              ? response
+              : response.url || response.imageUrl || '';
+          newImageUrls.push(imageUrl);
         }
-        const base64 = await toBase64(file);
-        onChange?.(base64);
-        setDragActive(false);
-      },
-      [disabled, maxSize, onChange]
-    );
 
-    const handleRemove = useCallback(() => {
-      onChange?.('');
-    }, [onChange]);
+        const updatedUrls = multiple
+          ? [...imageUrls, ...newImageUrls] // Append for multiple
+          : newImageUrls[0] || ''; // Use single URL for non-multiple
 
-    const handlePreview = useCallback(() => {
-      if (value) {
-        window.open(value, '_blank');
+        setImageUrls(Array.isArray(updatedUrls) ? updatedUrls : [updatedUrls]);
+        onChange(multiple ? updatedUrls : updatedUrls); // Send array for multiple, string for single
+      } catch (error) {
+      } finally {
+        setUploading(false);
       }
-    }, [value]);
+    };
 
-    const formatFileSize = (bytes: number) => {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    const handleRemove = (index: number) => {
+      if (onChange) {
+        const updatedUrls = imageUrls.filter((_, i) => i !== index);
+        setImageUrls(updatedUrls);
+        onChange(multiple ? updatedUrls : updatedUrls[0] || ''); // Send string if not multiple
+      }
+    };
+
+    const handlePreview = (url: string) => {
+      if (url) {
+        window.open(url, '_blank');
+      }
+    };
+
+    const openFileDialog = () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.jpg,.jpeg,.png,.heif';
+      input.multiple = multiple;
+      input.onchange = (e) => {
+        const files = (e.target as HTMLInputElement).files;
+        if (files) {
+          handleFileDrop(Array.from(files));
+        }
+      };
+      input.click();
     };
 
     return (
       <div ref={ref} className={className} {...others}>
-        {/* Label */}
-        <Text
-          size="sm"
-          mb="xs"
-          style={{ color: theme.colors.textPrimary }}
-        >
+        <Text size="sm" style={{ color: theme.colors.textPrimary, marginBottom: "4px" }}>
           {label}
           {(withAsterisk ?? required) && (
             <span style={{ color: theme.colors.error }}> *</span>
           )}
         </Text>
 
-        {/* Description */}
-        {description && (
-          <Text size="xs" mb="sm" style={{ color: theme.colors.textSecondary }}>
-            {description}
-          </Text>
-        )}
-
-        {/* Dropzone when no image */}
-        {!value && (
-          <Dropzone
-            onDrop={handleDrop}
-            onReject={(files) => console.log('Rejected files:', files)}
-            maxSize={maxSize}
-            maxFiles={1}accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.heif]}
-            multiple={false}
-            disabled={disabled}
-            onDragEnter={() => setDragActive(true)}
-            onDragLeave={() => setDragActive(false)}
-            styles={{
-              root: {
-                borderColor: error
-                  ? theme.colors.error
-                  : dragActive
-                  ? theme.colors.primary
-                  : theme.colors.border,
-                backgroundColor: dragActive
-                  ? `${theme.colors.primary}05`
-                  : theme.colors.surface,
-                '&:hover': {
-                  borderColor: theme.colors.primary,
-                  backgroundColor: `${theme.colors.primary}05`,
+        {!imageUrls.length && (
+          <div style={{ position: 'relative' }}>
+            <Dropzone
+              onDrop={handleFileDrop}
+              onReject={(files) => console.log('Rejected files:', files)}
+              maxSize={maxSize}
+              maxFiles={multiple ? undefined : 1} // Unlimited for multiple, 1 for single
+              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.heif]}
+              multiple={multiple} // Enable multiple based on prop
+              disabled={disabled || uploading}
+              onDragEnter={() => setDragActive(true)}
+              onDragLeave={() => setDragActive(false)}
+              onBlur={onBlur}
+              onClick={openFileDialog} // Open file dialog on click
+              styles={{
+                root: {
+                  borderColor: error
+                    ? theme.colors.error
+                    : dragActive
+                    ? theme.colors.primary
+                    : theme.colors.border,
+                  backgroundColor: dragActive
+                    ? `${theme.colors.primary}05`
+                    : theme.colors.surface,
+                  '&:hover': {
+                    borderColor: theme.colors.primary,
+                    backgroundColor: `${theme.colors.primary}05`,
+                  },
+                  cursor: disabled || uploading ? 'not-allowed' : 'pointer',
+                  width: 300,
+                  height: 120,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 },
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                maxWidth: 400,
-                minWidth: 320,
-                minHeight: 120,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-            }}
-          >
-            <Group justify="center" gap="xl" style={{ pointerEvents: 'none' }}>
-              <Dropzone.Accept>
-                <IconUpload size={52} stroke={1.5} color={theme.colors.primary} />
-              </Dropzone.Accept>
-              <Dropzone.Reject>
-                <IconX size={52} stroke={1.5} color={theme.colors.error} />
-              </Dropzone.Reject>
-              <Dropzone.Idle>
-                <IconPhoto size={52} stroke={1.5} color={theme.colors.textSecondary} />
-              </Dropzone.Idle>
+              }}
+            >
+              <Group justify="center" gap="xl" style={{ pointerEvents: 'none' }}>
+                <Dropzone.Accept>
+                  <IconUpload size={52} stroke={1.5} color={theme.colors.primary} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size={52} stroke={1.5} color={theme.colors.error} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto
+                    size={36}
+                    stroke={1}
+                    color={theme.colors.textSecondary}
+                  />
+                </Dropzone.Idle>
 
-              <div>
-                <Text size="xl" style={{ color: theme.colors.textPrimary }}>
-                  Drag image here or click to select file
-                </Text>
-                <Text
-                  size="sm"
-                  color="dimmed"
-                  mt={7}
-                  style={{ color: theme.colors.textSecondary }}
-                >
-                  Attach 1 file, max size {formatFileSize(maxSize)}
-                </Text>
-              </div>
-            </Group>
-          </Dropzone>
-        )}
-
-        {/* Preview */}
-        {value && (
-          <Paper
-            p="sm"
-            radius="md"
-            style={{
-              backgroundColor: theme.colors.surface,
-              border: `1px solid ${theme.colors.border}`,
-              position: 'relative',
-              width: previewSize,
-              height: previewSize,
-            }}
-          >
-            <Stack gap={4} align="center" justify="center" style={{ height: '100%' }}>
-              <Image
-                src={value}
-                alt="Uploaded image"
-                height={previewSize}
-                width={previewSize}
-                fit="cover"
-                radius="sm"
-                
-              />
-
-              <Group gap={8} mt="xs">
-                <ActionIcon
-                  color="blue"
-                  variant="filled"
-                  onClick={handlePreview}
-                  size="sm"
-                  title="Preview"
-                >
-                  <IconEye size={14} />
-                </ActionIcon>
-                <ActionIcon
-                  color="red"
-                  variant="filled"
-                  onClick={handleRemove}
-                  size="sm"
-                  title="Remove"
-                >
-                  <IconTrash size={14} />
-                </ActionIcon>
+                <div>
+                  <Text size="xs" style={{ color: theme.colors.textPrimary }}>
+                    {uploading ? 'Uploading...' : 'Drag image here or click to select'}
+                  </Text>
+                  <Text size="sm" mt={4} style={{ color: theme.colors.textSecondary }}>
+                    {uploading
+                      ? 'Please wait while your image is being uploaded'
+                      : 'JPG, PNG, HEIF up to 5MB'}
+                  </Text>
+                </div>
               </Group>
-            </Stack>
-          </Paper>
+            </Dropzone>
+            <LoadingOverlay visible={uploading} />
+            {description && (
+              <Text size="xs" mb="sm" style={{ color: theme.colors.textSecondary }}>
+                {description}
+              </Text>
+            )}
+          </div>
         )}
 
-        {/* Error */}
+        {imageUrls.length > 0 && (
+          <Stack gap="sm">
+            <Paper
+              p=""
+              radius="md"
+              style={{
+                backgroundColor: theme.colors.surface,
+                border: `1px solid ${theme.colors.border}`,
+                position: 'relative',
+                width: 300,
+                height: 120,
+              }}
+            >
+              <Stack
+                gap={4}
+                align="start"
+                justify="start"
+                style={{ height: '100%', position: "relative" }}
+              >
+                {imageUrls.length <= 2 ? (
+                  <Group style={{ position: "absolute", top: "0" }}>
+                    {imageUrls.slice(0, 2).map((url, index) => (
+                      <Image
+                        key={index}
+                        src={url}
+                        alt={`Uploaded image ${index + 1}`}
+                        height={120}
+                        width={70}
+                        fit="contain"
+                        radius="sm"
+                      />
+                    ))}
+                  </Group>
+                ) : (
+                  <Group style={{ position: "absolute", top: "0" }}>
+                    {imageUrls.slice(0, 2).map((url, index) => (
+                      <Image
+                        key={index}
+                        src={url}
+                        alt={`Uploaded image ${index + 1}`}
+                        height={120}
+                        width={140} // Adjusted to fit two images
+                        fit="contain"
+                        radius="sm"
+                      />
+                    ))}
+                    <Text size="sm" style={{ color: theme.colors.textPrimary, marginLeft: "10px" }}>
+                      +{imageUrls.length - 2} more
+                    </Text>
+                  </Group>
+                )}
+                <Group gap={4} mt="xs" style={{ position: "absolute", top: "0", right: "0" }}>
+                  {imageUrls.slice(0, 2).map((url, index) => (
+                    <React.Fragment key={index}>
+                      <ActionIcon
+                        color="blue"
+                        variant="filled"
+                        onClick={() => handlePreview(url)}
+                        size="sm"
+                        title="Preview"
+                      >
+                        <IconEye size={14} />
+                      </ActionIcon>
+                      <ActionIcon
+                        color="red"
+                        variant="filled"
+                        onClick={() => handleRemove(index)}
+                        size="sm"
+                        title="Remove"
+                      >
+                        <IconTrash size={14} />
+                      </ActionIcon>
+                    </React.Fragment>
+                  ))}
+                </Group>
+              </Stack>
+            </Paper>
+          </Stack>
+        )}
+
         {error && (
           <Text size="sm" mt="xs" style={{ color: theme.colors.error }}>
             {error}

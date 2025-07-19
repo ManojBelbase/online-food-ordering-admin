@@ -2,7 +2,7 @@
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 import ProtectedRoute from "../auth/ProtectedRoute.tsx";
-import withSuspense, { withPageLoader, withSkeleton } from "../utils/withSuspense";
+import withSuspense, { withPageLoader } from "../utils/withSuspense";
 import { FRONTENDROUTES } from "../constants/frontendRoutes.ts";
 import CategoryPageIndex from "../pages/Category/CategoryPageIndex.tsx";
 import CustomerPageIndex from "../pages/Customer/CustomerPageIndex.tsx";
@@ -22,10 +22,6 @@ const HomePage = withPageLoader(
 const ComponentsIndex = withPageLoader(
   lazy(() => import("../pages/dashboard/ComponentsIndex")),
   "Loading dashboard..."
-);
-
-const OrderPageIndex = withSkeleton(
-  lazy(() => import("../pages/orders/OrderPageIndex"))
 );
 
 const LoginPage = withPageLoader(
@@ -73,7 +69,6 @@ const protectedRoutes: RouteObject[] = [
       { path: "components", element: <ComponentsIndex /> },
       {path:FRONTENDROUTES.GLOBAL_CATEGORY, element:<GlobalCategoryIndex/>},
       { path: FRONTENDROUTES.CUSTOMER, element: <CustomerPageIndex /> },
-      { path: FRONTENDROUTES.ORDERS, element: <OrderPageIndex /> },
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
       { path: FRONTENDROUTES.CATEGORY, element: <CategoryPageIndex /> },
       { path: "menu/categories", element: <div>Menu Categories</div> },

@@ -6,6 +6,7 @@ import { useTheme } from "../../../contexts/ThemeContext";
 import { FormInput, FormSelect, type SelectOption } from "../../../components/Forms";
 import { useAppDispatch } from "../../../redux/useAuth";
 import { signupUser, type SignupCredentials } from "../../../server-action/authThunk";
+import { customerValidation } from "./CustomerFormValidation";
 
 
 const CustomerForm: React.FC = () => {
@@ -22,14 +23,9 @@ const roleOptions: SelectOption[] = [
     initialValues: {
       email: "",
       password: "",
-      role: "customer", 
+      role: "", 
     },
-    validate: {
-      email: (value) => (/^\S+@\S+\.\S+$/.test(value) ? null : "Invalid email"),
-      password: (value) =>
-        value.length >= 6 ? null : "Password must be at least 6 characters",
-      role: (value) => (value ? null : "Role is required"),
-    },
+    validate:customerValidation,
   });
 
   const handleSubmit = async (values: SignupCredentials) => {
@@ -49,6 +45,7 @@ const roleOptions: SelectOption[] = [
           placeholder="Enter email"
           leftSection={<IconMail size={16} />}
           {...form.getInputProps("email")}
+          required
         />
 
         <FormInput

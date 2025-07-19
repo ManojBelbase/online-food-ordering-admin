@@ -1,9 +1,10 @@
 import { createApiConfig } from "../../config/APIConfig";
 
 export interface IGlobalCategory{
-    name: string;
-  slug: string;
-  image?: string;
+  _id?:string
+  name: string;
+  slug?: string;
+  image: string;
   isActive: boolean;
 }
 

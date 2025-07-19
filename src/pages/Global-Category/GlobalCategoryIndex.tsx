@@ -4,18 +4,24 @@ import { globalCategoryApi, type IGlobalCategory } from "../../server-action/api
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
 import { Modal } from "@mantine/core";
 import GlobalCategoryForm from "./Components/GlobalCategoryForm";
-import { createDeleteAction, createEditAction, createViewAction } from "../../components/GlobalComponents/TableActions";
+import DeleteModal from "../../components/GlobalComponents/DeleteModal";
+import { createDeleteAction, createEditAction } from "../../components/GlobalComponents/TableActions";
 
 const GlobalCategoryIndex = () => {
-  const { data } = globalCategoryApi.useGetAll(); 
+  const { data } = globalCategoryApi.useGetAll();
+  const { mutateAsync: deleteGlobalCategory } = globalCategoryApi.useDelete();
+  const [modalState, setModalState] = useState<{ mode: string; data?: IGlobalCategory } | null>(null);
 
-  const [openModal, setOpenModal] = useState(false);
+  const handleDeleteGlobalCategory = async (id: string) => {
+    await deleteGlobalCategory(id);
+    setModalState(null);
+  };
 
   const tableData = useMemo(() => {
     return {
       columns: [
         { title: "Sn", key: "sn" },
-        { title: " Category Name", key: "name" },
+        { title: "Category Name", key: "name" },
         { title: "Slug", key: "slug" },
         { title: "Status", key: "status" },
         { title: "Image", key: "image" },
@@ -26,15 +32,13 @@ const GlobalCategoryIndex = () => {
           sn: index + 1,
           name: item.name,
           slug: item.slug,
-          status:<StatusBadge status={item?.isActive ?"Active":"InActive"}/>,
+          status: <StatusBadge status={item?.isActive ? "Active" : "InActive"} />,
           image: item.image,
           action: (
             <TableActions
               actions={[
-                createViewAction(() => {}),
-                createEditAction(() => {}),
-                createDeleteAction(() => {}),
-
+                createEditAction(() => setModalState({ mode: "edit", data: item })),
+                createDeleteAction(() => setModalState({ mode: "delete", data: item })),
               ]}
             />
           ),
@@ -44,12 +48,31 @@ const GlobalCategoryIndex = () => {
 
   return (
     <div>
-      <PageHeader title="Global Category" onClick={()=>setOpenModal(true)}  actionVariant="outline"/>
+      <PageHeader
+        title="Global Category"
+        onClick={() => setModalState({ mode: "create" })}
+        actionVariant="outline"
+      />
       <DataTable columns={tableData.columns} data={tableData.rows} />
-
-      <Modal opened={openModal} onClose={()=>setOpenModal(false)} title="Global Category Form" size={"xl"}>
-        <GlobalCategoryForm/>
+      {/* Create/Edit Modal */}
+      <Modal
+        opened={modalState?.mode === "create" || modalState?.mode === "edit"}
+        onClose={() => setModalState(null)}
+        title={modalState?.mode === "create" ? "Create Global Category" : "Edit Global Category"}
+        size="xl"
+      >
+        <GlobalCategoryForm
+          edit={modalState?.mode === "edit" ? modalState.data : undefined}
+          onClose={() => setModalState(null)}
+        />
       </Modal>
+
+      <DeleteModal
+        opened={modalState?.mode === "delete"}
+        itemName={modalState?.data?.name || ""}
+        onClose={() => setModalState(null)}
+        onConfirm={() => modalState?.data?._id && handleDeleteGlobalCategory(modalState.data._id)}
+      />
     </div>
   );
 };

@@ -41,7 +41,7 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       onBlur,
       disabled = false,
       readonly = false,
-      size = 'md',
+      size = 'sm',
       radius = 'sm',
       leftSection,
       rightSection,
@@ -92,8 +92,8 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       styles: {
         label: {
           color: theme.colors.textPrimary,
-          fontWeight: 500,
-          marginBottom: '8px',
+          fontWeight: 400,
+          marginBottom: '4px',
         },
         input: {
           backgroundColor: theme.colors.surface,
