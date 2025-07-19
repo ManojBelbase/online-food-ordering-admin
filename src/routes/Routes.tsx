@@ -29,10 +29,7 @@ const LoginPage = withPageLoader(
   "Loading login..."
 );
 
-const AddMenuItemPage = withPageLoader(
-  lazy(() => import("../pages/Menu/AddMenuItemPage")),
-  "Loading menu form..."
-);
+
 
 const ProfilePage = withPageLoader(
   lazy(() => import("../pages/ProfilePage")),
@@ -68,13 +65,11 @@ const protectedRoutes: RouteObject[] = [
       { index: true, element: <HomePage /> },
       { path: "components", element: <ComponentsIndex /> },
       {path:FRONTENDROUTES.GLOBAL_CATEGORY, element:<GlobalCategoryIndex/>},
+      {path:FRONTENDROUTES.CATEGORY, element:<CategoryPageIndex/>},
       { path: FRONTENDROUTES.CUSTOMER, element: <CustomerPageIndex /> },
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
       { path: FRONTENDROUTES.CATEGORY, element: <CategoryPageIndex /> },
-      { path: "menu/categories", element: <div>Menu Categories</div> },
       { path: "menu/items", element: <div>Menu Items</div> },
-      { path: "menu/add-item", element: <AddMenuItemPage /> },
-      { path: "menu/inventory", element: <div>Inventory</div> },
     ],
   },
 ];

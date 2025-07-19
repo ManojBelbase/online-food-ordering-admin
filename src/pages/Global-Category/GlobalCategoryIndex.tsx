@@ -58,7 +58,7 @@ const GlobalCategoryIndex = () => {
       <Modal
         opened={modalState?.mode === "create" || modalState?.mode === "edit"}
         onClose={() => setModalState(null)}
-        title={modalState?.mode === "create" ? "Create Global Category" : "Edit Global Category"}
+        title={modalState?.mode === "create" ? "Create Category" : "Edit Category"}
         size="xl"
       >
         <GlobalCategoryForm

@@ -2,11 +2,10 @@ import {
   IconDashboard,
   IconShoppingCart,
   IconCreditCard,
-  IconTruck,
-  IconChefHat,
   IconUser,
   IconLock,
   IconCategory2,
+  IconCategoryFilled,
 } from "@tabler/icons-react";
 import { FRONTENDROUTES } from "../constants/frontendRoutes";
 
@@ -34,13 +33,8 @@ export const sidebarLinks: ISidebarLinks[] = [
     to: FRONTENDROUTES.ORDERS,
     icon: IconShoppingCart,
   },
-  {
-    label: "Menu Management",
-    to: FRONTENDROUTES.MENU,
-    icon: IconChefHat,
-  },
 
-  { label: "Category", to: FRONTENDROUTES.CATEGORY, icon: IconTruck },
+  { label: "Category", to: FRONTENDROUTES.CATEGORY, icon: IconCategoryFilled },
   {
     label: "Payments",
     to: "/payments",

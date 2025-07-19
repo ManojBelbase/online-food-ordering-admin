@@ -7,7 +7,7 @@ export const useRolePermissions = () => {
 
   const hasPermission = (path: string): boolean => {
     const requiredRoles = routePermissions[path] || [];
-    console.log(`Checking permission for ${path}:`, requiredRoles, user?.role);
+
 
     if (requiredRoles.length === 0) {
       return !!user;
