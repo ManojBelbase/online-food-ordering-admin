@@ -1,6 +1,5 @@
 import { useForm } from "@mantine/form";
 import { Button, MultiSelect, SimpleGrid, Stack } from "@mantine/core";
-import { useState } from "react";
 import { FormImageUpload, FormInput } from "../../../components/Forms";
 import { categoryApi, type ICategory } from "../../../server-action/api/category";
 import { globalCategoryApi } from "../../../server-action/api/global-category";
@@ -16,10 +15,9 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
   const { user } = useAuth();
   const { mutateAsync: createCategory } = categoryApi.useCreate();
   const { mutateAsync: updateCategory } = categoryApi.useUpdate();
-  const { uploadImage, loading: uploadLoading, error: uploadError } = useCloudinaryUpload();
+  const { uploadImage, error: uploadError } = useCloudinaryUpload();
 
   const { data: AllGlobalCategories } = globalCategoryApi.useGetAll();
-  const [loading, setLoading] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -34,14 +32,13 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    setLoading(true);
     try {
       const entityData = {
         ...values,
         restaurantId: user?.id, 
       };
       if (edit?._id) {
-        await updateCategory({ _id: edit._id, entityData:entityData });
+        await updateCategory({ _id: edit?._id, entityData:entityData });
       } else {
         await createCategory(entityData);
       }
@@ -49,7 +46,6 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
     } catch (error) {
       console.error("Submission error:", error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -87,14 +83,10 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
         />
 
         <SimpleGrid cols={2}>
-          <FormInput
-            label="Active"
-            type="toggle"
-            {...form.getInputProps("isActive")}
-          />
+      
         </SimpleGrid>
 
-        <Button type="submit" style={{ alignSelf: "end" }} loading={loading || uploadLoading}>
+        <Button type="submit" style={{ alignSelf: "end" }} loading={form.submitting}>
           Submit
         </Button>
       </Stack>

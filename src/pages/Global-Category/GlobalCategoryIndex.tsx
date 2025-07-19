@@ -54,11 +54,10 @@ const GlobalCategoryIndex = () => {
         actionVariant="outline"
       />
       <DataTable columns={tableData.columns} data={tableData.rows} />
-      {/* Create/Edit Modal */}
       <Modal
         opened={modalState?.mode === "create" || modalState?.mode === "edit"}
         onClose={() => setModalState(null)}
-        title={modalState?.mode === "create" ? "Create Category" : "Edit Category"}
+        title={modalState?.mode === "create" ? "Create Global Category" : "Edit Global Category"}
         size="xl"
       >
         <GlobalCategoryForm

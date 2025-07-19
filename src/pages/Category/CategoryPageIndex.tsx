@@ -9,7 +9,6 @@ import { Modal } from "@mantine/core";
 
 const CategoryPageIndex = () => {
   const { data } = categoryApi.useGetAll();
-  console.log(data, "data");
   const { mutateAsync: deleteCategory } = categoryApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: ICategory } | null>(null);
 
@@ -26,22 +25,24 @@ const CategoryPageIndex = () => {
         { title: "Global Category", key: "globalCategory" },
         { title: "Action", key: "action" },
       ],
-      rows: (data as any)?.category?.map((item: ICategory, index: number) => ({
-        sn: index + 1,
-        name: item.name,
-        image: item.image,
-        globalCategory: item.globalCategoryId,
-        action: (
-          <TableActions
-            actions={[
-              createEditAction(() => setModalState({ mode: "edit", data: item })),
-              createDeleteAction(() => setModalState({ mode: "delete", data: item })),
-            ]}
-          />
-        ),
-      })) || [], // Fallback to empty array if data is undefined
+      rows: (data as any)?.category?.map((item: ICategory, index: number) => {
+        const actions = [];
+        if (!item?.globalCategoryId || item?.globalCategoryId?.length === 0) {
+          actions.push(createEditAction(() => setModalState({ mode: "edit", data: item })));
+        }
+        actions.push(createDeleteAction(() => setModalState({ mode: "delete", data: item })));
+
+        return {
+          sn: index + 1,
+          name: item.name || "N/A",
+          image: item.image || "N/A",
+          globalCategory: item.globalCategoryId,
+          action: <TableActions actions={actions} />,
+        };
+      }) || [],
+ 
     };
-  }, [data]); // Add data to the dependency array
+  }, [data]);
 
   return (
     <div>
@@ -55,7 +56,7 @@ const CategoryPageIndex = () => {
       <Modal
         opened={modalState?.mode === "create" || modalState?.mode === "edit"}
         onClose={() => setModalState(null)}
-        title={modalState?.mode === "create" ? "Create Global Category" : "Edit Global Category"}
+        title={modalState?.mode === "create" ? "Create Category" : "Edit Category"}
         size="xl"
       >
         <CategoryForm
