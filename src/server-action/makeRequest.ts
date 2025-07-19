@@ -17,9 +17,8 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 export const makeRequest: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_REACT_APP_API_URL,
+  baseURL: import.meta.env.VITE_REACT_APP_API_URL || "https://food-ordering-backend-36ba.vercel.app/api/v1/",
   withCredentials: true,
-  
 });
 
 makeRequest.interceptors.request.use((config: InternalAxiosRequestConfig) => {
