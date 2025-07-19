@@ -1,4 +1,3 @@
-// hooks/useCloudinaryUpload.ts
 import { useState } from 'react';
 import { CloudinarySignUploadApi, type ICloudinarySignUploadApi } from '../server-action/api/cloudionary-image-upload-api.ts';
 

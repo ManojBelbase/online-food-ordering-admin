@@ -21,6 +21,7 @@ const roleOptions: SelectOption[] = [
 
   const form = useForm<SignupCredentials>({
     initialValues: {
+      name:"",
       email: "",
       password: "",
       role: "", 
@@ -39,6 +40,14 @@ const roleOptions: SelectOption[] = [
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
+          <FormInput
+          label="Name"
+          type="text"
+          placeholder="Enter Name"
+          leftSection={<IconMail size={16} />}
+          {...form.getInputProps("name")}
+          required
+        />
         <FormInput
           label="Email"
           type="email"

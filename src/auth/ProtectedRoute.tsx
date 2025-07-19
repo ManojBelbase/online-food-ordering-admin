@@ -17,7 +17,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Check if user has permission for the current route
   if (!hasPermission(location.pathname)) {
     return <Navigate to="/not-authorized" replace />;
   }

@@ -60,7 +60,6 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
   const { user, dispatch } = useAuth();
-  console.log(user,"user")
   const navigate = useNavigate();
   const [notificationsOpened, setNotificationsOpened] = useState(false);
 
@@ -323,7 +322,12 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
             }}
           >
             <Menu.Label style={{ color: theme.colors.textSecondary }}>
-              {user?.email}
+              <Text size="sm">{user?.email}</Text>
+              {user?.role && (
+                <Text size="xs" style={{ color: theme.colors.textTertiary }}>
+                  Role: {user?.role}
+                </Text>
+              )}
             </Menu.Label>
             <Menu.Item
               leftSection={<IconUser size={16} />}

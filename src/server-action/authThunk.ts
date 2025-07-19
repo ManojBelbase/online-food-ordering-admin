@@ -9,6 +9,7 @@ interface LoginCredentials {
 }
 
 export interface SignupCredentials {
+  name:string,
   email: string;
   password: string;
   role: string;
@@ -46,13 +47,13 @@ export const signupUser = createAsyncThunk<
   }
 >(
   "auth/signupUser",
-  async ({ email, password, role }: SignupCredentials, thunkAPI) => {
+  async ({name, email, password, role }: SignupCredentials, thunkAPI) => {
     try {
       const res = await makeRequest.post("auth/signup", {
+        name,
         email,
         password,
         role,
-        
       },{
     headers: {
       "Content-Type": "application/json",
