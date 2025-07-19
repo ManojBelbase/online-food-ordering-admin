@@ -72,9 +72,10 @@ export const FormSelect = React.forwardRef<HTMLInputElement, FormSelectProps>(
     const commonStyles = {
       label: {
         color: theme.colors.textPrimary,
-        fontWeight: 500,
-        marginBottom: '8px',
+        fontWeight: 400,
+        marginBottom: '4px',
       },
+      
       input: {
         backgroundColor: theme.colors.surface,
         borderColor: error ? theme.colors.error : theme.colors.border,
@@ -115,6 +116,7 @@ export const FormSelect = React.forwardRef<HTMLInputElement, FormSelectProps>(
         color: theme.colors.error,
       },
     };
+    
 
     const commonProps = {
       label,
@@ -161,6 +163,7 @@ export const FormSelect = React.forwardRef<HTMLInputElement, FormSelectProps>(
         value={value as string}
         onChange={onChange as (value: string | null) => void}
         ref={ref}
+
       />
     );
   }

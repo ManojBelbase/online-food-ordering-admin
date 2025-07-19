@@ -46,7 +46,7 @@ const roleOptions: SelectOption[] = [
           placeholder="Enter Name"
           leftSection={<IconMail size={16} />}
           {...form.getInputProps("name")}
-          required
+          
         />
         <FormInput
           label="Email"
@@ -84,6 +84,7 @@ const roleOptions: SelectOption[] = [
               backgroundColor: theme.colors.primaryHover,
             },
           }}
+          loading={form.submitting}
         >
           Create Customer
         </Button>
