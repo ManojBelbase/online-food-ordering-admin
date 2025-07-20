@@ -47,7 +47,7 @@ const CategoryPageIndex = () => {
   return (
     <div>
       <PageHeader
-        title="Global Category"
+        title=" Category"
         onClick={() => setModalState({ mode: "create" })}
         actionVariant="outline"
       />

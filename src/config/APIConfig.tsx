@@ -115,7 +115,6 @@ export function createApiConfig<T>(
           );
           return response.data;
         } catch (err) {
-          // Directly throw the raw error to preserve its structure
           console.log("Original error in mutationFn:", err);
           throw err;
         }

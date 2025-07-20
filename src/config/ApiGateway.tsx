@@ -1,26 +1,21 @@
 import axios from "axios";
-
-// Configure base URL from environment variables
-// export const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}api/`;
-// export const API_BASE_URL_EN = `${import.meta.env.VITE_API_LOCAL_URL}`;
-// export const network = "http://62.72.42.129:8100/api/v1/en";
-
-export const VITE_REACT_APP_API_URL =
-  "https://food-ordering-backend-36ba.vercel.app/api/v1/";
-
+// export const VITE_REACT_APP_API_URL =
+//   "https://food-ordering-backend-36ba.vercel.app/api/v1/";
+// import.meta.env.VITE_REACT_APP_API_URL
+const VITE_REACT_APP_API_URL= import.meta.env.VITE_REACT_APP_API_URL;
 export const apiClient = axios.create({
   baseURL: VITE_REACT_APP_API_URL,
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials:true
 });
 
 const controllers = new Map<string, AbortController>();
 
 apiClient.interceptors.request.use(
   (config) => {
-    // Get token from localStorage
     const token = localStorage.getItem("accessToken");
 
     // Only add authorization header if token exists
