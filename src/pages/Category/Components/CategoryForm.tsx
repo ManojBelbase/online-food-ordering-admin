@@ -27,7 +27,11 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
     },
 
     validate: {
-      name: (value) => (!value ? "Name is required" : null),
+      name: (value, values) => {
+        if(values.globalCategoryId.length>0) return null;
+        return !value ? "Name is required":null
+      },
+
     },
   });
 
@@ -59,32 +63,37 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md" mt={10}>
         <SimpleGrid cols={2} spacing="md">
-          <FormInput
-            label="Category Name"
-            type="text"
-            placeholder="Enter Category Name"
-            {...form.getInputProps("name")}
-          />
-          <FormImageUpload
-            label="Image"
-            uploadApi={uploadImage}
-            maxSize={5 * 1024 * 1024}
-            {...form.getInputProps("image")}
-            error={uploadError?.message}
-          />
-        </SimpleGrid>
-
+          
         <MultiSelect
           label="Global Categories"
           data={globalCategoryOptions}
           placeholder="Select Global Categories"
           searchable
           {...form.getInputProps("globalCategoryId")}
+          disabled={form.values.image.length>0 || form.values.name.length>0}
         />
-
-        <SimpleGrid cols={2}>
-      
+          <FormInput
+          required
+            label="Category Name"
+            type="text"
+            disabled={form.values.globalCategoryId.length>0}
+            placeholder="Enter Category Name"
+            {...form.getInputProps("name")}
+          />
+          <FormImageUpload
+          required
+            label="Image"
+            uploadApi={uploadImage}
+            maxSize={5 * 1024 * 1024}
+            {...form.getInputProps("image")}
+            disabled={form.values.globalCategoryId.length>0}
+            error={uploadError?.message}
+            
+          />
         </SimpleGrid>
+
+
+       
 
         <Button type="submit" style={{ alignSelf: "end" }} loading={form.submitting}>
           Submit

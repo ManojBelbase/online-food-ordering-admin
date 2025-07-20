@@ -8,6 +8,6 @@ export const routePermissions: { [path: string]: string[] } = {
   [FRONTENDROUTES.CUSTOMER]: [Roles.ADMIN],
   [FRONTENDROUTES.PROFILE]: [], 
   [FRONTENDROUTES.GLOBAL_CATEGORY]:[Roles.ADMIN],
-  [FRONTENDROUTES.CATEGORY]: [Roles.RESTAURANT, Roles.ADMIN],
+  [FRONTENDROUTES.CATEGORY]: [Roles.RESTAURANT],
   [FRONTENDROUTES.ORDERS]: [Roles.USER, Roles.USER],
 };
