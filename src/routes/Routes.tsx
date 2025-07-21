@@ -8,6 +8,7 @@ import CategoryPageIndex from "../pages/Category/CategoryPageIndex.tsx";
 import CustomerPageIndex from "../pages/Customer/CustomerPageIndex.tsx";
 import UnauthorizedPage from "../components/GlobalComponents/UnAuthorizedPage.tsx";
 import GlobalCategoryIndex from "../pages/Global-Category/GlobalCategoryIndex.tsx";
+import RestaurantOnboardingForm from "../pages/restaurant-onboarding/Components/RestaurantOnboardingForm.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
   message: "Loading application layout...",
@@ -44,11 +45,11 @@ const NotFoundPage = withSuspense(lazy(() => import("../pages/NotFoundPage")), {
 
 const publicRoutes: RouteObject[] = [
   {
-    path: "/login",
+    path: FRONTENDROUTES.LOGIN,
     element: <LoginPage />,
   },
   {
-    path: "/not-authorized",
+    path: FRONTENDROUTES.NOT_AUTHORIZED,
     element: <UnauthorizedPage />,
   },
 ];
@@ -79,6 +80,12 @@ const notFoundRoute: RouteObject = {
   element: <NotFoundPage />,
 };
 
-const routes: RouteObject[] = [...publicRoutes, ...protectedRoutes, notFoundRoute];
+const restautantOnBoardingRoute: RouteObject=
+  {
+    path:FRONTENDROUTES.RESTAURANT_ONBOARDING,
+    element:<RestaurantOnboardingForm />
+  }
+
+const routes: RouteObject[] = [...publicRoutes, ...protectedRoutes,restautantOnBoardingRoute, notFoundRoute];
 
 export { routes };
