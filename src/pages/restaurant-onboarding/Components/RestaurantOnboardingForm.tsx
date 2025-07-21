@@ -160,7 +160,6 @@ const handleSubmit = async (values: typeof form.values) => {
         </Card>
       </Grid.Col>
 
-      {/* RIGHT: Map Selector */}
       <Grid.Col span={{ base: 12, md: 6 }}>
         <Card shadow="sm" padding="md" radius="md" withBorder>
           <Title order={3} mb="xs">

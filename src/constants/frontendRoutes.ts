@@ -8,6 +8,7 @@ export const FRONTENDROUTES = {
   GLOBAL_CATEGORY:'/global-category',
   
   RESTAURANT_ONBOARDING:'/restaurant-onboarding',
+  RESTAURAT:'/restaurant',
 
   ORDERS: "orders",
   PROFILE: "/profile",

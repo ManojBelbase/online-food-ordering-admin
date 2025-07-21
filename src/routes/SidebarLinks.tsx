@@ -6,6 +6,7 @@ import {
   IconLock,
   IconCategory2,
   IconCategoryFilled,
+  IconHotelService,
 } from "@tabler/icons-react";
 import { FRONTENDROUTES } from "../constants/frontendRoutes";
 
@@ -33,7 +34,11 @@ export const sidebarLinks: ISidebarLinks[] = [
     to: FRONTENDROUTES.ORDERS,
     icon: IconShoppingCart,
   },
-
+{
+  label:"Restaurant",
+  to:FRONTENDROUTES.RESTAURAT,
+  icon:IconHotelService,
+},
   { label: "Category", to: FRONTENDROUTES.CATEGORY, icon: IconCategoryFilled },
   {
     label: "Payments",
