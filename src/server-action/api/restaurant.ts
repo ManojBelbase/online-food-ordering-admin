@@ -25,3 +25,4 @@ userId:string;
 }
 
 export const restaurantApi = createApiConfig<IRestaurant>("restaurant", "Restaurant")
+export const restaurantApiForUser = createApiConfig<IRestaurant>("restaurant/user", "Restaurant")

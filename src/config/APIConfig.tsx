@@ -61,7 +61,7 @@ export function createApiConfig<T>(
       queryKey: [entityName, id],
       queryFn: async () => {
         const { data } = await apiClient.get(`/${entityName}/${id}`);
-        return data?.data;
+        return data;
       },
       enabled: !!id,
     });

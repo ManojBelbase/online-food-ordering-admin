@@ -9,6 +9,7 @@ import { Modal } from "@mantine/core";
 
 const CategoryPageIndex = () => {
   const { data } = categoryApi.useGetAll();
+  
   const { mutateAsync: deleteCategory } = categoryApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: ICategory } | null>(null);
 

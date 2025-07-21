@@ -7,7 +7,12 @@ import { Modal } from "@mantine/core";
 const RestaurantPageIndex = () => {
   const { data } = restaurantApi.useGetAll();
   const [openModal, setOpenModal] = useState(false);
-  console.log(data,"data")
+  
+//   const { user } = useAuth();
+//   const {data:userId}= restaurantApiForUser.useGetById(user?.id ?? "");
+// console.log(userId)
+
+  // console.log( userId,"user")
 
   const tableData = useMemo(() => {
     return {
