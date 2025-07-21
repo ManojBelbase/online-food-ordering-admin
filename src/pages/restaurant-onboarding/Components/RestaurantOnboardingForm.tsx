@@ -103,10 +103,10 @@ const handleSubmit = async (values: typeof form.values) => {
 
 
   return (
-    <Container size="xl" style={{marginBlock:"20px"}}>
+    <Container size="lg" style={{marginBlock:"20px"}}>
       <Paper shadow="sm" p="xl" radius="md">
        <form onSubmit={form.onSubmit(handleSubmit)}>
-  <Stack gap="xl">
+  <Stack gap="md">
     <Title order={2} ta="center" c="blue">
       Restaurant Onboarding
     </Title>

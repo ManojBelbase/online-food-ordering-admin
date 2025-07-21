@@ -38,7 +38,7 @@ const LocationSelectorMap: React.FC<LocationSelectorMapProps> = ({
     <Box style={{ height: "400px", width: "100%", borderRadius: "8px", overflow: "hidden" }}>
       <MapContainer
         center={selectedLocation || [27.7172, 85.3240]} 
-        zoom={13}
+        zoom={100}
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer

@@ -23,8 +23,8 @@ import {
   IconCheck,
   IconX,
 } from "@tabler/icons-react";
-import { useAuth } from "../../redux/useAuth";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../../redux/useAuth";
+import { useTheme } from "../../../contexts/ThemeContext";
 import { notifications } from "@mantine/notifications";
 
 const ProfileInfoTab: React.FC = () => {

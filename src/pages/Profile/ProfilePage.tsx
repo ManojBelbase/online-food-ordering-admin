@@ -7,12 +7,12 @@ import {
   IconUser,
   IconShield,
 } from "@tabler/icons-react";
-import { useTheme } from "../contexts/ThemeContext";
-import PageHeader from "../components/GlobalComponents/PageHeader";
-import ProfileInfoTab from "../components/Profile/ProfileInfoTab";
-import SecurityTab from "../components/Profile/SecurityTab";
+import { useTheme } from "../../contexts/ThemeContext";
+import PageHeader from "../../components/GlobalComponents/PageHeader";
+import ProfileInfoTab from "./Components/ProfileInfoTab";
+import SecurityTab from "./Components/SecurityTab";
 
-const ProfilePage: React.FC = () => {
+const ProfilePageIndex: React.FC = () => {
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState("profile");
 
@@ -65,4 +65,4 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default ProfilePage;
+export default ProfilePageIndex;

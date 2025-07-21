@@ -18,7 +18,7 @@ import {
   IconSearch,
   IconAlertTriangle,
 } from '@tabler/icons-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const NotFoundPage: React.FC = () => {
   const { theme } = useTheme();

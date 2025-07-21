@@ -25,8 +25,8 @@ import {
   IconDevices,
   IconLock,
 } from "@tabler/icons-react";
-import { useTheme } from "../../contexts/ThemeContext";
 import { notifications } from "@mantine/notifications";
+import { useTheme } from "../../../contexts/ThemeContext";
 
 const SecurityTab: React.FC = () => {
   const { theme } = useTheme();

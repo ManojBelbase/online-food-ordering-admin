@@ -33,12 +33,12 @@ const LoginPage = withPageLoader(
 
 
 const ProfilePage = withPageLoader(
-  lazy(() => import("../pages/ProfilePage")),
+  lazy(() => import("../pages/Profile/ProfilePage.tsx")),
   "Loading profile..."
 );
 
 
-const NotFoundPage = withSuspense(lazy(() => import("../pages/NotFoundPage")), {
+const NotFoundPage = withSuspense(lazy(() => import("../components/GlobalComponents/NotFoundPage.tsx")), {
   message: "Page not found...",
   type: "custom",
 });

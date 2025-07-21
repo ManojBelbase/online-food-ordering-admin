@@ -77,7 +77,6 @@ const roleOptions: SelectOption[] = [
         <Button
           type="submit"
           fullWidth
-          leftSection={<IconUserPlus size={16} />}
           style={{
             backgroundColor: theme.colors.primary,
             "&:hover": {
