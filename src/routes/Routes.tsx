@@ -10,6 +10,7 @@ import UnauthorizedPage from "../components/GlobalComponents/UnAuthorizedPage.ts
 import GlobalCategoryIndex from "../pages/Global-Category/GlobalCategoryIndex.tsx";
 import RestaurantOnboardingForm from "../pages/restaurant-onboarding/Components/RestaurantOnboardingForm.tsx";
 import RestaurantPageIndex from "../pages/restaurant-onboarding/RestaurantPageIndex.tsx";
+import FoodItemPageIndex from "../pages/FoodItem/FoodItemPageIndex.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
   message: "Loading application layout...",
@@ -72,6 +73,7 @@ const protectedRoutes: RouteObject[] = [
       { path: FRONTENDROUTES.RESTAURAT, element: <RestaurantPageIndex /> },
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
       { path: FRONTENDROUTES.CATEGORY, element: <CategoryPageIndex /> },
+      { path: FRONTENDROUTES.FOOD_ITEM, element: <FoodItemPageIndex /> },
       { path: "menu/items", element: <div>Menu Items</div> },
     ],
   },

@@ -11,6 +11,8 @@ export const FRONTENDROUTES = {
   RESTAURANT_ONBOARDING:'/restaurant-onboarding',
   RESTAURAT:'/restaurant',
 
+  FOOD_ITEM:'/food-item',
+
   ORDERS: "orders",
   PROFILE: "/profile",
   MENU:'/menu',
