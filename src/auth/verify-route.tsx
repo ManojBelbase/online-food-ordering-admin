@@ -38,7 +38,7 @@ const VerifyEmailPage = () => {
 
       try {
         const res = await fetch(
-          `https://food-ordering-backend-36ba.vercel.app/api/v1/verify-email?token=${token}`,
+          `https://food-ordering-backend-36ba.vercel.app/api/v1/auth/verify-email?token=${token}`,
           {
             method: "GET",
           }
