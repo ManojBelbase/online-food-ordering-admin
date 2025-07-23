@@ -3,10 +3,10 @@ import { Button, SimpleGrid, Stack } from '@mantine/core';
 import { FormImageUpload, FormInput, FormSelect } from '../../../components/Forms';
 import { foodItemApi, type IFoodItem } from '../../../server-action/api/food-item';
 import { categoryApi } from '../../../server-action/api/category';
-import { useAuth } from '../../../redux/useAuth';
 import { useCloudinaryUpload } from '../../../hooks/useCloudinaryUpload';
 import { CuisineType } from '../../../constants/cuisine-type';
 import { FormTags } from '../../../components/Forms/FormTags';
+import { useRestaurantByUser } from '../../../hooks/useRestaurantByUser';
 
 interface IFoodItemFormProps {
   edit?: IFoodItem;
@@ -14,7 +14,7 @@ interface IFoodItemFormProps {
 }
 
 const FoodItemForm: React.FC<IFoodItemFormProps> = ({ edit, onClose }) => {
-  const { user } = useAuth();
+const {restaurant}= useRestaurantByUser();
   const { mutateAsync: createFoodItem } = foodItemApi.useCreate();
   const { mutateAsync: updateFoodItem } = foodItemApi.useUpdate();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();
@@ -29,7 +29,7 @@ const FoodItemForm: React.FC<IFoodItemFormProps> = ({ edit, onClose }) => {
       isVeg: edit?.isVeg ?? false,
       description: edit?.description ?? '',
       categoryId: edit?.categoryId ?? '',
-      tags: edit?.tags ?? [],
+    tags: edit?.tags ?? [],
     },
     validate: {
       name: (value) => (!value ? 'Name is required' : null),
@@ -46,7 +46,7 @@ const FoodItemForm: React.FC<IFoodItemFormProps> = ({ edit, onClose }) => {
     try {
       const entityData = {
         ...values,
-        resturantId: user?.id ?? '',
+        resturantId: restaurant?._id ?? '',
         price: Number(values.price),
         _id: edit?._id ?? '', 
       };

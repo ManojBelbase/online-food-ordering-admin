@@ -11,6 +11,7 @@ import GlobalCategoryIndex from "../pages/Global-Category/GlobalCategoryIndex.ts
 import RestaurantOnboardingForm from "../pages/restaurant-onboarding/Components/RestaurantOnboardingForm.tsx";
 import RestaurantPageIndex from "../pages/restaurant-onboarding/RestaurantPageIndex.tsx";
 import FoodItemPageIndex from "../pages/FoodItem/FoodItemPageIndex.tsx";
+import VerifyEmailPage from "../auth/verify-route.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
   message: "Loading application layout...",
@@ -54,6 +55,10 @@ const publicRoutes: RouteObject[] = [
     path: FRONTENDROUTES.NOT_AUTHORIZED,
     element: <UnauthorizedPage />,
   },
+  {
+    path: FRONTENDROUTES.VERIFY_EMAIL,
+    element:<VerifyEmailPage/>
+  }
 ];
 
 const protectedRoutes: RouteObject[] = [
@@ -89,6 +94,8 @@ const restautantOnBoardingRoute: RouteObject=
     path:FRONTENDROUTES.RESTAURANT_ONBOARDING,
     element:<RestaurantOnboardingForm />
   }
+
+
 
 const routes: RouteObject[] = [...publicRoutes, ...protectedRoutes,restautantOnBoardingRoute, notFoundRoute];
 

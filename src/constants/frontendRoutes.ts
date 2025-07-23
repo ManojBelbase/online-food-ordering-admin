@@ -2,6 +2,7 @@
 export const FRONTENDROUTES = {
   LOGIN: "/login",
   NOT_AUTHORIZED:'/not-authorized',
+  VERIFY_EMAIL:'/verify-email',
   RESTAURANT_DASHBOARD:'restaurant-dashboard',
   HOME: "/",
   DASHBOARD: "dashboard",

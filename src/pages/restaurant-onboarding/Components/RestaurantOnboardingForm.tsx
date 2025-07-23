@@ -97,7 +97,6 @@ const handleSubmit = async (values: typeof form.values) => {
   await createRestaurant(entityData as any);
   <Navigate to={'/'}/>
   } catch (error) {
-    console.error("Restaurant creation failed", error);
   }
 };
 

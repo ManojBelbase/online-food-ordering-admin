@@ -4,8 +4,8 @@ import { useAuth } from "../redux/useAuth";
 import { useRolePermissions } from "../hooks/useRolePermission";
 import { FRONTENDROUTES } from "../constants/frontendRoutes";
 import { Roles } from "../constants/roles";
-import { restaurantApiForUser } from "../server-action/api/restaurant";
 import { LoadingOverlay } from "@mantine/core";
+import { useRestaurantByUser } from "../hooks/useRestaurantByUser";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -16,12 +16,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { hasPermission } = useRolePermissions();
   const location = useLocation();
 
-  const {
-    data: restaurantData,
-    isLoading: isRestaurantLoading,
-  } = restaurantApiForUser.useGetById(user?.id ?? "");
-
-  const restaurant = restaurantData?.restaurant;
+  const { restaurant, isLoading } = useRestaurantByUser();
 
   // 1. Redirect unauthenticated users
   if (!user) {
@@ -30,9 +25,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // 2. For RESTAURANT role: ensure restaurant is registered
   if (user?.role === Roles.RESTAURANT) {
-    if (isRestaurantLoading) return <LoadingOverlay />;
-
-    // If restaurant does not exist or is empty
+    if (isLoading) return <LoadingOverlay />;
     if (!restaurant || Object.keys(restaurant).length === 0) {
       return <Navigate to={FRONTENDROUTES.RESTAURANT_ONBOARDING} />;
     }
