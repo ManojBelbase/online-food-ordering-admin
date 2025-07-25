@@ -20,13 +20,12 @@ export const SidebarLinksList: React.FC<Props> = ({
   const location = useLocation();
   const { theme } = useTheme();
   const { filterItemsByRole, hasPermission } = useRolePermissions();
-
   const filteredLinks = filterItemsByRole(sidebarLinks);
 
   useEffect(() => {
     filteredLinks.forEach((item) => {
       if (item.children) {
-        const isChildActive = item.children.some((child:any) =>
+        const isChildActive = item.children.some((child: any) =>
           location.pathname.startsWith(child.to)
         );
         if (isChildActive) setOpenDropdown(item.label);
@@ -42,14 +41,14 @@ export const SidebarLinksList: React.FC<Props> = ({
     <div style={{ marginTop: "10px" }}>
       {filteredLinks.map((item) => {
         const Icon = item.icon;
-        
+
         const filteredChildren = (item.children || []).filter(
-          (child:any) => hasPermission(child.to)
+          (child: any) => hasPermission(child.to)
         );
-        
+
         const isDirectMatch = location.pathname === item.to;
         const isChildMatch = filteredChildren.some(
-          (child:any) =>
+          (child: any) =>
             location.pathname === child.to ||
             location.pathname.startsWith(child.to + "/")
         );
@@ -113,35 +112,61 @@ export const SidebarLinksList: React.FC<Props> = ({
                     },
                   }}
                 />
-                {openDropdown === item.label &&
-                  filteredChildren.map((child:any) => {
-                    const isChildActive = location.pathname.startsWith(child.to);
-                    return (
-                      <NavLink
-                        key={child.to}
-                        component={RouterNavLink}
-                        to={child.to}
-                        label={child.label}
-                        active={isChildActive}
-                        styles={{
-                          root: {
-                            paddingLeft: "20px",
-                            color: isChildActive
-                              ? theme.colors.sidebarTextActive
-                              : theme.colors.sidebarText,
-                            backgroundColor: isChildActive
-                              ? theme.colors.sidebarActive
-                              : "transparent",
-                            "&:hover": {
+                {openDropdown === item.label && (
+                  <div style={{ position: "relative", paddingLeft: "20px" }}>
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        bottom: 0,
+                        left: "8px",
+                        width: "2px",
+                        backgroundColor: theme.colors.sidebarText,
+                      }}
+                    />
+                    {filteredChildren.map((child: any) => {
+                      const isChildActive = location.pathname.startsWith(child.to);
+                      return (
+                        <NavLink
+                          key={child.to}
+                          component={RouterNavLink}
+                          to={child.to}
+                          label={
+                            <span style={{ display: "flex", alignItems: "center" }}>
+                              <span
+                                style={{
+                                  width: "6px",
+                                  height: "6px",
+                                  backgroundColor: theme.colors.sidebarText,
+                                  borderRadius: "50%",
+                                  marginRight: "8px",
+                                }}
+                              />
+                              {child.label}
+                            </span>
+                          }
+                          active={isChildActive}
+                          styles={{
+                            root: {
+                              paddingLeft: "20px",
+                              color: isChildActive
+                                ? theme.colors.sidebarTextActive
+                                : theme.colors.sidebarText,
                               backgroundColor: isChildActive
                                 ? theme.colors.sidebarActive
-                                : theme.colors.sidebarHover,
+                                : "transparent",
+                              "&:hover": {
+                                backgroundColor: isChildActive
+                                  ? theme.colors.sidebarActive
+                                  : theme.colors.sidebarHover,
+                              },
                             },
-                          },
-                        }}
-                      />
-                    );
-                  })}
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </>
             ) : !item.children && hasPermission(item.to) ? (
               <NavLink

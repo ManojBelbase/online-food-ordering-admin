@@ -12,6 +12,7 @@ import RestaurantOnboardingForm from "../pages/restaurant-onboarding/Components/
 import RestaurantPageIndex from "../pages/restaurant-onboarding/RestaurantPageIndex.tsx";
 import FoodItemPageIndex from "../pages/FoodItem/FoodItemPageIndex.tsx";
 import VerifyEmailPage from "../auth/verify-route.tsx";
+import NewOrderPageIndex from "../pages/Orders/NewOrders/NewOrderPageIndex.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
   message: "Loading application layout...",
@@ -76,9 +77,13 @@ const protectedRoutes: RouteObject[] = [
       {path:FRONTENDROUTES.CATEGORY, element:<CategoryPageIndex/>},
       { path: FRONTENDROUTES.CUSTOMER, element: <CustomerPageIndex /> },
       { path: FRONTENDROUTES.RESTAURAT, element: <RestaurantPageIndex /> },
+
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
       { path: FRONTENDROUTES.CATEGORY, element: <CategoryPageIndex /> },
       { path: FRONTENDROUTES.FOOD_ITEM, element: <FoodItemPageIndex /> },
+
+      { path: FRONTENDROUTES.NEW_ORDERS, element: <NewOrderPageIndex /> },
+
       { path: "menu/items", element: <div>Menu Items</div> },
     ],
   },

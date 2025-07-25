@@ -10,3 +10,4 @@ export interface ICategory{
 }
 
 export const categoryApi = createApiConfig<ICategory>("category", "Category")
+
