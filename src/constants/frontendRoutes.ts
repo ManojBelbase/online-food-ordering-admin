@@ -14,7 +14,11 @@ export const FRONTENDROUTES = {
 
   FOOD_ITEM:'/food-item',
 
-  ORDERS: "orders",
+  ORDERS: "/orders",
+  NEW_ORDERS:'/new-orders',
+  COMPLETED_ORDERS:'/completed-orders',
+  CANCELLED_ORDERS:'/completed-orders',
+  
   PROFILE: "/profile",
   MENU:'/menu',
 

@@ -1,19 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { PageHeader, StatusBadge } from "../../components/GlobalComponents";
 import { restaurantApi } from "../../server-action/api/restaurant";
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
-import { Modal } from "@mantine/core";
 
 const RestaurantPageIndex = () => {
   const { data } = restaurantApi.useGetAll();
-  const [openModal, setOpenModal] = useState(false);
   
-//   const { user } = useAuth();
-//   const {data:userId}= restaurantApiForUser.useGetById(user?.id ?? "");
-// console.log(userId)
-
-  // console.log( userId,"user")
-
   const tableData = useMemo(() => {
     return {
       columns: [
@@ -41,7 +33,6 @@ const RestaurantPageIndex = () => {
     <div>
       <PageHeader
         title="Restaurants"
-        onClick={() => setOpenModal(true)}
         actionVariant="outline"
       />
       <DataTable
@@ -49,14 +40,7 @@ const RestaurantPageIndex = () => {
         columns={tableData.columns}
         searchPlaceholder="Search restaurants..."
       />
-      <Modal
-        opened={openModal}
-        onClose={() => setOpenModal(false)}
-        title="Add Restaurant"
-        centered
-      >
-        {/* <RestaurantForm /> */}
-      </Modal>
+      
     </div>
   );
 };
