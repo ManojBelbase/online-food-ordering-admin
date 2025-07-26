@@ -24,11 +24,12 @@ import { CuisineType } from "../../../constants/cuisine-type";
 import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
 import { restaurantApi } from "../../../server-action/api/restaurant";
 import LocationSelectorMap from "../../../components/LocationSelectorMap";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
 const RestaurantOnboardingForm: React.FC = () => {
   const { user } = useAuth();
+  const navigate  = useNavigate();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();
   const {mutateAsync:createRestaurant}= restaurantApi.useCreate();
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
@@ -94,9 +95,28 @@ const handleSubmit = async (values: typeof form.values) => {
       },
     };
 
-  await createRestaurant(entityData as any);
-  <Navigate to={'/'}/>
-  } catch (error) {
+    // Await response
+    const response = await createRestaurant(entityData as any);
+
+    if ((response as any)?.success) {
+      navigate("/"); 
+    } else {
+      // Handle known failure (like already submitted)
+      form.setErrors({
+        restaurantName: (response as any)?.error?.message || "Failed to create restaurant",
+      });
+    }
+
+  } catch (error: any) {
+    // Handle API exception or react-query error
+    const errMsg =
+      error?.response?.data?.error?.message ||
+      error?.message ||
+      "Unexpected error occurred";
+    form.setErrors({
+      restaurantName: errMsg,
+    });
+    console.error("API Error:", error);
   }
 };
 

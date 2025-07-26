@@ -1,299 +1,395 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect, useCallback } from "react";
+import { useForm } from "@mantine/form";
 import {
-  Card,
-  Title,
-  Group,
-  Avatar,
   Button,
-  TextInput,
-  Textarea,
-  Grid,
-  Badge,
-  ActionIcon,
+  Select,
+  SimpleGrid,
   Stack,
-  Box,
+  Text,
+  Card,
+  Group,
+  Switch,
+  Divider,
+  Title,
+  Grid,
+  Paper,
 } from "@mantine/core";
-import {
-  IconUser,
-  IconMail,
-  IconPhone,
-  IconMapPin,
-  IconEdit,
-  IconCamera,
-  IconCheck,
-  IconX,
-} from "@tabler/icons-react";
-import { useAuth } from "../../../redux/useAuth";
-import { useTheme } from "../../../contexts/ThemeContext";
+import { TimeInput } from "@mantine/dates";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { useRestaurantByUser } from "../../../hooks/useRestaurantByUser";
+import { FormImageUpload, FormInput } from "../../../components/Forms";
+import { CuisineType } from "../../../constants/cuisine-type";
+import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
+import { restaurantApi } from "../../../server-action/api/restaurant";
+import LocationSelectorMap from "../../../components/LocationSelectorMap";
+
+const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
 const ProfileInfoTab: React.FC = () => {
-  const { user } = useAuth();
-  const { theme } = useTheme();
+  const { restaurant, isLoading } = useRestaurantByUser();
+  const { uploadImage, error: uploadError, loading: uploadLoading } = useCloudinaryUpload();
+  const { mutateAsync: updateRestaurant, isPending: updateLoading } = restaurantApi.useUpdate();
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
+  console.log(restaurant,"re")
 
-  // Form state
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main St, City, State 12345",
-    bio: "Food service administrator with 5+ years of experience managing restaurant operations.",
-    department: "Operations",
-    position: "Senior Administrator",
+  const form = useForm({
+    initialValues: {
+      restaurantName: "",
+      address: "",
+      cuisineType: "Other",
+      licenseNumber: "",
+      logo: "",
+      location: {
+        coordinates: [0, 0],
+      },
+      weeklySchedule: {
+        monday: { open: "09:00", close: "21:00", isClosed: false },
+        tuesday: { open: "09:00", close: "21:00", isClosed: false },
+        wednesday: { open: "09:00", close: "21:00", isClosed: false },
+        thursday: { open: "09:00", close: "21:00", isClosed: false },
+        friday: { open: "09:00", close: "21:00", isClosed: false },
+        saturday: { open: "10:00", close: "22:00", isClosed: false },
+        sunday: { open: "10:00", close: "22:00", isClosed: false },
+      },
+      manualOverride: {
+        isManuallySet: false,
+        isOpen: true,
+      },
+    },
+    validate: {
+      restaurantName: (value) => (!value ? "Restaurant name is required" : null),
+      address: (value) => (!value ? "Address is required" : null),
+      licenseNumber: (value) => (!value ? "License number is required" : null),
+  
+    },
   });
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (restaurant) {
+      form.setValues({
+        restaurantName: restaurant?.restaurantName || "",
+        address: restaurant?.address || "",
+        cuisineType: restaurant?.cuisineType || "Other",
+        licenseNumber: restaurant?.licenseNumber || "",
+        logo: restaurant?.logo || "",
+        location: {
+          coordinates: restaurant.location?.coordinates || [0, 0],
+        },
+        weeklySchedule: restaurant.weeklySchedule || {
+          monday: { open: "09:00", close: "21:00", isClosed: false },
+          tuesday: { open: "09:00", close: "21:00", isClosed: false },
+          wednesday: { open: "09:00", close: "21:00", isClosed: false },
+          thursday: { open: "09:00", close: "21:00", isClosed: false },
+          friday: { open: "09:00", close: "21:00", isClosed: false },
+          saturday: { open: "10:00", close: "22:00", isClosed: false },
+          sunday: { open: "10:00", close: "22:00", isClosed: false },
+        },
+        manualOverride: restaurant.manualOverride || {
+          isManuallySet: false,
+          isOpen: true,
+        },
+      });
+      setSelectedLocation(restaurant.location?.coordinates || null);
+    }
+  }, [restaurant]);
+
+  const handleLocationSelect = useCallback(
+    (lat: number, lng: number) => {
+      setSelectedLocation([lat, lng]);
+      form.setFieldValue("location.coordinates", [lng, lat]);
+    },
+    [form]
+  );
+
+  const handleSave = async (values: typeof form.values) => {
     try {
-      // dispatch(updateUser({
-      //   name: formData.name,
-      //   email: formData.email,
-      // }));
-      setIsEditing(false);
+      if (!restaurant?._id) {
+        form.setErrors({
+          restaurantName: "Restaurant ID is missing. Please ensure you are logged in.",
+        });
+        notifications.show({
+          title: "Error",
+          message: "Restaurant ID is missing. Please ensure you are logged in.",
+          color: "red",
+          icon: <IconX size={16} />,
+        });
+        return;
+      }
+
+      if (!selectedLocation || (selectedLocation[0] === 0 && selectedLocation[1] === 0)) {
+        form.setFieldError("location.coordinates", "Please select a location on the map");
+        notifications.show({
+          title: "Error",
+          message: "Please select a valid location on the map.",
+          color: "red",
+          icon: <IconX size={16} />,
+        });
+        return;
+      }
+
+      const entityData = {
+        ...values,
+        location: {
+          type: "Point",
+          coordinates: values.location.coordinates,
+        },
+      };
+
+      await updateRestaurant({ _id: restaurant._id, entityData:entityData as any});
 
       notifications.show({
-        title: 'Profile Updated',
-        message: 'Your profile information has been successfully updated.',
-        color: 'green',
+        title: "Profile Updated",
+        message: "Your restaurant profile has been updated successfully.",
+        color: "green",
         icon: <IconCheck size={16} />,
-        autoClose: 4000,
       });
-    } catch (error) {
+
+      setIsEditing(false);
+    } catch (error: any) {
+      const errMsg =
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Unexpected error occurred";
+      form.setErrors({
+        restaurantName: errMsg,
+      });
+      console.error("Submission error:", error);
       notifications.show({
-        title: 'Update Failed',
-        message: 'Failed to update profile. Please try again.',
-        color: 'red',
+        title: "Error",
+        message: errMsg,
+        color: "red",
         icon: <IconX size={16} />,
-        autoClose: 4000,
       });
     }
   };
 
   const handleCancel = () => {
-    setFormData({
-      ...formData,
-      name: user?.name || "",
-      email: user?.email || "",
-    });
+    if (restaurant) {
+      form.setValues({
+        restaurantName: restaurant.restaurantName || "",
+        address: restaurant.address || "",
+        cuisineType: restaurant.cuisineType || "Other",
+        licenseNumber: restaurant.licenseNumber || "",
+        logo: restaurant.logo || "",
+        location: {
+          coordinates: restaurant.location?.coordinates || [0, 0],
+        },
+        weeklySchedule: restaurant.weeklySchedule || {
+          monday: { open: "09:00", close: "21:00", isClosed: false },
+          tuesday: { open: "09:00", close: "21:00", isClosed: false },
+          wednesday: { open: "09:00", close: "21:00", isClosed: false },
+          thursday: { open: "09:00", close: "21:00", isClosed: false },
+          friday: { open: "09:00", close: "21:00", isClosed: false },
+          saturday: { open: "10:00", close: "22:00", isClosed: false },
+          sunday: { open: "10:00", close: "22:00", isClosed: false },
+        },
+        manualOverride: restaurant.manualOverride || {
+          isManuallySet: false,
+          isOpen: true,
+        },
+      });
+      setSelectedLocation(restaurant.location?.coordinates || null);
+    }
     setIsEditing(false);
-
     notifications.show({
-      title: 'Changes Cancelled',
-      message: 'Your changes have been discarded.',
-      color: 'orange',
-      autoClose: 3000,
+      title: "Edit Cancelled",
+      message: "Your changes were discarded.",
+      color: "orange",
+      icon: <IconX size={16} />,
     });
   };
 
+  if (isLoading) return <div>Loading...</div>;
+  if (!restaurant) return <div>No restaurant data found</div>;
+
   return (
-    <Card
-      shadow="sm"
-      padding="xl"
-      w={"100%"}
-      style={{
-        backgroundColor: theme.colors.surface,
-        border: `1px solid ${theme.colors.border}`,
-      }}
-    >
+    <Card shadow="sm" padding="xl" style={{ margin: "auto" }}>
       <Group justify="space-between" mb="md">
-        <Title order={3} style={{ color: theme.colors.textPrimary }}>
-          Profile Information
-        </Title>
+        <Title order={3}>Profile Information</Title>
         <Button
-          variant="light"
-          leftSection={<IconEdit size={16} />}
+          variant="outline"
           onClick={() => setIsEditing(!isEditing)}
+          disabled={uploadLoading || updateLoading}
         >
           {isEditing ? "Cancel" : "Edit Profile"}
         </Button>
       </Group>
 
-      <Grid>
-        <Grid.Col span={{ base: 12, md: 4 }}>
-          <Stack align="center" gap="md">
-            <Box pos="relative">
-              <Avatar
-                src={user?.avatar}
-                size={120}
-                radius="xl"
-                style={{
-                  border: `3px solid ${theme.colors.primary}`,
-                }}
+      <form onSubmit={form.onSubmit(handleSave)}>
+        <Stack gap="md">
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <Card shadow="sm" padding="md" radius="md" withBorder>
+                <Title order={3} mb="md">
+                  Basic Information
+                </Title>
+                <SimpleGrid cols={1} spacing="md">
+                  <FormInput
+                    required
+                    label="Restaurant Name"
+                    placeholder="Enter restaurant name"
+                    {...form.getInputProps("restaurantName")}
+                    disabled={!isEditing || uploadLoading || updateLoading}
+                  />
+                  <Select
+                    required
+                    label="Cuisine Type"
+                    placeholder="Select cuisine type"
+                    data={CuisineType}
+                    {...form.getInputProps("cuisineType")}
+                    disabled={!isEditing || uploadLoading || updateLoading}
+                  />
+                  <FormInput
+                    required
+                    label="License Number"
+                    placeholder="Enter license number"
+                    {...form.getInputProps("licenseNumber")}
+                    disabled={!isEditing || uploadLoading || updateLoading}
+                  />
+                  <FormInput
+                    required
+                    label="Address"
+                    placeholder="Enter full address"
+                    {...form.getInputProps("address")}
+                    disabled={!isEditing || uploadLoading || updateLoading}
+                  />
+                  <FormImageUpload
+                    required
+                    label="Restaurant Logo"
+                    uploadApi={uploadImage}
+                    maxSize={5 * 1024 * 1024}
+                    {...form.getInputProps("logo")}
+                    error={uploadError?.message}
+                    disabled={!isEditing || uploadLoading || updateLoading}
+                  />
+                </SimpleGrid>
+              </Card>
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <Card shadow="sm" padding="md" radius="md" withBorder>
+                <Title order={3} mb="xs">
+                  Location
+                </Title>
+                <Text size="sm" c="dimmed" mb="md">
+                  Click on the map to select your restaurant's location
+                </Text>
+                <LocationSelectorMap
+                  onLocationSelect={handleLocationSelect}
+                  selectedLocation={selectedLocation}
+                />
+                {selectedLocation && (
+                  <Text size="sm" mt="sm" c="green">
+                    Selected: {selectedLocation[0].toFixed(6)}, {selectedLocation[1].toFixed(6)}
+                  </Text>
+                )}
+           
+              </Card>
+            </Grid.Col>
+          </Grid>
+
+          <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Title order={3} mb="md">
+              Weekly Schedule
+            </Title>
+            <Stack gap="sm">
+              {daysOfWeek.map((day) => {
+                type Weekday = keyof typeof form.values.weeklySchedule;
+                const weekday = day as Weekday;
+                return (
+                  <Paper key={day} p="xs" withBorder>
+                    <Grid align="center">
+                      <Grid.Col span={{ base: 12, sm: 3 }}>
+                        <Text fw={500} tt="capitalize">
+                          {day}
+                        </Text>
+                      </Grid.Col>
+                      <Grid.Col span={{ base: 12, sm: 2 }}>
+                        <Switch
+                          label="Closed"
+                          {...form.getInputProps(`weeklySchedule.${day}.isClosed`, {
+                            type: "checkbox",
+                          })}
+                          disabled={!isEditing || uploadLoading || updateLoading}
+                        />
+                      </Grid.Col>
+                      {!form.values.weeklySchedule[weekday]?.isClosed && (
+                        <>
+                          <Grid.Col span={{ base: 6, sm: 3 }}>
+                            <TimeInput
+                              label="Open"
+                              {...form.getInputProps(`weeklySchedule.${day}.open`)}
+                              disabled={!isEditing || uploadLoading || updateLoading}
+                            />
+                          </Grid.Col>
+                          <Grid.Col span={{ base: 6, sm: 3 }}>
+                            <TimeInput
+                              label="Close"
+                              {...form.getInputProps(`weeklySchedule.${day}.close`)}
+                              disabled={!isEditing || uploadLoading || updateLoading}
+                            />
+                          </Grid.Col>
+                        </>
+                      )}
+                    </Grid>
+                  </Paper>
+                );
+              })}
+            </Stack>
+          </Card>
+
+          <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Title order={3} mb="md">
+              Manual Override
+            </Title>
+            <Group>
+              <Switch
+                label="Enable Manual Override"
+                description="Override automatic schedule"
+                {...form.getInputProps("manualOverride.isManuallySet", {
+                  type: "checkbox",
+                })}
+                disabled={!isEditing || uploadLoading || updateLoading}
               />
-              {isEditing && (
-                <ActionIcon
-                  variant="filled"
-                  radius="xl"
-                  size="sm"
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    right: 0,
-                    backgroundColor: theme.colors.primary,
-                  }}
-                >
-                  <IconCamera size={14} />
-                </ActionIcon>
+              {form.values.manualOverride.isManuallySet && (
+                <Switch
+                  label="Currently Open"
+                  description="Set current status"
+                  {...form.getInputProps("manualOverride.isOpen", {
+                    type: "checkbox",
+                  })}
+                  disabled={!isEditing || uploadLoading || updateLoading}
+                />
               )}
-            </Box>
-            <Badge
-              variant="light"
-              color="blue"
-              size="lg"
-              style={{ textTransform: "capitalize" }}
-            >
-              {user?.role}
-            </Badge>
-          </Stack>
-        </Grid.Col>
+            </Group>
+          </Card>
 
-        <Grid.Col span={{ base: 12, md: 8 }}>
-          <Stack gap="md">
-            <TextInput
-              label="Full Name"
-              placeholder="Enter your full name"
-              leftSection={<IconUser size={16} />}
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              readOnly={!isEditing}
-              styles={{
-                input: {
-                  backgroundColor: isEditing ? theme.colors.inputBackground : theme.colors.surface,
-                  borderColor: theme.colors.inputBorder,
-                  color: theme.colors.inputText,
-                },
-                label: {
-                  color: theme.colors.textPrimary,
-                },
-              }}
-            />
-
-            <TextInput
-              label="Email Address"
-              placeholder="Enter your email"
-              leftSection={<IconMail size={16} />}
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              readOnly={!isEditing}
-              styles={{
-                input: {
-                  backgroundColor: isEditing ? theme.colors.inputBackground : theme.colors.surface,
-                  borderColor: theme.colors.inputBorder,
-                  color: theme.colors.inputText,
-                },
-                label: {
-                  color: theme.colors.textPrimary,
-                },
-              }}
-            />
-
-            <TextInput
-              label="Phone Number"
-              placeholder="Enter your phone number"
-              leftSection={<IconPhone size={16} />}
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              readOnly={!isEditing}
-              styles={{
-                input: {
-                  backgroundColor: isEditing ? theme.colors.inputBackground : theme.colors.surface,
-                  borderColor: theme.colors.inputBorder,
-                  color: theme.colors.inputText,
-                },
-                label: {
-                  color: theme.colors.textPrimary,
-                },
-              }}
-            />
-
-            <TextInput
-              label="Address"
-              placeholder="Enter your address"
-              leftSection={<IconMapPin size={16} />}
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              readOnly={!isEditing}
-              styles={{
-                input: {
-                  backgroundColor: isEditing ? theme.colors.inputBackground : theme.colors.surface,
-                  borderColor: theme.colors.inputBorder,
-                  color: theme.colors.inputText,
-                },
-                label: {
-                  color: theme.colors.textPrimary,
-                },
-              }}
-            />
-
-            <Grid>
-              <Grid.Col span={6}>
-                <TextInput
-                  label="Department"
-                  value={formData.department}
-                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                  readOnly={!isEditing}
-                  styles={{
-                    input: {
-                      backgroundColor: isEditing ? theme.colors.inputBackground : theme.colors.surface,
-                      borderColor: theme.colors.inputBorder,
-                      color: theme.colors.inputText,
-                    },
-                    label: {
-                      color: theme.colors.textPrimary,
-                    },
-                  }}
-                />
-              </Grid.Col>
-              <Grid.Col span={6}>
-                <TextInput
-                  label="Position"
-                  value={formData.position}
-                  onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                  readOnly={!isEditing}
-                  styles={{
-                    input: {
-                      backgroundColor: isEditing ? theme.colors.inputBackground : theme.colors.surface,
-                      borderColor: theme.colors.inputBorder,
-                      color: theme.colors.inputText,
-                    },
-                    label: {
-                      color: theme.colors.textPrimary,
-                    },
-                  }}
-                />
-              </Grid.Col>
-            </Grid>
-
-            <Textarea
-              label="Bio"
-              placeholder="Tell us about yourself"
-              value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              readOnly={!isEditing}
-              minRows={3}
-              styles={{
-                input: {
-                  backgroundColor: isEditing ? theme.colors.inputBackground : theme.colors.surface,
-                  borderColor: theme.colors.inputBorder,
-                  color: theme.colors.inputText,
-                },
-                label: {
-                  color: theme.colors.textPrimary,
-                },
-              }}
-            />
-
-            {isEditing && (
+          {isEditing && (
+            <>
+              <Divider />
               <Group justify="flex-end" mt="md">
-                <Button variant="outline" onClick={handleCancel}>
+                <Button
+                  variant="outline"
+                  onClick={handleCancel}
+                  disabled={uploadLoading || updateLoading}
+                >
                   Cancel
                 </Button>
-                <Button onClick={handleSave}>Save Changes</Button>
+                <Button
+                  type="submit"
+                  loading={updateLoading}
+                  disabled={uploadLoading || updateLoading}
+                >
+                  Save
+                </Button>
               </Group>
-            )}
-          </Stack>
-        </Grid.Col>
-      </Grid>
+            </>
+          )}
+        </Stack>
+      </form>
     </Card>
   );
 };

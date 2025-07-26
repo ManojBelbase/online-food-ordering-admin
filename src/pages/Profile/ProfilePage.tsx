@@ -11,10 +11,13 @@ import { useTheme } from "../../contexts/ThemeContext";
 import PageHeader from "../../components/GlobalComponents/PageHeader";
 import ProfileInfoTab from "./Components/ProfileInfoTab";
 import SecurityTab from "./Components/SecurityTab";
+import { useAuth } from "../../redux/useAuth";
 
 const ProfilePageIndex: React.FC = () => {
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState("profile");
+  const {user}= useAuth();
+  console.log(user?.role,"reole")
 
   return (
     <Container py="md" size="xl">
@@ -46,7 +49,7 @@ const ProfilePageIndex: React.FC = () => {
       >
         <Tabs.List>
           <Tabs.Tab value="profile" leftSection={<IconUser size={16} />}>
-            Profile Information
+          {user?.role ?"Restaurant Information":"Profile Information"}
           </Tabs.Tab>
           <Tabs.Tab value="security" leftSection={<IconShield size={16} />}>
             Security Settings

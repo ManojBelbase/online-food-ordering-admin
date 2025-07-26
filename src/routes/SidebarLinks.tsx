@@ -3,7 +3,6 @@ import {
   IconShoppingCart,
   IconCreditCard,
   IconUser,
-  IconLock,
   IconCategory2,
   IconCategoryFilled,
   IconHotelService,
@@ -61,8 +60,5 @@ export const sidebarLinks: ISidebarLinks[] = [
     ],
   },
 
-
-
-  { label: "Permission", to: FRONTENDROUTES.PERMISSION, icon: IconLock },
   { label: "Profile", to: FRONTENDROUTES.PROFILE, icon: IconUser },
 ];

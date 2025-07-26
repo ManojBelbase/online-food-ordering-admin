@@ -31,7 +31,7 @@ interface LocationSelectorMapProps {
   selectedLocation: [number, number] | null;
 }
 
-const MapUpdater: React.FC<{ center: [number, number], zoom?: number }> = ({ center, zoom = 17 }) => {
+const MapUpdater: React.FC<{ center: [number, number], zoom?: number }> = ({ center, zoom = 15 }) => {
   const map = useMap();
   map.flyTo(center, zoom, { duration: 1 }); 
   return null;

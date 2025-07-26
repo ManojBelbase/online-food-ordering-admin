@@ -18,7 +18,6 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
   const { uploadImage, error: uploadError } = useCloudinaryUpload();
 
   const { data: AllGlobalCategories } = globalCategoryApi.useGetAll();
-  console.log(AllGlobalCategories,"ca")
 
   const form = useForm({
     initialValues: {

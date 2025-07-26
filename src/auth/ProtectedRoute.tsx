@@ -18,24 +18,29 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const { restaurant, isLoading } = useRestaurantByUser();
 
-  // 1. Redirect unauthenticated users
+  // Not logged in
   if (!user) {
     return <Navigate to={FRONTENDROUTES.LOGIN} state={{ from: location }} replace />;
   }
 
-  // 2. For RESTAURANT role: ensure restaurant is registered
+  // If user is RESTAURANT role
   if (user?.role === Roles.RESTAURANT) {
-    if (isLoading) return <LoadingOverlay />;
-    if (!restaurant || Object.keys(restaurant).length === 0) {
-      return <Navigate to={FRONTENDROUTES.RESTAURANT_ONBOARDING} />;
+    if (isLoading) return <LoadingOverlay visible />;
+
+    if (!restaurant && Object.keys(restaurant).length === 0) {
+      // No restaurant yet — go to onboarding
+      return <Navigate to={FRONTENDROUTES.RESTAURANT_ONBOARDING} replace/>;
+    } else {
+      return <>{children}</>
     }
   }
 
-  // 3. If no permission for route
+  // Permission check
   if (!hasPermission(location.pathname)) {
     return <Navigate to="/not-authorized" replace />;
   }
 
+  // All good — render the page
   return <>{children}</>;
 };
 
