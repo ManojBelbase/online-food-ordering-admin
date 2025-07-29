@@ -33,7 +33,6 @@ const ProfileInfoTab: React.FC = () => {
   const { mutateAsync: updateRestaurant, isPending: updateLoading } = restaurantApi.useUpdate();
   const [isEditing, setIsEditing] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
-  console.log(restaurant,"re")
 
   const form = useForm({
     initialValues: {

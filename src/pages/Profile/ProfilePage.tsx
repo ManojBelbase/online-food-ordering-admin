@@ -6,18 +6,19 @@ import {
 import {
   IconUser,
   IconShield,
+  IconFaceId,
 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import PageHeader from "../../components/GlobalComponents/PageHeader";
 import ProfileInfoTab from "./Components/ProfileInfoTab";
 import SecurityTab from "./Components/SecurityTab";
+import FaceRecognitionTab from "./Components/FaceRecognitionTab";
 import { useAuth } from "../../redux/useAuth";
 
 const ProfilePageIndex: React.FC = () => {
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState("profile");
   const {user}= useAuth();
-  console.log(user?.role,"reole")
 
   return (
     <Container py="md" size="xl">
@@ -54,6 +55,9 @@ const ProfilePageIndex: React.FC = () => {
           <Tabs.Tab value="security" leftSection={<IconShield size={16} />}>
             Security Settings
           </Tabs.Tab>
+          <Tabs.Tab value="face-recognition" leftSection={<IconFaceId size={16} />}>
+            Face Recognition
+          </Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="profile" pt="md">
@@ -62,6 +66,10 @@ const ProfilePageIndex: React.FC = () => {
 
         <Tabs.Panel value="security" pt="md">
           <SecurityTab />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="face-recognition" pt="md">
+          <FaceRecognitionTab />
         </Tabs.Panel>
       </Tabs>
     </Container>

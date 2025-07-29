@@ -225,14 +225,14 @@ const SecurityTab: React.FC = () => {
                     <Group gap="md">
                       <IconDevices size={20} style={{ color: theme.colors.textSecondary }} />
                       <div>
-                        <Text size="sm" fw={500} style={{ color: theme.colors.textPrimary }}>
+                        {/* <Text size="sm" fw={500} style={{ color: theme.colors.textPrimary }}>
                           {session.device}
                           {session.current && (
                             <Badge size="xs" color="green" ml="xs">
                               Current
                             </Badge>
                           )}
-                        </Text>
+                        </Text> */}
                         <Text size="xs" style={{ color: theme.colors.textSecondary }}>
                           {session.location} • {session.lastActive}
                         </Text>

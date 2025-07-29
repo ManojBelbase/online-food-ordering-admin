@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Paper,
@@ -10,6 +10,7 @@ import {
   Container,
   Stack,
   LoadingOverlay,
+  Tabs,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -19,11 +20,14 @@ import {
   IconLock,
   IconCheck,
   IconAlertCircle,
+  IconFaceId,
+  IconKey,
 } from "@tabler/icons-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAppDispatch, useAuth } from "../redux/useAuth";
 import { loginUser } from "../server-action/authThunk";
 import { loginValidators } from "../validation/authValidation";
+import FaceLogin from "../components/FaceLogin";
 
 interface LoginFormValues {
   email: string;
@@ -35,6 +39,7 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const [activeTab, setActiveTab] = useState("credentials");
 
   const { loadingLogin, errorLogin, isAuthenticated } = useAuth();
 
@@ -127,7 +132,35 @@ const LoginPage: React.FC = () => {
               </Text>
             </div>
 
-            <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Tabs
+              value={activeTab}
+              onChange={(value) => setActiveTab(value || "credentials")}
+              styles={{
+                list: {
+                  backgroundColor: theme.colors.surface,
+                  border: `1px solid ${theme.colors.border}`,
+                  borderRadius: "8px 8px 0 0",
+                },
+                tab: {
+                  color: theme.colors.textSecondary,
+                  "&[data-active]": {
+                    color: theme.colors.primary,
+                    borderColor: theme.colors.primary,
+                  },
+                },
+              }}
+            >
+              <Tabs.List grow>
+                <Tabs.Tab value="credentials" leftSection={<IconKey size={16} />}>
+                  Credentials
+                </Tabs.Tab>
+                <Tabs.Tab value="face" leftSection={<IconFaceId size={16} />}>
+                  Face Recognition
+                </Tabs.Tab>
+              </Tabs.List>
+
+              <Tabs.Panel value="credentials" pt="md">
+                <form onSubmit={form.onSubmit(handleSubmit)}>
               <Stack gap="md">
                 <TextInput
                   label="Email"
@@ -197,6 +230,15 @@ const LoginPage: React.FC = () => {
                 )}
               </Stack>
             </form>
+              </Tabs.Panel>
+
+              <Tabs.Panel value="face" pt="md">
+                <FaceLogin
+                  onSuccess={() => navigate(from, { replace: true })}
+                  onError={(error) => console.error('Face login error:', error)}
+                />
+              </Tabs.Panel>
+            </Tabs>
           </Stack>
         </Paper>
       </Container>
