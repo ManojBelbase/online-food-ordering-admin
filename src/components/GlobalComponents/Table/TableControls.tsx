@@ -43,11 +43,7 @@ const TableControls: React.FC<TableControlsProps> = ({
       <Flex justify="space-between" align="center" mb="md">
         {/* Title */}
         {title && (
-          <Text
-            size="lg"
-            fw={600}
-            style={{ color: theme.colors.textPrimary }}
-          >
+          <Text size="lg" fw={600} style={{ color: theme.colors.textPrimary }}>
             {title}
           </Text>
         )}
@@ -58,7 +54,7 @@ const TableControls: React.FC<TableControlsProps> = ({
           {filters.length > 0 && onToggleFilters && (
             <FilterButton
               onClick={onToggleFilters}
-              activeFilterCount={Object.keys(filterValues).length}
+              activeFilterCount={Object.keys(filterValues ?? {}).length}
             />
           )}
 
