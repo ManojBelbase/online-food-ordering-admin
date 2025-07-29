@@ -20,18 +20,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // Not logged in
   if (!user) {
-    return <Navigate to={FRONTENDROUTES.LOGIN} state={{ from: location }} replace />;
+    return (
+      <Navigate to={FRONTENDROUTES.LOGIN} state={{ from: location }} replace />
+    );
   }
 
   // If user is RESTAURANT role
   if (user?.role === Roles.RESTAURANT) {
     if (isLoading) return <LoadingOverlay visible />;
 
-    if (!restaurant && Object.keys(restaurant).length === 0) {
+    if (!restaurant || Object.keys(restaurant).length === 0) {
       // No restaurant yet — go to onboarding
-      return <Navigate to={FRONTENDROUTES.RESTAURANT_ONBOARDING} replace/>;
+      return <Navigate to={FRONTENDROUTES.RESTAURANT_ONBOARDING} replace />;
     } else {
-      return <>{children}</>
+      return <>{children}</>;
     }
   }
 
