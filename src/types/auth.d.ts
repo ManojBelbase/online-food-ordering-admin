@@ -1,5 +1,5 @@
-declare namespace Auth {
-  interface User {
+export namespace Auth {
+  export interface User {
     _id?: string;
     id?: string;
     email: string;
@@ -9,15 +9,15 @@ declare namespace Auth {
     avatar?: string;
   }
 
-export interface AuthState {
-  user: User | null;
-  accessToken: string | null;
-  loadingLogin: boolean;
-  loadingSignup: boolean;
-  errorLogin: string | null;
-  errorSignup: string | null;
-  isInitialized: boolean;
-}
+  export interface AuthState {
+    user: User | null;
+    accessToken: string | null;
+    loadingLogin: boolean;
+    loadingSignup: boolean;
+    errorLogin: string | null;
+    errorSignup: string | null;
+    isInitialized: boolean;
+  }
 }
 
 export interface LoginCredentials {

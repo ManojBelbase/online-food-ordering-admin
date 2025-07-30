@@ -140,7 +140,7 @@ const FaceRecognitionTab: React.FC = () => {
     try {
       // Try backend API first
       console.log('🔍 Checking face status from backend...');
-      const faceResponse = await makeRequest.get('/face-status');
+      const faceResponse = await makeRequest.get('/auth/face-status');
 
       if (faceResponse.data.success) {
         console.log('✅ Backend API response:', faceResponse.data);
@@ -177,7 +177,7 @@ const FaceRecognitionTab: React.FC = () => {
         // Try to disable face recognition via backend API
         try {
           console.log('🔄 Disabling face recognition via backend...');
-          const response = await makeRequest.post('/face-disable');
+          const response = await makeRequest.post('/auth/face-disable');
 
           if (response.data.success) {
             console.log('✅ Backend disable successful');
@@ -422,7 +422,7 @@ const FaceRecognitionTab: React.FC = () => {
 
       // Try backend API first
       try {
-        const response = await makeRequest.post('/face-enable', { faceDescriptor });
+        const response = await makeRequest.post('/auth/face-enable', { faceDescriptor });
         console.log('✅ Backend enable response:', response.data);
 
         if (response.data.success) {

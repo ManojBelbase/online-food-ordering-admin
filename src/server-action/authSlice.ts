@@ -13,14 +13,29 @@ const initialState: Auth.AuthState = {
   isInitialized: false,
 };
 
-// Define thunks in the same file
+export const faceLoginUser = createAsyncThunk<
+  { user: Auth.User; accessToken: string; success: boolean; message: string },
+  { faceDescriptor: number[] },
+  { rejectValue: string }
+>("auth/faceLoginUser", async ({ faceDescriptor }, thunkAPI) => {
+  try {
+    const res = await makeRequest.post("/auth/face-login", { faceDescriptor });
+    return res.data;
+  } catch (err: unknown) {
+    const error = err as AxiosError<{ message: string }>;
+    return thunkAPI.rejectWithValue(
+      error.response?.data?.message || "Face login failed"
+    );
+  }
+});
+
 export const loginUser = createAsyncThunk<
   { user: Auth.User; accessToken: string },
   { email: string; password: string },
   { rejectValue: string }
 >("auth/loginUser", async ({ email, password }, thunkAPI) => {
   try {
-    const res = await makeRequest.post("auth/login", { email, password });
+    const res = await makeRequest.post("/auth/login", { email, password });
     return res.data;
   } catch (err: unknown) {
     const error = err as AxiosError<{ message: string }>;
@@ -36,7 +51,7 @@ export const signupUser = createAsyncThunk<
   { rejectValue: string }
 >("auth/signupUser", async ({ email, password, role }, thunkAPI) => {
   try {
-    const res = await makeRequest.post("auth/signup", { email, password, role });
+    const res = await makeRequest.post("/auth/signup", { email, password, role });
     return res.data;
   } catch (err: unknown) {
     const error = err as AxiosError<{ message: string }>;
@@ -75,7 +90,22 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Login User
+    builder
+      .addCase(faceLoginUser.pending, (state) => {
+        state.loadingLogin = true;
+        state.errorLogin = null;
+      })
+      .addCase(faceLoginUser.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.loadingLogin = false;
+        localStorage.setItem("accessToken", action.payload.accessToken);
+      })
+      .addCase(faceLoginUser.rejected, (state, action) => {
+        state.loadingLogin = false;
+        state.errorLogin = action.payload || "Unknown error occurred";
+      });
+
     builder
       .addCase(loginUser.pending, (state) => {
         state.loadingLogin = true;
@@ -92,7 +122,6 @@ const authSlice = createSlice({
         state.errorLogin = action.payload || "Unknown error occurred";
       });
 
-    // Signup User
     builder
       .addCase(signupUser.pending, (state) => {
         state.loadingSignup = true;

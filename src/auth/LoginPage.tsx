@@ -11,6 +11,9 @@ import {
   Stack,
   LoadingOverlay,
   Tabs,
+  Group,
+  Box,
+  Divider,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -22,6 +25,7 @@ import {
   IconAlertCircle,
   IconFaceId,
   IconKey,
+  IconShieldCheck,
 } from "@tabler/icons-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAppDispatch, useAuth } from "../redux/useAuth";
@@ -65,14 +69,13 @@ const LoginPage: React.FC = () => {
 
       if (loginUser.fulfilled.match(result)) {
         notifications.show({
-          title: 'Login Successful',
-          message: 'Welcome back!',
+          title: 'Welcome Back!',
+          message: 'Login successful',
           color: 'green',
           icon: <IconCheck size={16} />,
         });
         navigate(from, { replace: true });
       } else if (loginUser.rejected.match(result)) {
-
         notifications.show({
           title: 'Login Failed',
           message: result.payload as string || 'Invalid credentials',
@@ -82,7 +85,7 @@ const LoginPage: React.FC = () => {
       }
     } catch (error) {
       notifications.show({
-        title: 'Login Failedfdfd',
+        title: 'Error',
         message: 'An error occurred during login',
         color: 'red',
         icon: <IconAlertCircle size={16} />,
@@ -90,8 +93,12 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const handleSwitchToCredentials = () => {
+    setActiveTab("credentials");
+  };
+
   return (
-    <div
+    <Box
       style={{
         minHeight: "100vh",
         backgroundColor: theme.colors.background,
@@ -99,150 +106,203 @@ const LoginPage: React.FC = () => {
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
+        backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
       }}
     >
-      <Container size={420}>
+      <Container size={480}>
         <Paper
-          radius="md"
-          p="xl"
+          radius="lg"
+          p={0}
           style={{
             backgroundColor: theme.colors.surface,
             border: `1px solid ${theme.colors.border}`,
-            boxShadow: theme.shadows.lg,
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
+            overflow: "hidden",
             position: 'relative',
           }}
         >
           <LoadingOverlay
             visible={loadingLogin}
-            overlayProps={{ radius: "sm", blur: 2 }}
+            overlayProps={{ radius: "lg", blur: 2 }}
           />
-          <Stack gap="md">
-            <div style={{ textAlign: "center" }}>
-              <Title
-                order={2}
-                style={{
-                  color: theme.colors.textPrimary,
-                  marginBottom: "8px",
-                }}
-              >
-                Welcome Back
-              </Title>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
-                Sign in to your Food Ordering Admin account
-              </Text>
-            </div>
 
+          {/* Header Section */}
+          <Box
+            p="xl"
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              color: "white",
+              textAlign: "center",
+            }}
+          >
+            <IconShieldCheck size={48} style={{ marginBottom: "16px", opacity: 0.9 }} />
+            <Title order={1} size="h2" fw={600} mb="xs">
+              Admin Portal
+            </Title>
+            <Text size="sm" style={{ opacity: 0.9 }}>
+              Food Ordering System Management
+            </Text>
+          </Box>
+
+          {/* Content Section */}
+          <Box p="xl">
             <Tabs
               value={activeTab}
               onChange={(value) => setActiveTab(value || "credentials")}
-              styles={{
-                list: {
-                  backgroundColor: theme.colors.surface,
-                  border: `1px solid ${theme.colors.border}`,
-                  borderRadius: "8px 8px 0 0",
-                },
-                tab: {
-                  color: theme.colors.textSecondary,
-                  "&[data-active]": {
-                    color: theme.colors.primary,
-                    borderColor: theme.colors.primary,
-                  },
-                },
-              }}
+              variant="pills"
+              radius="md"
             >
-              <Tabs.List grow>
-                <Tabs.Tab value="credentials" leftSection={<IconKey size={16} />}>
-                  Credentials
+              <Tabs.List grow mb="xl">
+                <Tabs.Tab 
+                  value="credentials" 
+                  leftSection={<IconKey size={18} />}
+                  style={{ fontSize: "14px", fontWeight: 500 }}
+                >
+                  Password Login
                 </Tabs.Tab>
-                <Tabs.Tab value="face" leftSection={<IconFaceId size={16} />}>
+                <Tabs.Tab 
+                  value="face" 
+                  leftSection={<IconFaceId size={18} />}
+                  style={{ fontSize: "14px", fontWeight: 500 }}
+                >
                   Face Recognition
                 </Tabs.Tab>
               </Tabs.List>
 
-              <Tabs.Panel value="credentials" pt="md">
+              <Tabs.Panel value="credentials">
                 <form onSubmit={form.onSubmit(handleSubmit)}>
-              <Stack gap="md">
-                <TextInput
-                  label="Email"
-                  placeholder="Enter your email"
-                  leftSection={<IconUser size={16} />}
-                  {...form.getInputProps("email")}
-                  styles={{
-                    input: {
-                      backgroundColor: theme.colors.inputBackground,
-                      borderColor: theme.colors.inputBorder,
-                      color: theme.colors.inputText,
-                      "&::placeholder": {
-                        color: theme.colors.inputPlaceholder,
-                      },
-                      "&:focus": {
-                        borderColor: theme.colors.primary,
-                      },
-                    },
-                    label: {
-                      color: theme.colors.textPrimary,
-                    },
-                  }}
-                />
+                  <Stack gap="lg">
+                    <TextInput
+                      label="Email Address"
+                      placeholder="Enter your email"
+                      leftSection={<IconUser size={18} />}
+                      size="md"
+                      {...form.getInputProps("email")}
+                      styles={{
+                        input: {
+                          backgroundColor: theme.colors.inputBackground,
+                          borderColor: theme.colors.inputBorder,
+                          color: theme.colors.inputText,
+                          fontSize: "14px",
+                          height: "48px",
+                          "&::placeholder": {
+                            color: theme.colors.inputPlaceholder,
+                          },
+                          "&:focus": {
+                            borderColor: theme.colors.primary,
+                            boxShadow: `0 0 0 2px ${theme.colors.primary}20`,
+                          },
+                        },
+                        label: {
+                          color: theme.colors.textPrimary,
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          marginBottom: "8px",
+                        },
+                      }}
+                    />
 
-                <PasswordInput
-                  label="Password"
-                  placeholder="Enter your password"
-                  leftSection={<IconLock size={16} />}
-                  {...form.getInputProps("password")}
-                  styles={{
-                    input: {
-                      backgroundColor: theme.colors.inputBackground,
-                      borderColor: theme.colors.inputBorder,
-                      color: theme.colors.inputText,
-                      "&::placeholder": {
-                        color: theme.colors.inputPlaceholder,
-                      },
-                      "&:focus": {
-                        borderColor: theme.colors.primary,
-                      },
-                    },
-                    label: {
-                      color: theme.colors.textPrimary,
-                    },
-                  }}
-                />
+                    <PasswordInput
+                      label="Password"
+                      placeholder="Enter your password"
+                      leftSection={<IconLock size={18} />}
+                      size="md"
+                      {...form.getInputProps("password")}
+                      styles={{
+                        input: {
+                          backgroundColor: theme.colors.inputBackground,
+                          borderColor: theme.colors.inputBorder,
+                          color: theme.colors.inputText,
+                          fontSize: "14px",
+                          height: "48px",
+                          "&::placeholder": {
+                            color: theme.colors.inputPlaceholder,
+                          },
+                          "&:focus": {
+                            borderColor: theme.colors.primary,
+                            boxShadow: `0 0 0 2px ${theme.colors.primary}20`,
+                          },
+                        },
+                        label: {
+                          color: theme.colors.textPrimary,
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          marginBottom: "8px",
+                        },
+                      }}
+                    />
 
-                <Button
-                  type="submit"
-                  fullWidth
-                  loading={loadingLogin}
-                  leftSection={!loadingLogin ? <IconLogin size={16} /> : undefined}
-                  style={{
-                    backgroundColor: theme.colors.primary,
-                    "&:hover": {
-                      backgroundColor: theme.colors.primaryHover,
-                    },
-                  }}
-                >
-                  {loadingLogin ? 'Signing In...' : 'Sign In'}
-                </Button>
+                    <Button
+                      type="submit"
+                      fullWidth
+                      size="md"
+                      loading={loadingLogin}
+                      leftSection={!loadingLogin ? <IconLogin size={18} /> : undefined}
+                      style={{
+                        backgroundColor: theme.colors.primary,
+                        height: "48px",
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        "&:hover": {
+                          backgroundColor: theme.colors.primaryHover,
+                          transform: "translateY(-1px)",
+                        },
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      {loadingLogin ? 'Signing In...' : 'Sign In'}
+                    </Button>
 
-                {errorLogin && (
-                  <Text size="sm" c="red" ta="center">
-                    {errorLogin}
-                  </Text>
-                )}
-              </Stack>
-            </form>
+                    {errorLogin && (
+                      <Text size="sm" c="red" ta="center" p="sm" 
+                        style={{ 
+                          backgroundColor: "#fee", 
+                          borderRadius: "6px",
+                          border: "1px solid #fcc"
+                        }}
+                      >
+                        {errorLogin}
+                      </Text>
+                    )}
+                  </Stack>
+                </form>
               </Tabs.Panel>
 
-              <Tabs.Panel value="face" pt="md">
-                <FaceLogin
-                  onSuccess={() => navigate(from, { replace: true })}
-                  onError={(error) => console.error('Face login error:', error)}
-                />
+              <Tabs.Panel value="face">
+                <FaceLogin onSwitchToCredentials={handleSwitchToCredentials} />
+                
+                <Divider my="xl" label="Alternative Options" labelPosition="center" />
+                
+                <Group justify="center">
+                  <Button
+                    variant="light"
+                    size="sm"
+                    onClick={() => navigate('/face-align')}
+                    leftSection={<IconFaceId size={16} />}
+                  >
+                    Face Alignment Setup
+                  </Button>
+                </Group>
               </Tabs.Panel>
             </Tabs>
-          </Stack>
+          </Box>
+
+          {/* Footer */}
+          <Box
+            p="md"
+            style={{
+              backgroundColor: theme.colors.background,
+              borderTop: `1px solid ${theme.colors.border}`,
+              textAlign: "center",
+            }}
+          >
+            <Text size="xs" c="dimmed">
+              Secure authentication powered by advanced face recognition
+            </Text>
+          </Box>
         </Paper>
       </Container>
-    </div>
+    </Box>
   );
 };
 

@@ -1,6 +1,4 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from "axios";
-import { appStore } from "../redux/store/store";
-import { logout, refreshToken } from "./authSlice";
 
 let isRefreshing = false;
 let failedQueue: Array<(token: string) => void> = [];
@@ -23,9 +21,7 @@ export const makeRequest: AxiosInstance = axios.create({
 
 makeRequest.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (typeof window !== "undefined") {
-    const state = appStore.getState();
-    const token = state.auth.accessToken;
-
+    const token = localStorage.getItem("accessToken");
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -48,7 +44,7 @@ makeRequest.interceptors.response.use(
               reject("Refresh failed");
               return;
             }
-            originalReq.headers!["Authorization"] =`Bearer ${newToken}`;
+            originalReq.headers!["Authorization"] = `Bearer ${newToken}`;
             resolve(makeRequest(originalReq));
           });
         });
@@ -57,15 +53,17 @@ makeRequest.interceptors.response.use(
       isRefreshing = true;
       try {
         const { data } = await axios.post(
-          `${import.meta.env.VITE_REACT_APP_API_URL}auth/refresh-token`,
+          `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );
         const newToken = data.accessToken;
-        appStore.dispatch(
-          refreshToken({
-            user: data.user,
-            accessToken: newToken,
+        localStorage.setItem("accessToken", newToken);
+
+        // Notify components to update Redux state (e.g., via a global event)
+        window.dispatchEvent(
+          new CustomEvent("auth:refreshToken", {
+            detail: { user: data.user, accessToken: newToken },
           })
         );
 
@@ -74,7 +72,8 @@ makeRequest.interceptors.response.use(
         return makeRequest(originalReq);
       } catch (err) {
         processQueue(err as Error, null);
-        appStore.dispatch(logout());
+        // Notify components of logout
+        window.dispatchEvent(new CustomEvent("auth:logout"));
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -82,5 +81,5 @@ makeRequest.interceptors.response.use(
     }
 
     return Promise.reject(error);
-}
+  }
 );
