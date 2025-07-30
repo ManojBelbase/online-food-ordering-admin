@@ -30,7 +30,7 @@ const ComponentsIndex = withPageLoader(
 );
 
 const LoginPage = withPageLoader(
-  lazy(() => import("../auth/LoginPage")),
+  lazy(() => import("../pages/login/LoginPage.tsx")),
   "Loading login..."
 );
 

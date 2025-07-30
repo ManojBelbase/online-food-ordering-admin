@@ -1,0 +1,217 @@
+import type React from "react"
+import { useEffect, useState } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
+import { Button, Title, Text, LoadingOverlay, Box, Group, Image, Stack } from "@mantine/core"
+import { IconFaceId, IconKey, IconShieldCheck } from "@tabler/icons-react"
+import { useMediaQuery } from "@mantine/hooks"
+import { useTheme } from "../../contexts/ThemeContext"
+import { useAuth } from "../../redux/useAuth"
+import CredentialsLogin from "./CredentialsLogin"
+import FaceLogin from "./FaceLogin"
+
+const LoginPage: React.FC = () => {
+  const { theme } = useTheme()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [activeTab, setActiveTab] = useState("credentials")
+  const { loadingLogin, isAuthenticated } = useAuth()
+  const from = location.state?.from?.pathname || "/"
+  const isMobile = useMediaQuery("(max-width: 768px)")
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true })
+    }
+  }, [isAuthenticated, navigate, from])
+
+  const handleLoginSuccess = () => {
+    navigate(from, { replace: true })
+  }
+
+  const handleSwitchToCredentials = () => {
+    setActiveTab("credentials")
+  }
+
+  return (
+    <Box
+      style={{
+        minHeight: "100vh",
+        backgroundColor: theme.colors.background,
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+      }}
+    >
+      <LoadingOverlay visible={loadingLogin} />
+
+      {/* Left Side - Hero Section */}
+      <Box
+        style={{
+          flex: 1,
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          minHeight: isMobile ? "40vh" : "100vh",
+        }}
+      >
+        <Image
+          src="/images/restaurant-hero.png"
+          alt="Restaurant Interior"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 0.3,
+          }}
+        />
+        <Box
+          style={{
+            position: "relative",
+            zIndex: 1,
+            textAlign: "center",
+            color: "white",
+            maxWidth: "400px",
+            padding: "20px",
+          }}
+        >
+          <IconShieldCheck 
+            size={isMobile ? 48 : 64} 
+            style={{ 
+              marginBottom: isMobile ? "16px" : "24px", 
+              opacity: 0.9,
+            }} 
+          />
+          <Title 
+            order={1} 
+            style={{
+              fontSize: isMobile ? "28px" : "36px",
+              fontWeight: 700,
+              marginBottom: isMobile ? "12px" : "16px",
+            }}
+          >
+            Restaurant Admin
+          </Title>
+          <Text 
+            style={{ 
+              opacity: 0.9, 
+              lineHeight: 1.6,
+              fontSize: isMobile ? "16px" : "18px",
+            }}
+          >
+            Secure access to your food ordering system management dashboard
+          </Text>
+        </Box>
+      </Box>
+
+      {/* Right Side - Login Form */}
+      <Box
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: theme.colors.surface,
+          padding: isMobile ? "20px" : "40px",
+        }}
+      >
+        <Box 
+          style={{ 
+            width: "100%", 
+            maxWidth: isMobile ? "400px" : "450px",
+          }}
+        >
+          {/* Header */}
+          <Stack gap={8} mb={24}>
+            <Title 
+              order={2} 
+              style={{
+                fontSize: isMobile ? "20px" : "24px",
+                fontWeight: 600,
+                color: theme.colors.textPrimary,
+              }}
+            >
+              Welcome Back
+            </Title>
+            <Text size="sm" c={theme.colors.textSecondary}>
+              Sign in to your admin account
+            </Text>
+          </Stack>
+
+          {/* Tab Switcher */}
+          <Group gap={8} mb={24} grow>
+            <Button
+              variant={activeTab === "credentials" ? "filled" : "light"}
+              onClick={() => setActiveTab("credentials")}
+              leftSection={<IconKey size={16} />}
+              size="sm"
+              style={{
+                height: "36px",
+                fontSize: "14px",
+                fontWeight: 500,
+                borderRadius: "6px",
+                border: `1px solid ${
+                  activeTab === "credentials" 
+                    ? theme.colors.primary 
+                    : theme.colors.inputBorder
+                }`,
+                backgroundColor: activeTab === "credentials" 
+                  ? theme.colors.primary 
+                  : theme.colors.inputBackground,
+                color: activeTab === "credentials" 
+                  ? "white" 
+                  : theme.colors.textPrimary,
+              }}
+            >
+              Password
+            </Button>
+            <Button
+              variant={activeTab === "face" ? "filled" : "light"}
+              onClick={() => setActiveTab("face")}
+              leftSection={<IconFaceId size={16} />}
+              size="sm"
+              style={{
+                height: "36px",
+                fontSize: "14px",
+                fontWeight: 500,
+                borderRadius: "6px",
+                border: `1px solid ${
+                  activeTab === "face" 
+                    ? theme.colors.primary 
+                    : theme.colors.inputBorder
+                }`,
+                backgroundColor: activeTab === "face" 
+                  ? theme.colors.primary 
+                  : theme.colors.inputBackground,
+                color: activeTab === "face" 
+                  ? "white" 
+                  : theme.colors.textPrimary,
+              }}
+            >
+              Face ID
+            </Button>
+          </Group>
+
+          {/* Login Components */}
+          {activeTab === "credentials" ? (
+            <CredentialsLogin onSuccess={handleLoginSuccess} />
+          ) : (
+            <FaceLogin onSwitchToCredentials={handleSwitchToCredentials} />
+          )}
+
+          {/* Footer */}
+          <Box mt={24} style={{ textAlign: "center" }}>
+            <Text size="xs" c={theme.colors.textSecondary}>
+              Secure authentication • Food Ordering System
+            </Text>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  )
+}
+
+export default LoginPage

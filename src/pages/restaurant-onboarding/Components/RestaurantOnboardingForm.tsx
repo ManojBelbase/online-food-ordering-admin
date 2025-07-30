@@ -73,7 +73,6 @@ const RestaurantOnboardingForm: React.FC = () => {
     },
     [form]
   );
-
 const handleSubmit = async (values: typeof form.values) => {
   try {
     if (!selectedLocation) {
@@ -95,20 +94,16 @@ const handleSubmit = async (values: typeof form.values) => {
       },
     };
 
-    // Await response
     const response = await createRestaurant(entityData as any);
 
     if ((response as any)?.success) {
       navigate("/"); 
     } else {
-      // Handle known failure (like already submitted)
       form.setErrors({
         restaurantName: (response as any)?.error?.message || "Failed to create restaurant",
       });
     }
-
   } catch (error: any) {
-    // Handle API exception or react-query error
     const errMsg =
       error?.response?.data?.error?.message ||
       error?.message ||
@@ -119,7 +114,6 @@ const handleSubmit = async (values: typeof form.values) => {
     console.error("API Error:", error);
   }
 };
-
 
   return (
     <Container size="lg" style={{marginBlock:"20px"}}>
