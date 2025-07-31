@@ -8,12 +8,10 @@ import {
 } from '@mantine/core';
 import { CustomText, ActionButton } from '../../../components/ui';
 import {
-  IconCamera,
   IconCheck,
   IconX,
   IconAlertCircle,
   IconFaceId,
-  IconTrash,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import * as faceapi from 'face-api.js';

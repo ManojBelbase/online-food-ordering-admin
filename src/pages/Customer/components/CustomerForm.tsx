@@ -2,7 +2,6 @@ import React from "react";
 import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconUserPlus, IconMail, IconLock } from "@tabler/icons-react";
-import { useTheme } from "../../../contexts/ThemeContext";
 import { FormInput, FormSelect, type SelectOption } from "../../../components/Forms";
 import { useAppDispatch } from "../../../redux/useAuth";
 import { signupUser, type SignupCredentials } from "../../../server-action/authThunk";
@@ -11,7 +10,6 @@ import { ActionButton } from "../../../components/ui";
 
 
 const CustomerForm: React.FC = () => {
-const { theme } = useTheme();
 const dispatch = useAppDispatch();
 
 const roleOptions: SelectOption[] = [

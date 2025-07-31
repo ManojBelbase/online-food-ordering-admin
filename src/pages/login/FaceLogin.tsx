@@ -14,7 +14,7 @@ interface FaceLoginProps {
   onSwitchToCredentials: () => void
 }
 
-const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
+const FaceLogin: React.FC<FaceLoginProps> = ({ }) => {
   
   const navigate = useNavigate()
   const { theme } = useTheme()
