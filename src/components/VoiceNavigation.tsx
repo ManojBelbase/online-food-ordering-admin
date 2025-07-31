@@ -6,10 +6,13 @@ import { notifications } from '@mantine/notifications';
 import { useTheme } from '../contexts/ThemeContext';
 import { CustomText, ActionButton } from './ui';
 import { FRONTENDROUTES } from '../constants/frontendRoutes';
-
-interface VoiceNavigationProps {
-  isCollapsed?: boolean;
-}
+import {
+  detectBrowser,
+  getVoiceErrorMessage,
+  getBrowserSupportMessage,
+  getSpeechRecognitionConfig,
+  getBrowserTips
+} from '../utils/voiceNavigationHelpers';
 
 interface NavigationCommand {
   keywords: string[];
@@ -17,7 +20,7 @@ interface NavigationCommand {
   description: string;
 }
 
-const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }) => {
+const VoiceNavigation: React.FC = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [isListening, setIsListening] = useState(false);
@@ -95,23 +98,26 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const browserInfo = detectBrowser();
+    const config = getSpeechRecognitionConfig(browserInfo);
+
     if (SpeechRecognition) {
       setIsSupported(true);
       const recognition = new SpeechRecognition();
-      recognition.continuous = true; 
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
-      recognition.maxAlternatives = 1;
 
-      if ('webkitSpeechRecognition' in window) {
-        // Chrome/Edge specific settings
+      recognition.continuous = config.continuous;
+      recognition.interimResults = config.interimResults;
+      recognition.lang = config.lang;
+      recognition.maxAlternatives = config.maxAlternatives;
+
+      if ('webkitSpeechRecognition' in window && (browserInfo.isChrome || browserInfo.isEdge || browserInfo.isBrave)) {
         (recognition as any).webkitSpeechRecognition = true;
       }
 
       recognition.onstart = () => {
         setIsListening(true);
         setTranscript('');
-        setRetryCount(0); 
+        setRetryCount(0);
 
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
@@ -121,12 +127,12 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
           if (isListening && !transcript) {
             recognition.stop();
           }
-        }, 10000); 
+        }, config.timeoutDuration);
 
         if (userInitiated) {
           notifications.show({
             title: 'Voice Recognition Active',
-            message: 'Listening... Say a command like "dashboard", "orders", "customers"',
+            message: browserInfo.isBrave ? 'Listening in Brave... Speak clearly after the beep' : 'Listening... Say a command like "dashboard", "orders", "customers"',
             color: 'blue',
             autoClose: 3000,
           });
@@ -157,34 +163,9 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
       recognition.onerror = (event) => {
         setIsListening(false);
 
-        let errorMessage = 'Could not process voice command. Please try again.';
-        let shouldRetry = false;
-
-        switch (event.error) {
-          case 'not-allowed':
-            errorMessage = 'Microphone access denied. Please allow microphone permissions and try again.';
-            break;
-          case 'no-speech':
-            errorMessage = 'No speech detected. Please try speaking clearly and try again.';
-            shouldRetry = true;
-            break;
-          case 'audio-capture':
-            errorMessage = 'No microphone found. Please check your microphone connection.';
-            break;
-          case 'network':
-            errorMessage = 'Speech recognition service temporarily unavailable. This is a common browser limitation - please try again.';
-            shouldRetry = true;
-            break;
-          case 'aborted':
-            errorMessage = 'Voice recognition was cancelled.';
-            break;
-          case 'bad-grammar':
-            errorMessage = 'Speech recognition grammar error.';
-            break;
-          default:
-            errorMessage = `Voice recognition error: ${event.error}. Please try again.`;
-            shouldRetry = true;
-        }
+        const errorInfo = getVoiceErrorMessage(event.error, browserInfo);
+        const errorMessage = errorInfo.message;
+        const shouldRetry = errorInfo.shouldRetry;
 
         if (shouldRetry && retryCount < maxRetries && userInitiated) {
           setRetryCount(prev => prev + 1);
@@ -220,15 +201,25 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
 
     
       recognition.onend = () => {
-        setIsListening(false);
-
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
         }
 
-        if (transcript || retryCount >= maxRetries) {
-          setUserInitiated(false);
-          setRetryCount(0);
+        // Delay setting isListening to false for Brave browser
+        if (browserInfo.isBrave && userInitiated && !transcript && retryCount < maxRetries) {
+          setTimeout(() => {
+            setIsListening(false);
+            if (transcript || retryCount >= maxRetries) {
+              setUserInitiated(false);
+              setRetryCount(0);
+            }
+          }, 500);
+        } else {
+          setIsListening(false);
+          if (transcript || retryCount >= maxRetries) {
+            setUserInitiated(false);
+            setRetryCount(0);
+          }
         }
       };
 
@@ -273,29 +264,56 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
     }
   };
 
+  const getBrowserSpecificMessage = () => {
+    const browserInfo = detectBrowser();
+    return getBrowserSupportMessage(browserInfo);
+  };
+
   const startListening = () => {
     if (!isSupported) {
       notifications.show({
         title: 'Voice Recognition Not Supported',
-        message: 'Your browser does not support voice recognition. Please use Chrome, Edge, or Safari.',
+        message: getBrowserSpecificMessage(),
         color: 'orange',
-        autoClose: 5000,
+        autoClose: 8000,
       });
       return;
     }
 
     if (recognitionRef.current && !isListening) {
       try {
-        setUserInitiated(true); 
+        setUserInitiated(true);
         setRetryCount(0);
+
+        // Check for microphone permissions first (especially important for Brave)
+        if (navigator.permissions) {
+          navigator.permissions.query({ name: 'microphone' as PermissionName }).then((result) => {
+            if (result.state === 'denied') {
+              notifications.show({
+                title: 'Microphone Permission Denied',
+                message: 'Please allow microphone access in your browser settings to use voice navigation.',
+                color: 'red',
+                autoClose: 5000,
+              });
+              setUserInitiated(false);
+              return;
+            }
+          }).catch(() => {
+            // Permission API not supported, continue anyway
+          });
+        }
+
         recognitionRef.current.start();
       } catch (error) {
         setUserInitiated(false);
+        const browserInfo = detectBrowser();
         notifications.show({
           title: 'Voice Recognition Error',
-          message: 'Failed to start voice recognition. Please try again.',
+          message: browserInfo.isBrave
+            ? 'Failed to start voice recognition in Brave. Please check your browser settings and ensure Google services are enabled.'
+            : 'Failed to start voice recognition. Please try again.',
           color: 'red',
-          autoClose: 3000,
+          autoClose: browserInfo.isBrave ? 8000 : 3000,
         });
       }
     }
@@ -330,8 +348,10 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
   if (!isSupported) {
     return (
       <Tooltip
-        label="Voice Navigation not supported in this browser. Please use Chrome, Edge, or Safari."
-        position={isCollapsed ? "right" : "top"}
+        label={getBrowserSpecificMessage()}
+        position="bottom"
+        multiline
+        w={300}
       >
         <ActionIcon
           variant="subtle"
@@ -350,7 +370,7 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
       <Group gap="xs">
         <Tooltip
           label={isListening ? "Stop Voice Navigation" : "Start Voice Navigation"}
-          position={isCollapsed ? "right" : "top"}
+          position="bottom"
         >
           <ActionIcon
             variant={isListening ? "filled" : "subtle"}
@@ -367,18 +387,16 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
           </ActionIcon>
         </Tooltip>
 
-        {!isCollapsed && (
-          <Tooltip label="Voice Commands Help" position="top">
-            <ActionIcon
-              variant="subtle"
-              size="sm"
-              onClick={() => setShowModal(true)}
-              style={{ color: theme.colors.textSecondary }}
-            >
-              <IconHelp size={16} />
-            </ActionIcon>
-          </Tooltip>
-        )}
+        <Tooltip label="Voice Commands Help" position="bottom">
+          <ActionIcon
+            variant="subtle"
+            size="sm"
+            onClick={() => setShowModal(true)}
+            style={{ color: theme.colors.textSecondary }}
+          >
+            <IconHelp size={16} />
+          </ActionIcon>
+        </Tooltip>
       </Group>
 
       {/* Help Modal */}
@@ -391,8 +409,19 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
             <CustomText fontWeight={600} color="primary">Voice Navigation Commands</CustomText>
           </Group>
         }
-        size="md"
+        size="lg"
         centered
+        styles={{
+          content: {
+            maxHeight: '85vh',
+            overflow: 'hidden'
+          },
+          body: {
+            padding: '20px',
+            maxHeight: '70vh',
+            overflow: 'auto'
+          }
+        }}
       >
         <Stack gap="md">
           <CustomText size="sm" color="secondary">
@@ -405,8 +434,7 @@ const VoiceNavigation: React.FC<VoiceNavigationProps> = ({ isCollapsed = false }
             borderRadius: '4px',
             border: '1px solid #ffeaa7'
           }}>
-            💡 <strong>Tip:</strong> If you get "network error", it's a browser limitation.
-            Try speaking immediately after clicking the microphone icon, or use Chrome/Edge for better results.
+{getBrowserTips()}
           </CustomText>
 
           <Stack gap="xs">

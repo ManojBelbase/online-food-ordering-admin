@@ -5,7 +5,6 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useResponsive } from "../../styles/useResponsive";
 import { SidebarLinksList } from "./SidebarLinksList";
 import { CustomText, ActionButton } from "../../components/ui";
-import VoiceNavigation from "../../components/VoiceNavigation";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -133,14 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
           </>
         )}
 
-        <Box style={{
-          padding: isCollapsed ? '8px 4px' : '8px 16px',
-          display: 'flex',
-          justifyContent: isCollapsed ? 'center' : 'flex-start',
-          marginBottom: '12px'
-        }}>
-          <VoiceNavigation isCollapsed={isCollapsed} />
-        </Box>
+
 
         <Group gap={isCollapsed ? 0 : 8} style={{ justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
           <Avatar size={isCollapsed ? 32 : 28} radius="sm" />

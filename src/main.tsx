@@ -19,12 +19,13 @@ import { appStore, persistor } from "./redux/store/store";
 import LoadingSpinner from "./components/GlobalComponents/LoadingSpinner";
 import { QueryProvider } from "./providers/QueryProvider";
 
-const preloadCriticalComponents = () => {    
-  import("./pages/login/LoginPage.tsx");
-  import("./utils/faceValidation");
+const preloadCriticalComponents = () => {
+  if (window.location.pathname === '/login' || !localStorage.getItem('auth-token')) {
+    import("./pages/login/LoginPage.tsx");
+  }
 };
 
-preloadCriticalComponents();
+setTimeout(preloadCriticalComponents, 100);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

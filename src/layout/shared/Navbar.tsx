@@ -120,13 +120,15 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
         top: 0,
         zIndex: 1000,
         paddingBlock: "14px",
+        flexWrap: "nowrap",
+        minWidth: 0,
       }}
     >
-      <Group gap="xs">
+      <Group gap="xs" wrap="nowrap" style={{ minWidth: 0, flex: 1 }}>
         <ActionIcon
           variant="subtle"
           onClick={onHamburgerClick}
-          style={{ color: theme.colors.textSecondary }}
+          style={{ color: theme.colors.textSecondary, flexShrink: 0 }}
         >
           <IconMenu2 size={24} />
         </ActionIcon>
@@ -136,6 +138,9 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
             style={{
               color: theme.colors.navbarText,
               fontWeight: 600,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {isTablet ? "Food Admin" : "Food Ordering Admin"}
@@ -143,7 +148,7 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
         )}
       </Group>
 
-      <Group gap="xs">
+      <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
         {!isMobile && (
           <TextInput
             placeholder="Search..."
@@ -161,13 +166,17 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
                 },
               },
             }}
-            style={{ width: isTablet ? "180px" : "250px" }}
+            style={{
+              width: isTablet ? "140px" : "180px",
+              minWidth: isTablet ? "140px" : "180px",
+              flexShrink: 0
+            }}
           />
         )}
         {isMobile && (
           <ActionIcon
             variant="subtle"
-            style={{ color: theme.colors.textSecondary }}
+            style={{ color: theme.colors.textSecondary, flexShrink: 0 }}
           >
             <IconSearch size={20} />
           </ActionIcon>

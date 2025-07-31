@@ -56,7 +56,7 @@ export const SidebarLinksList: React.FC<Props> = ({
         const isActive = isDirectMatch || isChildMatch;
 
         return (
-          <Box key={item.label}>
+          <Box key={item.label} style={{ marginBottom: '4px' }}>
             {isCollapsed ? (
               <Tooltip label={item.label} position="right">
                 <UnstyledButton
@@ -154,7 +154,7 @@ export const SidebarLinksList: React.FC<Props> = ({
                             }}
                           />
                           <CustomText
-                            fontSize="15px"
+                            fontSize="16px"
                             fontWeight={400}
                             color={isChildActive ? 'info' : 'primary'}
                           >
@@ -189,7 +189,7 @@ export const SidebarLinksList: React.FC<Props> = ({
                 }} />}
                 <CustomText
                   fontSize="16px"
-                  fontWeight={400}
+                  fontWeight={500}
                   color={isActive ? 'info' : 'primary'}
                 >
                   {item.label}

@@ -78,7 +78,6 @@ const protectedRoutes: RouteObject[] = [
       { path: FRONTENDROUTES.RESTAURANT, element: <RestaurantPageIndex /> },
 
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
-      { path: FRONTENDROUTES.CATEGORY, element: <CategoryPageIndex /> },
       { path: FRONTENDROUTES.FOOD_ITEM, element: <FoodItemPageIndex /> },
 
       { path: FRONTENDROUTES.NEW_ORDERS, element: <NewOrderPageIndex /> },
