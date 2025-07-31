@@ -1,10 +1,6 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
-# Run the build command
 npm run build
 
-# Check if build was successful
 if [ $? -ne 0 ]; then
   echo "❌ Build failed! Push aborted."
   echo "Please fix the build errors before pushing."
