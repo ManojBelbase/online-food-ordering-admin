@@ -12,7 +12,7 @@ import FaceLogin from "./FaceLogin"
 const LoginPage: React.FC = () => {
   const { theme } = useTheme()
   const navigate = useNavigate()
-  const location = useLocation()
+  const location = useLocation()  
   const [activeTab, setActiveTab] = useState("credentials")
   const { loadingLogin, isAuthenticated } = useAuth()
   const from = location.state?.from?.pathname || "/"

@@ -1,10 +1,9 @@
-"use client"
 
 import type React from "react"
 import { TextInput, PasswordInput, Button, Stack, Text } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { notifications } from "@mantine/notifications"
-import { IconLogin, IconUser, IconLock, IconCheck, IconAlertCircle } from "@tabler/icons-react"
+import { IconLogin, IconUser, IconLock, IconCheck, IconAlertCircle, IconFaceId } from "@tabler/icons-react"
 import { useAppDispatch, useAuth } from "../../redux/useAuth"
 import { useTheme } from "../../contexts/ThemeContext"
 import { loginUser } from "../../server-action/authSlice"
@@ -18,9 +17,10 @@ interface LoginFormValues {
 
 interface CredentialsLoginProps {
   onSuccess: () => void
+  onSwitchToFace?: () => void
 }
 
-const CredentialsLogin: React.FC<CredentialsLoginProps> = ({ onSuccess }) => {
+const CredentialsLogin: React.FC<CredentialsLoginProps> = ({ onSuccess, onSwitchToFace }) => {
   const { theme } = useTheme()
   const dispatch = useAppDispatch()
   const { loadingLogin, errorLogin } = useAuth()
@@ -45,9 +45,11 @@ const CredentialsLogin: React.FC<CredentialsLoginProps> = ({ onSuccess }) => {
         })
         onSuccess()
       } else if (loginUser.rejected.match(result)) {
+        const errorMessage = (result.payload as string) || "Invalid credentials";
+   
         notifications.show({
           title: "Login Failed",
-          message: (result.payload as string) || "Invalid credentials",
+          message: errorMessage,
           color: "red",
           icon: <IconAlertCircle size={16} />,
         })
@@ -158,6 +160,22 @@ const CredentialsLogin: React.FC<CredentialsLoginProps> = ({ onSuccess }) => {
           >
             {errorLogin}
           </Text>
+        )}
+
+        {onSwitchToFace && (
+          <Button
+            variant="subtle"
+            onClick={onSwitchToFace}
+            size="sm"
+            fullWidth
+            leftSection={<IconFaceId size={16} />}
+            style={{
+              color: theme.colors.textSecondary,
+              fontWeight: 400,
+            }}
+          >
+            Use face login instead
+          </Button>
         )}
 
       </Stack>

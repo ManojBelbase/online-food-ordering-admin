@@ -1,30 +1,16 @@
-"use client"
-
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Button, Stack, Text, Loader, Select, Box, Badge } from "@mantine/core"
+import { Button, Stack, Text, Loader, Box, Badge } from "@mantine/core"
 import { notifications } from "@mantine/notifications"
-import { IconCamera, IconCheck, IconX, IconUser, IconShield } from "@tabler/icons-react"
+import { IconCamera, IconCheck, IconX, IconKey } from "@tabler/icons-react"
 import * as faceapi from "face-api.js"
 import { useTheme } from "../../contexts/ThemeContext"
 import { useAuth } from "../../redux/useAuth"
 import type { Auth } from "../../types/auth"
 
-type ValidationLevel = "BASIC" | "STANDARD"
-
 interface FaceLoginProps {
   onSwitchToCredentials: () => void
-}
-
-interface LivenessResult {
-  isLive: boolean
-  confidence: number
-}
-
-interface BlinkResult {
-  blinkDetected: boolean
-  blinkCount: number
 }
 
 const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
@@ -34,10 +20,10 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
   const [loading, setLoading] = useState(false)
   const [faceModelsLoaded, setFaceModelsLoaded] = useState(false)
   const [instruction, setInstruction] = useState("Position your face in the camera")
-  const [validationLevel, setValidationLevel] = useState<ValidationLevel>("BASIC")
   const [faceDetected, setFaceDetected] = useState(false)
   const [confidence, setConfidence] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
 
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
@@ -48,30 +34,40 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
   useEffect(() => {
     const loadModels = async () => {
       try {
-        const MODEL_URL = "/models"
-        await Promise.all([
-          faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
-          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        ])
-        setFaceModelsLoaded(true)
-        notifications.show({
-          title: "Ready",
-          message: "Face recognition loaded",
-          color: "green",
-          icon: <IconCheck size={16} />,
-        })
+        // Check if models are already preloaded
+        const { areFaceRecognitionModelsLoaded, loadFaceRecognitionModels } = await import('../../server-action/api/faceRecognition');
+        
+        if (areFaceRecognitionModelsLoaded()) {
+          setFaceModelsLoaded(true);
+          notifications.show({
+            title: "Ready",
+            message: "Face recognition ready",
+            color: "green",
+            icon: <IconCheck size={16} />,
+          });
+        } else {
+          // Load models if not already preloaded
+          await loadFaceRecognitionModels();
+          setFaceModelsLoaded(true);
+          notifications.show({
+            title: "Ready",
+            message: "Face recognition loaded",
+            color: "green",
+            icon: <IconCheck size={16} />,
+          });
+        }
       } catch (error) {
         notifications.show({
           title: "Error",
           message: "Failed to load face recognition",
           color: "red",
           icon: <IconX size={16} />,
-        })
+        });
       }
-    }
-    loadModels()
-  }, [])
+    };
+    
+    loadModels();
+  }, []);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout
@@ -104,14 +100,6 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
     }
   }, [faceModelsLoaded, loading])
 
-  const detectLiveness = async (_video: HTMLVideoElement): Promise<LivenessResult> => {
-    return { isLive: true, confidence: 0.85 }
-  }
-
-  const detectBlink = async (_video: HTMLVideoElement): Promise<BlinkResult> => {
-    return { blinkDetected: true, blinkCount: 2 }
-  }
-
   const handleFaceLogin = async () => {
     if (!faceModelsLoaded) {
       notifications.show({
@@ -126,6 +114,7 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
     setLoading(true)
     setInstruction("Starting camera...")
     let stream: MediaStream | null = null
+    streamRef.current = null
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({
@@ -136,6 +125,7 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
           frameRate: { ideal: 30, min: 15 },
         },
       })
+      streamRef.current = stream
 
       if (!videoRef.current) {
         await new Promise((resolve) => setTimeout(resolve, 200))
@@ -162,32 +152,6 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
 
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setInstruction("Look at the camera")
-
-      setInstruction("Move your head slightly...")
-      const livenessResult = await detectLiveness(videoRef.current)
-      if (!livenessResult.isLive) {
-        notifications.show({
-          title: "Anti-Spoofing Failed",
-          message: "Please move naturally",
-          color: "red",
-          icon: <IconX size={16} />,
-        })
-        return
-      }
-
-      if (validationLevel === "STANDARD") {
-        setInstruction("Please blink naturally...")
-        const blinkResult = await detectBlink(videoRef.current)
-        if (!blinkResult.blinkDetected) {
-          notifications.show({
-            title: "Blink Detection Failed",
-            message: "Please blink naturally",
-            color: "red",
-            icon: <IconX size={16} />,
-          })
-          return
-        }
-      }
 
       setInstruction("Authenticating...")
       const detections = await faceapi
@@ -245,7 +209,16 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
         icon: <IconX size={16} />,
       })
     } finally {
-      
+      if (streamRef.current) {
+        const tracks = streamRef.current.getTracks();
+        tracks.forEach(track => track.stop());
+        streamRef.current = null;
+      } else if (videoRef.current && videoRef.current.srcObject) {
+        const videoStream = videoRef.current.srcObject as MediaStream;
+        const tracks = videoStream.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+      setLoading(false);
     }
   }
 
@@ -264,39 +237,10 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
   }
 
   return (
-    <Stack gap={16}>
+    <Stack gap={8}>
       <Text size="sm" c={theme.colors.textSecondary} ta="center">
         {instruction}
       </Text>
-
-      <Select
-        placeholder="Security level"
-        value={validationLevel}
-        onChange={(value) => setValidationLevel(value as ValidationLevel)}
-        disabled={loading}
-        data={[
-          { value: "BASIC", label: "Basic" },
-          { value: "STANDARD", label: "Enhanced" },
-        ]}
-        size="md"
-        leftSection={<IconShield size={18} style={{ color: theme.colors.textSecondary }} />}
-        styles={{
-          input: {
-            backgroundColor: theme.colors.inputBackground,
-            border: `1px solid ${theme.colors.inputBorder}`,
-            borderRadius: "8px",
-            color: theme.colors.textPrimary,
-            fontSize: "14px",
-            height: "44px",
-            paddingLeft: "40px",
-            "&:focus": {
-              borderColor: theme.colors.primary,
-              boxShadow: `0 0 0 2px ${theme.colors.primary}20`,
-              outline: "none",
-            },
-          },
-        }}
-      />
 
       <Box pos="relative">
         <Box
@@ -373,7 +317,7 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
         )}
       </Box>
 
-      <Stack gap={8}>
+      <Stack gap={3}>
         <Button
           onClick={handleFaceLogin}
           disabled={loading || !faceModelsLoaded}
@@ -386,7 +330,7 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
               backgroundColor: theme.colors.primary,
               border: "none",
               borderRadius: "8px",
-              height: "44px",
+              height: "40px",
               fontSize: "14px",
               fontWeight: 600,
               "&:hover": {
@@ -399,29 +343,19 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
         </Button>
 
         <Button
+          variant="subtle"
           onClick={onSwitchToCredentials}
-          disabled={loading}
-          variant="light"
-          leftSection={<IconUser size={18} />}
-          size="md"
+          size="sm"
           fullWidth
-          styles={{
-            root: {
-              backgroundColor: theme.colors.inputBackground,
-              border: `1px solid ${theme.colors.inputBorder}`,
-              borderRadius: "8px",
-              height: "44px",
-              fontSize: "14px",
-              fontWeight: 500,
-              color: theme.colors.textPrimary,
-              "&:hover": {
-                backgroundColor: theme.colors.surface,
-              },
-            },
+          leftSection={<IconKey size={16} />}
+          style={{
+            color: theme.colors.textSecondary,
+            fontWeight: 400,
           }}
-        > 
-          Use Password
+        >
+          Use password instead
         </Button>
+        
       </Stack>
     </Stack>
   )

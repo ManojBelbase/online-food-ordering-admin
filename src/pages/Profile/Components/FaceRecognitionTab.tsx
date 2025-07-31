@@ -42,12 +42,10 @@ const FaceRecognitionTab: React.FC = () => {
   // Load face-api.js models (using TinyFaceDetector - more stable)
   const loadFaceModels = async (): Promise<void> => {
     try {
-      console.log('🔄 Starting face-api.js models loading...');
       const MODEL_URL = '/models';
 
       // Quick bypass for testing - remove this in production
       if (window.location.search.includes('skipModels=true')) {
-        console.log('🚀 Skipping model loading (debug mode)');
         setFaceModelsLoaded(true);
         notifications.show({
           title: 'Debug Mode',
@@ -81,35 +79,32 @@ const FaceRecognitionTab: React.FC = () => {
       const allModelsLoaded = hasDetector && landmarksLoaded && recognitionLoaded;
 
       if (allModelsLoaded) {
-        console.log('🎉 All face models loaded and verified successfully!');
         setFaceModelsLoaded(true);
 
-        notifications.show({
-          title: 'Models Loaded',
-          message: 'Face recognition is ready to use!',
-          color: 'green',
-          icon: <IconCheck size={16} />,
-        });
+        if (!faceModelsLoaded) {
+          notifications.show({
+            title: 'Models Loaded',
+            message: 'Face recognition is ready to use!',
+            color: 'green',
+            icon: <IconCheck size={16} />,
+          });
+        }
       } else {
-        console.log('⚠️ Not all models loaded, but enabling anyway for testing...');
         setFaceModelsLoaded(true); // Force enable for testing
 
-        notifications.show({
-          title: 'Models Partially Loaded',
-          message: 'Face recognition enabled in test mode. Some features may not work.',
-          color: 'orange',
-          icon: <IconCheck size={16} />,
-        });
+        // Only show notification if this is the first time loading
+        if (!faceModelsLoaded) {
+          notifications.show({
+            title: 'Models Partially Loaded',
+            message: 'Face recognition enabled in test mode. Some features may not work.',
+            color: 'orange',
+            icon: <IconCheck size={16} />,
+          });
+        }
       }
     } catch (error: any) {
-      console.error('❌ Failed to load face models:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
 
-      // Try to provide more specific error information
+
       let errorMessage = 'Failed to load face recognition models.';
       if (error.message?.includes('Unexpected token') && error.message?.includes('doctype')) {
         errorMessage = 'Server returning HTML instead of model files. Check if models are properly served.';
@@ -128,10 +123,8 @@ const FaceRecognitionTab: React.FC = () => {
         message: errorMessage + ' Try the retry button or check console.',
         color: 'red',
         icon: <IconX size={16} />,
-        autoClose: false, // Keep error visible
+        autoClose: false,
       });
-
-      // Set a flag to show we attempted loading
       setFaceModelsLoaded(false);
     }
   };
@@ -139,20 +132,16 @@ const FaceRecognitionTab: React.FC = () => {
   const loadDashboardData = async (): Promise<void> => {
     try {
       // Try backend API first
-      console.log('🔍 Checking face status from backend...');
       const faceResponse = await makeRequest.get('/auth/face-status');
 
       if (faceResponse.data.success) {
-        console.log('✅ Backend API response:', faceResponse.data);
         setFaceEnabled(faceResponse.data.faceEnabled || false);
       } else {
-        console.log('❌ Backend API failed, using localStorage fallback');
         // Fallback to localStorage if backend fails
         const storedFaceData = localStorage.getItem(`faceData_${user?.id || 'demo'}`);
         setFaceEnabled(!!storedFaceData);
       }
     } catch (error) {
-      console.error('❌ Backend API error, using localStorage fallback:', error);
       // Fallback to localStorage if API call fails
       const storedFaceData = localStorage.getItem(`faceData_${user?.id || 'demo'}`);
       setFaceEnabled(!!storedFaceData);
@@ -176,11 +165,9 @@ const FaceRecognitionTab: React.FC = () => {
       if (faceEnabled) {
         // Try to disable face recognition via backend API
         try {
-          console.log('🔄 Disabling face recognition via backend...');
           const response = await makeRequest.post('/auth/face-disable');
 
           if (response.data.success) {
-            console.log('✅ Backend disable successful');
             setFaceEnabled(false);
             notifications.show({
               title: 'Success',
@@ -192,8 +179,6 @@ const FaceRecognitionTab: React.FC = () => {
             throw new Error('Backend disable failed');
           }
         } catch (apiError) {
-          console.log('❌ Backend disable failed, using localStorage fallback');
-          // Fallback to localStorage if backend fails
           localStorage.removeItem(`faceData_${user?.id || 'demo'}`);
           setFaceEnabled(false);
           notifications.show({
@@ -209,7 +194,6 @@ const FaceRecognitionTab: React.FC = () => {
         await setupFaceRecognition();
       }
     } catch (error: any) {
-      console.error('Failed to toggle face recognition:', error);
       notifications.show({
         title: 'Error',
         message: error.response?.data?.message || 'Operation failed',
@@ -223,14 +207,13 @@ const FaceRecognitionTab: React.FC = () => {
 
   const setupFaceRecognition = async (): Promise<void> => {
     try {
-      console.log('Setting up camera...');
 
       // Start camera with better constraints
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 640, min: 320 },
           height: { ideal: 480, min: 240 },
-          facingMode: 'user' // Use front camera
+          facingMode: 'user' 
         }
       });
 
@@ -241,30 +224,23 @@ const FaceRecognitionTab: React.FC = () => {
         await new Promise<void>((resolve) => {
           if (videoRef.current) {
             videoRef.current.onloadedmetadata = () => {
-              console.log('Video metadata loaded');
               videoRef.current?.play().then(() => {
-                console.log('Video playing');
                 resolve();
-              }).catch((err) => {
-                console.error('Video play failed:', err);
+              }).catch(() => {
                 resolve();
               });
             };
           }
         });
 
-        // Wait a bit more for the video to stabilize
         await new Promise(resolve => setTimeout(resolve, 1000));
-
         notifications.show({
           title: 'Camera Ready',
           message: 'Position your face clearly and click "Capture Face"',
           color: 'green',
-          icon: <IconCamera size={16} />,
         });
       }
     } catch (error) {
-      console.error('Camera access failed:', error);
       notifications.show({
         title: 'Camera Error',
         message: 'Camera access denied. Please allow camera access to enable face recognition.',
@@ -299,7 +275,6 @@ const FaceRecognitionTab: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log('Starting face detection...');
 
       // Wait a moment for the video to be ready
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -315,19 +290,10 @@ const FaceRecognitionTab: React.FC = () => {
         setLoading(false);
         return;
       }
-
-      console.log('Video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
-
       // Try different face detection methods based on what's loaded
       let detections;
-
-      console.log('🔍 Checking which detector is available...');
-      console.log('TinyFaceDetector loaded:', faceapi.nets.tinyFaceDetector.isLoaded);
-      console.log('SSD MobileNet loaded:', faceapi.nets.ssdMobilenetv1.isLoaded);
-
       try {
         if (faceapi.nets.tinyFaceDetector.isLoaded) {
-          console.log('📥 Using TinyFaceDetector...');
           detections = await faceapi
             .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions({
               inputSize: 416,
@@ -336,7 +302,6 @@ const FaceRecognitionTab: React.FC = () => {
             .withFaceLandmarks()
             .withFaceDescriptors();
         } else if (faceapi.nets.ssdMobilenetv1.isLoaded) {
-          console.log('📥 Using SSD MobileNet...');
           detections = await faceapi
             .detectAllFaces(videoRef.current, new faceapi.SsdMobilenetv1Options({
               minConfidence: 0.4,
@@ -345,8 +310,6 @@ const FaceRecognitionTab: React.FC = () => {
             .withFaceLandmarks()
             .withFaceDescriptors();
         } else {
-          console.log('⚠️ No models loaded, creating mock detection for testing...');
-          // Create a mock detection for testing when models aren't loaded
           detections = [{
             detection: { box: { x: 100, y: 100, width: 200, height: 200 }, score: 0.9 },
             landmarks: null,
@@ -361,10 +324,7 @@ const FaceRecognitionTab: React.FC = () => {
           });
         }
       } catch (detectionError) {
-        console.error('❌ Face detection failed:', detectionError);
-        console.log('🔧 Creating fallback mock detection...');
 
-        // Fallback mock detection
         detections = [{
           detection: { box: { x: 100, y: 100, width: 200, height: 200 }, score: 0.9 },
           landmarks: null,
@@ -378,8 +338,6 @@ const FaceRecognitionTab: React.FC = () => {
           icon: <IconCheck size={16} />,
         });
       }
-
-      console.log('Detections found:', detections.length);
 
       if (detections.length === 0) {
         notifications.show({
@@ -400,14 +358,8 @@ const FaceRecognitionTab: React.FC = () => {
         });
         return;
       }
-
-      console.log('Face detected successfully, extracting descriptor...');
-
       // Get face descriptor
       const faceDescriptor = Array.from(detections[0].descriptor);
-
-      console.log('Face descriptor length:', faceDescriptor.length);
-
       if (faceDescriptor.length !== 128) {
         notifications.show({
           title: 'Error',
@@ -417,14 +369,9 @@ const FaceRecognitionTab: React.FC = () => {
         });
         return;
       }
-
-      console.log('🔄 Enabling face recognition via backend...');
-
       // Try backend API first
       try {
         const response = await makeRequest.post('/auth/face-enable', { faceDescriptor });
-        console.log('✅ Backend enable response:', response.data);
-
         if (response.data.success) {
           setFaceEnabled(true);
           setShowCamera(false);
@@ -444,8 +391,6 @@ const FaceRecognitionTab: React.FC = () => {
           throw new Error(response.data.message || 'Backend enable failed');
         }
       } catch (apiError: any) {
-        console.log('❌ Backend enable failed, using localStorage fallback:', apiError);
-
         // Fallback to localStorage if backend fails
         const faceData = {
           descriptor: faceDescriptor,
@@ -472,9 +417,7 @@ const FaceRecognitionTab: React.FC = () => {
       }
 
     } catch (error: any) {
-      console.error('Face capture failed:', error);
       if (error.response) {
-        console.error('API Error:', error.response.data);
         notifications.show({
           title: 'API Error',
           message: error.response.data?.message || 'API call failed',
@@ -512,14 +455,11 @@ const FaceRecognitionTab: React.FC = () => {
           <Group justify="space-between">
             <div>
               <Title order={3} style={{ color: theme.colors.textPrimary }}>
-                Face Recognition Login
+                Face Recognition
               </Title>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
-                Enable face recognition for quick and secure login
-              </Text>
             </div>
-            <Badge 
-              color={faceEnabled ? 'green' : 'gray'} 
+            <Badge
+              color={faceEnabled ? 'green' : 'gray'}
               size="lg"
               leftSection={<IconFaceId size={16} />}
             >
@@ -554,39 +494,6 @@ const FaceRecognitionTab: React.FC = () => {
               {loading ? 'Processing...' : faceEnabled ? 'Disable' : !faceModelsLoaded ? 'Loading Models...' : 'Enable'}
             </Button>
 
-            {/* Debug buttons - remove in production */}
-            {!faceModelsLoaded && (
-              <Group>
-                <Button
-                  onClick={() => {
-                    console.log('🔧 Force enabling models (debug mode)');
-                    setFaceModelsLoaded(true);
-                    notifications.show({
-                      title: 'Debug Mode',
-                      message: 'Models force-enabled for testing',
-                      color: 'orange',
-                    });
-                  }}
-                  variant="outline"
-                  color="orange"
-                  size="xs"
-                >
-                  Force Enable (Debug)
-                </Button>
-                <Button
-                  onClick={() => {
-                    console.log('🔄 Manual model loading attempt...');
-                    loadFaceModels();
-                  }}
-                  variant="outline"
-                  color="blue"
-                  size="xs"
-                  loading={loading}
-                >
-                  Retry Loading
-                </Button>
-              </Group>
-            )}
           </Group>
         </Stack>
       </Paper>
@@ -627,17 +534,6 @@ const FaceRecognitionTab: React.FC = () => {
                 }}
               />
             </div>
-
-            <Alert color="blue" icon={<IconCamera size={16} />}>
-              <Text size="sm" fw={500}>📸 Face Detection Tips:</Text>
-              <Text size="sm">
-                • Position your face in the green circle<br/>
-                • Ensure good lighting<br/>
-                • Look directly at the camera<br/>
-                • Remove glasses if possible
-              </Text>
-            </Alert>
-
             <Group justify="center">
               <Button
                 onClick={captureFace}
@@ -661,17 +557,6 @@ const FaceRecognitionTab: React.FC = () => {
         </Card>
       )}
 
-      {/* Instructions */}
-      <Alert color="blue" icon={<IconAlertCircle size={16} />}>
-        <Text size="sm" fw={500} mb="xs">How to use Face Recognition:</Text>
-        <Text size="sm">
-          1. Click "Enable" to start face registration<br/>
-          2. Allow camera access when prompted<br/>
-          3. Position your face clearly in the camera view<br/>
-          4. Click "Capture Face" to register your face<br/>
-          5. Once registered, you can use face login on the login page
-        </Text>
-      </Alert>
     </Stack>
   );
 };
