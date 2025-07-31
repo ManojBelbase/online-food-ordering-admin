@@ -10,14 +10,14 @@ export const FRONTENDROUTES = {
   GLOBAL_CATEGORY:'/global-category',
   
   RESTAURANT_ONBOARDING:'/restaurant-onboarding',
-  RESTAURAT:'/restaurant',
+  RESTAURANT:'/restaurant',
 
   FOOD_ITEM:'/food-item',
 
   ORDERS: "/orders",
   NEW_ORDERS:'/new-orders',
   COMPLETED_ORDERS:'/completed-orders',
-  CANCELLED_ORDERS:'/completed-orders',
+  CANCELLED_ORDERS:'/cancelled-orders',
   
   PROFILE: "/profile",
   MENU:'/menu',

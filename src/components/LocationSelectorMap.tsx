@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Box, Button, Loader, Notification } from "@mantine/core";
+import { Box, Loader, Notification } from "@mantine/core";
 import { IconTarget } from "@tabler/icons-react";
+import { ActionButton } from "./ui";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents, Circle } from "react-leaflet";
 import L, { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -123,8 +124,8 @@ const LocationSelectorMap: React.FC<LocationSelectorMapProps> = ({
         )}
       </MapContainer>
 
-      <Button
-        leftSection={<IconTarget size={18} />}
+      <ActionButton
+        variant="outline"
         style={{
           position: "absolute",
           top: "10px",
@@ -137,8 +138,13 @@ const LocationSelectorMap: React.FC<LocationSelectorMapProps> = ({
         onClick={handleGetCurrentLocation}
         disabled={isLoading}
       >
-        {isLoading ? <Loader size="sm" /> : "Use Current Location"}
-      </Button>
+        {isLoading ? (
+          <Loader size="sm" style={{ marginRight: '8px' }} />
+        ) : (
+          <IconTarget size={18} style={{ marginRight: '8px' }} />
+        )}
+        Use Current Location
+      </ActionButton>
 
       {error && (
         <Notification

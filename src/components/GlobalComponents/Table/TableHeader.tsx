@@ -1,6 +1,7 @@
 import React from "react";
-import { Table, Group, Text } from "@mantine/core";
+import { Table, Group } from "@mantine/core";
 import { useTheme } from "../../../contexts/ThemeContext";
+import { CustomText } from "../../ui";
 
 interface TableColumn {
   title: string;
@@ -104,11 +105,11 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                     : "flex-start"
                 }
               >
-                <Text fw={600}>{column.title}</Text>
+                <CustomText fontWeight={600}>{column.title}</CustomText>
                 {column.sortable && sortColumn === column.key && (
-                  <Text size="sm">
+                  <CustomText size="sm">
                     {sortDirection === "asc" ? "↑" : "↓"}
-                  </Text>
+                  </CustomText>
                 )}
               </Group>
             </Table.Th>

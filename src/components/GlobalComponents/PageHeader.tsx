@@ -3,16 +3,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   Group,
   Title,
-  Text,
   Breadcrumbs,
   Anchor,
   ActionIcon,
   Flex,
   Box,
-  Button,
 } from "@mantine/core";
 import { IconArrowLeft, IconChevronRight, IconPlus } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { CustomText, ActionButton } from "../ui";
 
 interface PageHeaderProps {
   title: string;
@@ -83,7 +82,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         borderRadius: "4px",
       }}
     >
-      {/* Breadcrumbs */}
       {finalBreadcrumbs && finalBreadcrumbs.length > 0 && (
         <Breadcrumbs
           separator={
@@ -156,37 +154,27 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             </Title>
 
             {subtitle && (
-              <Text
+              <CustomText
                 size="md"
-                style={{
-                  color: theme.colors.textSecondary,
-                  lineHeight: 1.4,
-                  fontSize: "16px",
-                }}
+                color="secondary"
+                lineHeight={1.4}
+                fontSize="16px"
               >
                 {subtitle}
-              </Text>
+              </CustomText>
             )}
           </div>
         </Group>
 
         {/* Action Button */}
         {onClick && (
-          <Button
-            leftSection={<IconPlus size={16} />}
+          <ActionButton
             onClick={onClick}
-            variant={actionVariant}
-            style={{
-              backgroundColor:
-                actionVariant === "filled" ? theme.colors.primary : undefined,
-              borderColor:
-                actionVariant === "outline" ? theme.colors.primary : undefined,
-              color:
-                actionVariant === "outline" ? theme.colors.primary : undefined,
-            }}
+            variant={actionVariant === "filled" ? "primary" : actionVariant === "outline" ? "outline" : "ghost"}
           >
+            <IconPlus size={16} style={{ marginRight: '8px' }} />
             Add {title}
-          </Button>
+          </ActionButton>
         )}
       </Flex>
     </Box>

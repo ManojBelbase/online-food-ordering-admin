@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconUserPlus, IconMail, IconLock } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
@@ -7,6 +7,7 @@ import { FormInput, FormSelect, type SelectOption } from "../../../components/Fo
 import { useAppDispatch } from "../../../redux/useAuth";
 import { signupUser, type SignupCredentials } from "../../../server-action/authThunk";
 import { customerValidation } from "./CustomerFormValidation";
+import { ActionButton } from "../../../components/ui";
 
 
 const CustomerForm: React.FC = () => {
@@ -74,19 +75,14 @@ const roleOptions: SelectOption[] = [
           
         />
 
-        <Button
+        <ActionButton
           type="submit"
-          fullWidth
-          style={{
-            backgroundColor: theme.colors.primary,
-            "&:hover": {
-              backgroundColor: theme.colors.primaryHover,
-            },
-          }}
+          width="100%"
+          variant="primary"
           loading={form.submitting}
         >
           Create Customer
-        </Button>
+        </ActionButton>
       </Stack>
     </form>
   );

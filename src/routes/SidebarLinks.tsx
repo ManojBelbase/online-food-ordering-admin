@@ -34,14 +34,14 @@ export const sidebarLinks: ISidebarLinks[] = [
     to: FRONTENDROUTES.ORDERS,
     icon: IconShoppingCart,
     children:[
-      {label:"New Ordres", to:FRONTENDROUTES.NEW_ORDERS},
-      {label:"Completed Ordres", to:FRONTENDROUTES.COMPLETED_ORDERS},
-      {label:"CANCELLED Ordres", to:FRONTENDROUTES.CANCELLED_ORDERS}
+      {label:"New Orders", to:FRONTENDROUTES.NEW_ORDERS},
+      {label:"Completed Orders", to:FRONTENDROUTES.COMPLETED_ORDERS},
+      {label:"Cancelled Orders", to:FRONTENDROUTES.CANCELLED_ORDERS}
     ]
   },
 {
   label:"Restaurant",
-  to:FRONTENDROUTES.RESTAURAT,
+  to:FRONTENDROUTES.RESTAURANT,
   icon:IconHotelService,
 },
   { label: "Category", to: FRONTENDROUTES.CATEGORY, icon: IconCategoryFilled },

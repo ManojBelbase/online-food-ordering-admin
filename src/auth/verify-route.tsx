@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Container,
   Title,
-  Text,
-  Button,
   Paper,
   Stack,
   LoadingOverlay,
@@ -12,6 +10,7 @@ import {
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconAlertCircle } from "@tabler/icons-react";
 import { useTheme } from "../contexts/ThemeContext";
+import { CustomText, ActionButton } from "../components/ui";
 
 const VerifyEmailPage = () => {
   const location = useLocation();
@@ -109,20 +108,15 @@ const VerifyEmailPage = () => {
             </Title>
             {!loading && success && (
               <>
-                <Text style={{ color: theme.colors.textSecondary }}>
+                <CustomText color="secondary">
                   Your account has been successfully verified. You can now use all features.
-                </Text>
-                <Button
+                </CustomText>
+                <ActionButton
                   onClick={() => navigate("/")}
-                  style={{
-                    backgroundColor: theme.colors.primary,
-                    "&:hover": {
-                      backgroundColor: theme.colors.primaryHover,
-                    },
-                  }}
+                  variant="primary"
                 >
                   Go to Homepage
-                </Button>
+                </ActionButton>
               </>
             )}
           </Stack>

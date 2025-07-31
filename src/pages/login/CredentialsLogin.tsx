@@ -1,6 +1,6 @@
 
 import type React from "react"
-import { TextInput, PasswordInput, Button, Stack, Text } from "@mantine/core"
+import { TextInput, PasswordInput, Stack } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { notifications } from "@mantine/notifications"
 import { IconLogin, IconUser, IconLock, IconCheck, IconAlertCircle, IconFaceId } from "@tabler/icons-react"
@@ -8,6 +8,7 @@ import { useAppDispatch, useAuth } from "../../redux/useAuth"
 import { useTheme } from "../../contexts/ThemeContext"
 import { loginUser } from "../../server-action/authSlice"
 import { loginValidators } from "../../validation/authValidation"
+import { ActionButton } from "../../components/ui"
 
 
 interface LoginFormValues {
@@ -23,7 +24,7 @@ interface CredentialsLoginProps {
 const CredentialsLogin: React.FC<CredentialsLoginProps> = ({ onSuccess, onSwitchToFace }) => {
   const { theme } = useTheme()
   const dispatch = useAppDispatch()
-  const { loadingLogin, errorLogin } = useAuth()
+  const { loadingLogin } = useAuth()
 
   const form = useForm<LoginFormValues>({
     initialValues: {
@@ -122,60 +123,32 @@ const CredentialsLogin: React.FC<CredentialsLoginProps> = ({ onSuccess, onSwitch
           }}
         />
 
-        <Button
+        <ActionButton
           type="submit"
-          fullWidth
+          width="100%"
           size="md"
           loading={loadingLogin}
-          leftSection={!loadingLogin ? <IconLogin size={18} /> : undefined}
-          styles={{
-            root: {
-              backgroundColor: theme.colors.primary,
-              border: "none",
-              borderRadius: "8px",
-              height: "44px",
-              fontSize: "14px",
-              fontWeight: 600,
-              "&:hover": {
-                backgroundColor: theme.colors.primaryHover,
-              },
-            },
-          }}
+          variant="primary"
+          height="44px"
+          fontSize="14px"
+          fontWeight={600}
+          borderRadius="8px"
         >
+          <IconLogin size={18} style={{ marginRight: '8px' }} />
           {loadingLogin ? "Signing In..." : "Sign In"}
-        </Button>
-
-        {errorLogin && (
-          <Text
-            size="sm"
-            c="red" 
-
-            ta="center"
-            p="xs"
-            style={{
-              backgroundColor: theme.colors.error,
-              borderRadius: "6px",
-              border: `1px solid ${theme.colors.error}`,
-            }}
-          >
-            {errorLogin}
-          </Text>
-        )}
+        </ActionButton>
 
         {onSwitchToFace && (
-          <Button
-            variant="subtle"
+          <ActionButton
+            variant="ghost"
             onClick={onSwitchToFace}
             size="sm"
-            fullWidth
-            leftSection={<IconFaceId size={16} />}
-            style={{
-              color: theme.colors.textSecondary,
-              fontWeight: 400,
-            }}
+            width="100%"
+            fontWeight={400}
           >
+            <IconFaceId size={16} style={{ marginRight: '8px' }} />
             Use face login instead
-          </Button>
+          </ActionButton>
         )}
 
       </Stack>

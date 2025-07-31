@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Center,
   Stack,
-  Text,
   Box,
   Skeleton,
   Group,
@@ -10,6 +9,7 @@ import {
 } from '@mantine/core';
 import { useTheme } from '../../contexts/ThemeContext';
 import LoadingSpinner from './LoadingSpinner';
+import { CustomText } from '../ui';
 
 interface PageLoaderProps {
   type?: 'spinner' | 'skeleton' | 'custom';
@@ -150,20 +150,19 @@ const PageLoader: React.FC<PageLoaderProps> = ({
           </Box>
 
           <Stack gap="sm" align="center">
-            <Text
+            <CustomText
               size="lg"
-              fw={600}
-              style={{ color: theme.colors.textPrimary }}
+              fontWeight={600}
+              color="primary"
             >
               Food Ordering Admin
-            </Text>
-            <Text
+            </CustomText>
+            <CustomText
               size="sm"
-              c="dimmed"
-              style={{ color: theme.colors.textSecondary }}
+              color="secondary"
             >
               {message}
-            </Text>
+            </CustomText>
           </Stack>
         </Stack>
       </Center>

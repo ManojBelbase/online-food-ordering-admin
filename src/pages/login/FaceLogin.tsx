@@ -1,19 +1,21 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Button, Stack, Text, Loader, Box, Badge } from "@mantine/core"
+import { Stack, Loader, Box, Badge } from "@mantine/core"
 import { notifications } from "@mantine/notifications"
-import { IconCamera, IconCheck, IconX, IconKey } from "@tabler/icons-react"
+import { IconCheck, IconX } from "@tabler/icons-react"
 import * as faceapi from "face-api.js"
 import { useTheme } from "../../contexts/ThemeContext"
 import { useAuth } from "../../redux/useAuth"
 import type { Auth } from "../../types/auth"
+import { CustomText, ActionButton } from "../../components/ui"
 
 interface FaceLoginProps {
   onSwitchToCredentials: () => void
 }
 
 const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
+  
   const navigate = useNavigate()
   const { theme } = useTheme()
   const { login, isAuthenticated, isLoading } = useAuth()
@@ -238,9 +240,9 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
 
   return (
     <Stack gap={8}>
-      <Text size="sm" c={theme.colors.textSecondary} ta="center">
+      <CustomText size="sm" color="secondary" textAlign="center">
         {instruction}
-      </Text>
+      </CustomText>
 
       <Box pos="relative">
         <Box
@@ -295,9 +297,9 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
               }}
             >
               <Loader size="md" color={theme.colors.primary} />
-              <Text size="xs" c={theme.colors.textSecondary}>
+              <CustomText size="xs" color="secondary">
                 Loading...
-              </Text>
+              </CustomText>
             </Box>
           )}
         </Box>
@@ -318,44 +320,20 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ onSwitchToCredentials }) => {
       </Box>
 
       <Stack gap={3}>
-        <Button
+        <ActionButton
           onClick={handleFaceLogin}
           disabled={loading || !faceModelsLoaded}
-          leftSection={<IconCamera size={18} />}
           loading={loading}
           size="md"
-          fullWidth
-          styles={{
-            root: {
-              backgroundColor: theme.colors.primary,
-              border: "none",
-              borderRadius: "8px",
-              height: "40px",
-              fontSize: "14px",
-              fontWeight: 600,
-              "&:hover": {
-                backgroundColor: theme.colors.primaryHover,
-              },
-            },
-          }}
+          width="100%"
+          variant="primary"
+          height="40px"
+          fontSize="14px"
+          fontWeight={600}
+          borderRadius="8px"
         >
           {loading ? "Processing..." : !faceModelsLoaded ? "Loading..." : "Start Recognition"}
-        </Button>
-
-        <Button
-          variant="subtle"
-          onClick={onSwitchToCredentials}
-          size="sm"
-          fullWidth
-          leftSection={<IconKey size={16} />}
-          style={{
-            color: theme.colors.textSecondary,
-            fontWeight: 400,
-          }}
-        >
-          Use password instead
-        </Button>
-        
+        </ActionButton>
       </Stack>
     </Stack>
   )

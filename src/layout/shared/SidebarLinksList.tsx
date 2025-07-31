@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import { NavLink, Tooltip } from "@mantine/core";
+import { Box, UnstyledButton, Tooltip, Collapse } from "@mantine/core";
 import { IconChevronDown } from "@tabler/icons-react";
 import { NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useRolePermissions } from "../../hooks/useRolePermission";
 import { sidebarLinks } from "../../routes/SidebarLinks";
+import { CustomText } from "../../components/ui";
 
 interface Props {
   isCollapsed: boolean;
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export const SidebarLinksList: React.FC<Props> = ({
-  isCollapsed,
+  isCollapsed,  
   openDropdown,
   setOpenDropdown,
 }) => {
@@ -38,7 +39,7 @@ export const SidebarLinksList: React.FC<Props> = ({
   };
 
   return (
-    <div style={{ marginTop: "10px" }}>
+    <Box style={{ padding: isCollapsed ? '8px 4px' : '8px 0' }}>
       {filteredLinks.map((item) => {
         const Icon = item.icon;
 
@@ -55,20 +56,24 @@ export const SidebarLinksList: React.FC<Props> = ({
         const isActive = isDirectMatch || isChildMatch;
 
         return (
-          <div key={item.label}>
+          <Box key={item.label}>
             {isCollapsed ? (
               <Tooltip label={item.label} position="right">
-                <div
+                <UnstyledButton
                   style={{
+                    width: '100%',
+                    height: '40px',
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    height: "48px",
-                    marginBottom: "5px",
-                    backgroundColor: isActive ? theme.colors.sidebarActive : "transparent",
-                    color: isActive ? theme.colors.sidebarTextActive : theme.colors.sidebarText,
-                    cursor: "pointer",
-                    borderRadius: "4px",
+                    marginBottom: "2px",
+                    backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : "transparent",
+                    color: isActive ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.sidebarText || '#6c757d',
+                    borderRadius: "2px",
+                    transition: 'all 0.15s ease',
+                    '&:hover': {
+                      backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : theme.colors.sidebarHover || '#f8f9fa'
+                    }
                   }}
                   onClick={() => {
                     const targetPath = filteredChildren[0]?.to || item.to;
@@ -77,125 +82,123 @@ export const SidebarLinksList: React.FC<Props> = ({
                     }
                   }}
                 >
-                  {Icon && <Icon size={20} />}
-                </div>
+                  {Icon && <Icon size={18} />}
+                </UnstyledButton>
               </Tooltip>
             ) : item.children && filteredChildren.length > 0 ? (
               <>
-                <NavLink
-                  label={item.label}
-                  leftSection={Icon ? <Icon size={16} /> : undefined}
-                  rightSection={
-                    <IconChevronDown
-                      size={16}
-                      style={{
-                        transform: openDropdown === item.label ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.3s ease",
-                      }}
-                    />
-                  }
-                  onClick={() => toggleDropdown(item.label)}
-                  active={isActive}
-                  styles={{
-                    root: {
-                      color: isActive ? theme.colors.sidebarTextActive : theme.colors.sidebarText,
-                      marginBottom: "5px",
-                      backgroundColor: isActive
-                        ? theme.colors.sidebarActive
-                        : "transparent",
-                      "&:hover": {
-                        backgroundColor: isActive
-                          ? theme.colors.sidebarActive
-                          : theme.colors.sidebarHover,
-                      },
-                      cursor: "pointer",
-                    },
+                <UnstyledButton
+                  style={{
+                    width: '100%',
+                    padding: '8px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '1px',
+                    backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : 'transparent',
+                    borderRadius: '6px',
+                    transition: 'all 0.15s ease',
+                    cursor: 'pointer'
                   }}
-                />
-                {openDropdown === item.label && (
-                  <div style={{ position: "relative", paddingLeft: "20px" }}>
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        bottom: 0,
-                        left: "8px",
-                        width: "2px",
-                        backgroundColor: theme.colors.sidebarText,
-                      }}
-                    />
+                  onClick={() => toggleDropdown(item.label)}
+                >
+                  {Icon && <Icon size={16} style={{
+                    color: isActive ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.sidebarText || '#6c757d'
+                  }} />}
+                  <CustomText
+                    fontSize="16px"
+                    fontWeight={400}
+                    color={isActive ? 'info' : 'primary'}
+                    style={{ flex: 1 }}
+                  >
+                    {item.label}
+                  </CustomText>
+                  <IconChevronDown
+                    size={14}
+                    style={{
+                      color: theme.colors.textSecondary || '#6c757d',
+                      transform: openDropdown === item.label ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.2s ease",
+                    }}
+                  />
+                </UnstyledButton>
+
+                <Collapse in={openDropdown === item.label}>
+                  <Box style={{ paddingLeft: '24px', marginBottom: '4px' }}>
                     {filteredChildren.map((child: any) => {
                       const isChildActive = location.pathname.startsWith(child.to);
                       return (
-                        <NavLink
+                        <UnstyledButton
                           key={child.to}
                           component={RouterNavLink}
                           to={child.to}
-                          label={
-                            <span style={{ display: "flex", alignItems: "center" }}>
-                              <span
-                                style={{
-                                  width: "6px",
-                                  height: "6px",
-                                  backgroundColor: theme.colors.sidebarText,
-                                  borderRadius: "50%",
-                                  marginRight: "8px",
-                                }}
-                              />
-                              {child.label}
-                            </span>
-                          }
-                          active={isChildActive}
-                          styles={{
-                            root: {
-                              paddingLeft: "20px",
-                              color: isChildActive
-                                ? theme.colors.sidebarTextActive
-                                : theme.colors.sidebarText,
-                              backgroundColor: isChildActive
-                                ? theme.colors.sidebarActive
-                                : "transparent",
-                              "&:hover": {
-                                backgroundColor: isChildActive
-                                  ? theme.colors.sidebarActive
-                                  : theme.colors.sidebarHover,
-                              },
-                            },
+                          style={{
+                            width: '100%',
+                            padding: '6px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            marginBottom: '1px',
+                            backgroundColor: isChildActive ? theme.colors.sidebarActive || '#e3f2fd' : 'transparent',
+                            borderRadius: '4px',
+                            transition: 'all 0.15s ease',
+                            textDecoration: 'none'
                           }}
-                        />
+                        >
+                          <Box
+                            style={{
+                              width: '4px',
+                              height: '4px',
+                              backgroundColor: isChildActive ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.textSecondary || '#6c757d',
+                              borderRadius: '50%',
+                            }}
+                          />
+                          <CustomText
+                            fontSize="15px"
+                            fontWeight={400}
+                            color={isChildActive ? 'info' : 'primary'}
+                          >
+                            {child.label}
+                          </CustomText>
+                        </UnstyledButton>
                       );
                     })}
-                  </div>
-                )}
+                  </Box>
+                </Collapse>
               </>
             ) : !item.children && hasPermission(item.to) ? (
-              <NavLink
+              <UnstyledButton
                 component={RouterNavLink}
                 to={item.to}
-                label={item.label}
-                leftSection={Icon && <Icon size={16} />}
-                active={isActive}
-                styles={{
-                  root: {
-                    color: isActive
-                      ? theme.colors.sidebarTextActive
-                      : theme.colors.sidebarText,
-                    marginBottom: "5px",
-                    backgroundColor: isActive
-                      ? theme.colors.sidebarActive
-                      : "transparent",
-                    "&:hover": {
-                      backgroundColor: isActive
-                        ? theme.colors.sidebarActive
-                        : theme.colors.sidebarHover,
-                    },
-                  },
+                style={{
+                  width: '100%',
+                  padding: '8px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '1px',
+                  backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : 'transparent',
+                  borderRadius: '6px',
+                  transition: 'all 0.15s ease',
+                  textDecoration: 'none',
+                  cursor: 'pointer'
                 }}
-              />
+              >
+                {Icon && <Icon size={16} style={{
+                  color: isActive ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.sidebarText || '#6c757d'
+                }} />}
+                <CustomText
+                  fontSize="16px"
+                  fontWeight={400}
+                  color={isActive ? 'info' : 'primary'}
+                >
+                  {item.label}
+                </CustomText>
+              </UnstyledButton>
             ) : null}
-          </div>
+          </Box>
         );
       })}
-    </div>
+    </Box>
   );
 };

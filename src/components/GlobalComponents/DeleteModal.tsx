@@ -1,4 +1,5 @@
-import { Modal, Button } from "@mantine/core";
+import { Modal } from "@mantine/core";
+import { ActionButton, CustomText } from "../ui";
 
 interface DeleteModalProps {
   opened: boolean;
@@ -16,13 +17,17 @@ const DeleteModal = ({ opened, itemName, onClose, onConfirm }: DeleteModalProps)
       size="sm"
     >
       <div>
-        <p>Are you sure you want to delete {itemName}?</p>
-        <Button color="red" onClick={onConfirm} mr="sm">
-          Confirm
-        </Button>
-        <Button variant="outline" onClick={onClose}>
-          Cancel
-        </Button>
+        <CustomText margin="0 0 16px 0">
+          Are you sure you want to delete {itemName}?
+        </CustomText>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <ActionButton variant="error" onClick={onConfirm}>
+            Confirm
+          </ActionButton>
+          <ActionButton variant="outline" onClick={onClose}>
+            Cancel
+          </ActionButton>
+        </div>
       </div>
     </Modal>
   );

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Group, Text, Stack, Image, ActionIcon, Paper, LoadingOverlay } from '@mantine/core';
+import { Group, Stack, Image, ActionIcon, Paper, LoadingOverlay } from '@mantine/core';
 import { Dropzone, MIME_TYPES, type FileWithPath } from '@mantine/dropzone';
 import { IconUpload, IconPhoto, IconX, IconTrash, IconEye } from '@tabler/icons-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { CustomText } from '../ui';
 
 interface FormImageUploadProps {
   label: string;
@@ -105,12 +106,12 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
 
     return (
       <div ref={ref} className={className} {...others}>
-        <Text size="sm" style={{ color: theme.colors.textPrimary, marginBottom: "4px" }}>
+        <CustomText size="sm" color="primary" margin="0 0 4px 0">
           {label}
           {(withAsterisk ?? required) && (
             <span style={{ color: theme.colors.error }}> *</span>
           )}
-        </Text>
+        </CustomText>
 
         {!imageUrls.length && (
           <div style={{ position: 'relative' }}>
@@ -165,22 +166,22 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
                 </Dropzone.Idle>
 
                 <div>
-                  <Text size="xs" style={{ color: theme.colors.textPrimary }}>
+                  <CustomText size="xs" color="primary">
                     {uploading ? 'Uploading...' : 'Drag image here or click to select'}
-                  </Text>
-                  <Text size="sm" mt={4} style={{ color: theme.colors.textSecondary }}>
+                  </CustomText>
+                  <CustomText size="sm" color="secondary" margin="4px 0 0 0">
                     {uploading
                       ? 'Please wait while your image is being uploaded'
                       : 'JPG, PNG, HEIF up to 5MB'}
-                  </Text>
+                  </CustomText>
                 </div>
               </Group>
             </Dropzone>
             <LoadingOverlay visible={uploading} />
             {description && (
-              <Text size="xs" mb="sm" style={{ color: theme.colors.textSecondary }}>
+              <CustomText size="xs" color="secondary" margin="0 0 16px 0">
                 {description}
-              </Text>
+              </CustomText>
             )}
           </div>
         )}
@@ -231,9 +232,9 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
                         radius="sm"
                       />
                     ))}
-                    <Text size="sm" style={{ color: theme.colors.textPrimary, marginLeft: "10px" }}>
+                    <CustomText size="sm" color="primary" margin="0 0 0 10px">
                       +{imageUrls.length - 2} more
-                    </Text>
+                    </CustomText>
                   </Group>
                 )}
                 <Group gap={4} mt="xs" style={{ position: "absolute", top: "0", right: "0" }}>
@@ -266,9 +267,9 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
         )}
 
         {error && (
-          <Text size="sm" mt="xs" style={{ color: theme.colors.error }}>
+          <CustomText size="sm" color="error" margin="8px 0 0 0">
             {error}
-          </Text>
+          </CustomText>
         )}
       </div>
     );

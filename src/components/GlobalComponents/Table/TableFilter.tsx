@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   Group,
-  Button,
   Collapse,
   Select,
   TextInput,
 } from "@mantine/core";
 import { IconFilterOff } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
+import { ActionButton } from "../../ui";
 
 // Filter option interface
 export interface FilterOption {
@@ -143,27 +143,22 @@ const TableFilter: React.FC<TableFilterProps> = ({
         </Group>
 
         <Group p="sm">
-          <Button
+          <ActionButton
             variant="outline"
             size="sm"
-            leftSection={<IconFilterOff size={16} />}
             onClick={clearFilters}
-            color="gray"
-            
           >
+            <IconFilterOff size={16} style={{ marginRight: '8px' }} />
             Clear
-          </Button>
-          <Button
-            variant="filled"
+          </ActionButton>
+          <ActionButton
+            variant="primary"
             size="sm"
             onClick={applyFilters}
             disabled={!hasPendingChanges()}
-            style={{
-              opacity: hasPendingChanges() ? 1 : 1,
-            }}
           >
             Apply {hasPendingChanges() && "•"}
-          </Button>
+          </ActionButton>
         </Group>
       </Box>
     </Collapse>

@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Title,
-  Text,
-  Button,
   Group,
   Stack,
   Paper,
@@ -19,6 +17,7 @@ import {
   IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { CustomText, ActionButton } from '../ui';
 
 const NotFoundPage: React.FC = () => {
   const { theme } = useTheme();
@@ -98,18 +97,15 @@ const NotFoundPage: React.FC = () => {
                 Page Not Found
               </Title>
               
-              <Text
+              <CustomText
                 size="lg"
-                c="dimmed"
-                style={{
-                  color: theme.colors.textSecondary,
-                  maxWidth: '500px',
-                  lineHeight: 1.6,
-                }}
+                color="secondary"
+                lineHeight={1.6}
+                style={{ maxWidth: '500px' }}
               >
-                Oops! The page you're looking for doesn't exist. It might have been moved, 
+                Oops! The page you're looking for doesn't exist. It might have been moved,
                 deleted, or you entered the wrong URL.
-              </Text>
+              </CustomText>
             </Stack>
 
             <Divider
@@ -119,65 +115,42 @@ const NotFoundPage: React.FC = () => {
 
             {/* Action Buttons */}
             <Group gap="md" justify="center">
-              <Button
-                leftSection={<IconHome size={16} />}
-                variant="filled"
+              <ActionButton
+                variant="primary"
                 size="md"
                 onClick={handleGoHome}
-                style={{
-                  backgroundColor: theme.colors.primary,
-                  '&:hover': {
-                    backgroundColor: theme.colors.primaryHover,
-                  },
-                }}
               >
+                <IconHome size={16} style={{ marginRight: '8px' }} />
                 Go Home
-              </Button>
+              </ActionButton>
 
-              <Button
-                leftSection={<IconSearch size={16} />}
-                variant="light"
+              <ActionButton
+                variant="ghost"
                 size="md"
                 onClick={handleGoToDashboard}
-                style={{
-                  backgroundColor: `${theme.colors.primary}15`,
-                  color: theme.colors.primary,
-                  '&:hover': {
-                    backgroundColor: `${theme.colors.primary}25`,
-                  },
-                }}
               >
+                <IconSearch size={16} style={{ marginRight: '8px' }} />
                 Dashboard
-              </Button>
+              </ActionButton>
 
-              <Button
-                leftSection={<IconArrowLeft size={16} />}
+              <ActionButton
                 variant="outline"
                 size="md"
                 onClick={handleGoBack}
-                style={{
-                  borderColor: theme.colors.border,
-                  color: theme.colors.textPrimary,
-                  '&:hover': {
-                    backgroundColor: theme.colors.surface,
-                  },
-                }}
               >
+                <IconArrowLeft size={16} style={{ marginRight: '8px' }} />
                 Go Back
-              </Button>
+              </ActionButton>
             </Group>
 
             {/* Help Text */}
-            <Text
+            <CustomText
               size="sm"
-              c="dimmed"
-              style={{
-                color: theme.colors.textSecondary,
-                marginTop: '20px',
-              }}
+              color="secondary"
+              margin="20px 0 0 0"
             >
               Need help? Contact our support team or check the navigation menu above.
-            </Text>
+            </CustomText>
           </Stack>
         </Paper>
       </Container>

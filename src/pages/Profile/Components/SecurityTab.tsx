@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import {
   Card,
   Title,
-  Text,
   Group,
-  Button,
   Stack,
   Badge,
   Divider,
@@ -27,6 +25,7 @@ import {
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useTheme } from "../../../contexts/ThemeContext";
+import { CustomText, ActionButton } from "../../../components/ui";
 
 const SecurityTab: React.FC = () => {
   const { theme } = useTheme();
@@ -152,20 +151,20 @@ const SecurityTab: React.FC = () => {
           {/* Change Password */}
           <Group justify="space-between">
             <div>
-              <Text fw={500} style={{ color: theme.colors.textPrimary }}>
+              <CustomText fontWeight={500} color="primary">
                 Change Password
-              </Text>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+              </CustomText>
+              <CustomText size="sm" color="secondary">
                 Update your password to keep your account secure
-              </Text>
+              </CustomText>
             </div>
-            <Button
+            <ActionButton
               variant="outline"
-              leftSection={<IconKey size={16} />}
               onClick={() => setChangePasswordOpened(true)}
             >
+              <IconKey size={16} style={{ marginRight: '8px' }} />
               Change Password
-            </Button>
+            </ActionButton>
           </Group>
 
           <Divider />
@@ -173,12 +172,12 @@ const SecurityTab: React.FC = () => {
           {/* Two-Factor Authentication */}
           <Group justify="space-between">
             <div>
-              <Text fw={500} style={{ color: theme.colors.textPrimary }}>
+              <CustomText fontWeight={500} color="primary">
                 Two-Factor Authentication
-              </Text>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+              </CustomText>
+              <CustomText size="sm" color="secondary">
                 Add an extra layer of security to your account
-              </Text>
+              </CustomText>
             </div>
             <Group gap="md">
               <Badge color={twoFactorEnabled ? "green" : "red"} variant="light">
@@ -197,16 +196,17 @@ const SecurityTab: React.FC = () => {
           <div>
             <Group justify="space-between" mb="md">
               <div>
-                <Text fw={500} style={{ color: theme.colors.textPrimary }}>
+                <CustomText fontWeight={500} color="primary">
                   Active Sessions
-                </Text>
-                <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+                </CustomText>
+                <CustomText size="sm" color="secondary">
                   Manage your active login sessions across devices
-                </Text>
+                </CustomText>
               </div>
-              <Button variant="outline" leftSection={<IconSettings size={16} />}>
+              <ActionButton variant="outline">
+                <IconSettings size={16} style={{ marginRight: '8px' }} />
                 Manage All
-              </Button>
+              </ActionButton>
             </Group>
 
             <Stack gap="sm">
@@ -233,15 +233,15 @@ const SecurityTab: React.FC = () => {
                             </Badge>
                           )}
                         </Text> */}
-                        <Text size="xs" style={{ color: theme.colors.textSecondary }}>
+                        <CustomText size="xs" color="secondary">
                           {session.location} • {session.lastActive}
-                        </Text>
+                        </CustomText>
                       </div>
                     </Group>
                     {!session.current && (
-                      <Button size="xs" variant="subtle" color="red">
+                      <ActionButton size="xs" variant="error">
                         Revoke
-                      </Button>
+                      </ActionButton>
                     )}
                   </Group>
                 </Card>
@@ -253,9 +253,9 @@ const SecurityTab: React.FC = () => {
 
           {/* Security Recommendations */}
           <div>
-            <Text fw={500} mb="md" style={{ color: theme.colors.textPrimary }}>
+            <CustomText fontWeight={500} margin="0 0 16px 0" color="primary">
               Security Recommendations
-            </Text>
+            </CustomText>
             <List
               spacing="xs"
               size="sm"
@@ -285,7 +285,7 @@ const SecurityTab: React.FC = () => {
         title={
           <Group gap="xs">
             <IconLock size={20} style={{ color: theme.colors.primary }} />
-            <Text fw={600} style={{ color: theme.colors.textPrimary }}>Change Password</Text>
+            <CustomText fontWeight={600} color="primary">Change Password</CustomText>
           </Group>
         }
         size="md"
@@ -358,12 +358,12 @@ const SecurityTab: React.FC = () => {
           {passwordData.newPassword && (
             <div>
               <Group justify="space-between" mb="xs">
-                <Text size="sm" style={{ color: theme.colors.textPrimary }}>
+                <CustomText size="sm" color="primary">
                   Password Strength
-                </Text>
-                <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+                </CustomText>
+                <CustomText size="sm" color="secondary">
                   {getStrengthLabel(passwordStrength)}
-                </Text>
+                </CustomText>
               </Group>
               <Progress
                 value={passwordStrength}
@@ -413,13 +413,13 @@ const SecurityTab: React.FC = () => {
           </Alert>
 
           <Group justify="flex-end" mt="md">
-            <Button
+            <ActionButton
               variant="outline"
               onClick={() => setChangePasswordOpened(false)}
             >
               Cancel
-            </Button>
-            <Button
+            </ActionButton>
+            <ActionButton
               onClick={handleChangePassword}
               disabled={
                 !passwordData.currentPassword ||
@@ -427,9 +427,10 @@ const SecurityTab: React.FC = () => {
                 !passwordData.confirmPassword ||
                 passwordData.newPassword !== passwordData.confirmPassword
               }
+              variant="primary"
             >
               Change Password
-            </Button>
+            </ActionButton>
           </Group>
         </Stack>
       </Modal>

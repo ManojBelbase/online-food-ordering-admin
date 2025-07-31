@@ -1,8 +1,9 @@
 import React from "react";
-import { TextInput, Group, Text, Flex, ActionIcon } from "@mantine/core";
+import { TextInput, Group, Flex, ActionIcon } from "@mantine/core";
 import { IconSearch, IconRefresh } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
 import FilterButton from "../FilterButton";
+import { CustomText } from "../../ui";
 
 interface TableControlsProps {
   title?: string;
@@ -43,9 +44,9 @@ const TableControls: React.FC<TableControlsProps> = ({
       <Flex justify="space-between" align="center" mb="md">
         {/* Title */}
         {title && (
-          <Text size="lg" fw={600} style={{ color: theme.colors.textPrimary }}>
+          <CustomText size="lg" fontWeight={600} color="primary">
             {title}
-          </Text>
+          </CustomText>
         )}
 
         {/* Action Buttons */}

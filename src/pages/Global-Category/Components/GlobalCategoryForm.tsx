@@ -4,7 +4,8 @@ import {
   type IGlobalCategory,
 } from '../../../server-action/api/global-category';
 import { FormImageUpload, FormInput } from '../../../components/Forms';
-import { Button, SimpleGrid, Stack } from '@mantine/core';
+import { SimpleGrid, Stack } from '@mantine/core';
+import { ActionButton } from '../../../components/ui';
 import {
   globalCategoryValidation,
   type GlobalCategoryFormValues,
@@ -76,9 +77,14 @@ const GlobalCategoryForm: React.FC<IGlobalCategoryFormProps> = ({ edit, onClose 
           />
         </SimpleGrid>
 
-        <Button type="submit" style={{ alignSelf: 'end' }} loading={loading || uploadLoading}>
+        <ActionButton
+          type="submit"
+          variant="primary"
+          loading={loading || uploadLoading}
+          style={{ alignSelf: 'end' }}
+        >
           Submit
-        </Button>
+        </ActionButton>
       </Stack>
     </form>
   );

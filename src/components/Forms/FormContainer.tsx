@@ -1,7 +1,8 @@
 import React from 'react';
-import { Paper, Stack, Group, Button, Title, Text, Divider } from '@mantine/core';
+import { Paper, Stack, Group, Title, Divider } from '@mantine/core';
 import { IconDeviceFloppy, IconX, IconRefresh } from '@tabler/icons-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { CustomText, ActionButton } from '../ui';
 
 interface FormContainerProps {
   title?: string;
@@ -72,12 +73,12 @@ export const FormContainer = React.forwardRef<HTMLFormElement, FormContainerProp
                 </Title>
               )}
               {description && (
-                <Text
+                <CustomText
                   size="sm"
-                  style={{ color: theme.colors.textSecondary }}
+                  color="secondary"
                 >
                   {description}
-                </Text>
+                </CustomText>
               )}
               <Divider style={{ borderColor: theme.colors.border }} />
             </>
@@ -94,80 +95,39 @@ export const FormContainer = React.forwardRef<HTMLFormElement, FormContainerProp
               <Divider style={{ borderColor: theme.colors.border }} />
               <Group justify="flex-end" gap="sm">
                 {showReset && (
-                  <Button
+                  <ActionButton
                     type="button"
-                    variant={resetVariant}
+                    variant={resetVariant === 'filled' ? 'secondary' : 'outline'}
                     onClick={onReset}
                     disabled={disabled || loading}
-                    leftSection={<IconRefresh size={16} />}
-                    styles={{
-                      root: {
-                        backgroundColor: resetVariant === 'filled' ? theme.colors.secondary : 'transparent',
-                        borderColor: theme.colors.border,
-                        color: resetVariant === 'filled' ? '#ffffff' : theme.colors.textPrimary,
-                        '&:hover': {
-                          backgroundColor: resetVariant === 'filled' 
-                            ? theme.colors.secondaryHover 
-                            : `${theme.colors.secondary}15`,
-                        },
-                      },
-                    }}
                   >
+                    <IconRefresh size={16} style={{ marginRight: '8px' }} />
                     {resetLabel}
-                  </Button>
+                  </ActionButton>
                 )}
 
                 {showCancel && (
-                  <Button
+                  <ActionButton
                     type="button"
-                    variant={cancelVariant}
+                    variant={cancelVariant === 'filled' ? 'error' : 'outline'}
                     onClick={onCancel}
                     disabled={loading}
-                    leftSection={<IconX size={16} />}
-                    styles={{
-                      root: {
-                        backgroundColor: cancelVariant === 'filled' ? theme.colors.error : 'transparent',
-                        borderColor: theme.colors.error,
-                        color: cancelVariant === 'filled' ? '#ffffff' : theme.colors.error,
-                        '&:hover': {
-                          backgroundColor: cancelVariant === 'filled'
-                            ? theme.colors.error
-                            : `${theme.colors.error}15`,
-                        },
-                      },
-                    }}
                   >
+                    <IconX size={16} style={{ marginRight: '8px' }} />
                     {cancelLabel}
-                  </Button>
+                  </ActionButton>
                 )}
 
                 {showSubmit && (
-                  <Button
+                  <ActionButton
                     type="submit"
-                    variant={submitVariant}
+                    variant={submitVariant === 'filled' ? 'primary' : 'outline'}
                     loading={loading}
                     disabled={disabled}
-                    leftSection={!loading ? <IconDeviceFloppy size={16} /> : undefined}
-                    styles={{
-                      root: {
-                        backgroundColor: submitVariant === 'filled' ? theme.colors.primary : 'transparent',
-                        borderColor: theme.colors.primary,
-                        color: submitVariant === 'filled' ? '#ffffff' : theme.colors.primary,
-                        '&:hover': {
-                          backgroundColor: submitVariant === 'filled' 
-                            ? theme.colors.primaryHover 
-                            : `${theme.colors.primary}15`,
-                        },
-                        '&:disabled': {
-                          backgroundColor: theme.colors.background,
-                          borderColor: theme.colors.border,
-                          color: theme.colors.textSecondary,
-                        },
-                      },
-                    }}
                   >
+                    {!loading && <IconDeviceFloppy size={16} style={{ marginRight: '8px' }} />}
                     {submitLabel}
-                  </Button>
+                  </ActionButton>
                 )}
               </Group>
             </>
@@ -232,12 +192,12 @@ export const FormSection: React.FC<FormSectionProps> = ({
             </Title>
           )}
           {description && (
-            <Text
+            <CustomText
               size="sm"
-              style={{ color: theme.colors.textSecondary }}
+              color="secondary"
             >
               {description}
-            </Text>
+            </CustomText>
           )}
           {withDivider && (
             <Divider style={{ borderColor: theme.colors.border }} />

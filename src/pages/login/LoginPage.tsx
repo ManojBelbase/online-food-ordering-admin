@@ -1,13 +1,14 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Button, Title, Text, LoadingOverlay, Box, Group, Image, Stack } from "@mantine/core"
+import { Title, LoadingOverlay, Box, Group, Image, Stack } from "@mantine/core"
 import { IconFaceId, IconKey, IconShieldCheck } from "@tabler/icons-react"
 import { useMediaQuery } from "@mantine/hooks"
 import { useTheme } from "../../contexts/ThemeContext"
 import { useAuth } from "../../redux/useAuth"
 import CredentialsLogin from "./CredentialsLogin"
 import FaceLogin from "./FaceLogin"
+import { CustomText, ActionButton } from "../../components/ui"
 
 const LoginPage: React.FC = () => {
   const { theme } = useTheme()
@@ -95,19 +96,19 @@ const LoginPage: React.FC = () => {
           >
             Restaurant Admin
           </Title>
-          <Text 
-            style={{ 
-              opacity: 0.9, 
-              lineHeight: 1.6,
-              fontSize: isMobile ? "16px" : "18px",
+          <CustomText
+            fontSize={isMobile ? "16px" : "18px"}
+            lineHeight={1.6}
+            style={{
+              opacity: 0.9,
+              color: 'white'
             }}
           >
             Secure access to your food ordering system management dashboard
-          </Text>
+          </CustomText>
         </Box>
       </Box>
 
-      {/* Right Side - Login Form */}
       <Box
         style={{
           flex: 1,
@@ -124,7 +125,6 @@ const LoginPage: React.FC = () => {
             maxWidth: isMobile ? "400px" : "450px",
           }}
         >
-          {/* Header */}
           <Stack gap={8} mb={24}>
             <Title 
               order={2} 
@@ -136,77 +136,48 @@ const LoginPage: React.FC = () => {
             >
               Welcome Back
             </Title>
-            <Text size="sm" c={theme.colors.textSecondary}>
+            <CustomText size="sm" color="secondary">
               Sign in to your admin account
-            </Text>
+            </CustomText>
           </Stack>
 
-          {/* Tab Switcher */}
           <Group gap={8} mb={24} grow>
-            <Button
-              variant={activeTab === "credentials" ? "filled" : "light"}
+            <ActionButton
+              variant={activeTab === "credentials" ? "primary" : "outline"}
               onClick={() => setActiveTab("credentials")}
-              leftSection={<IconKey size={16} />}
               size="sm"
-              style={{
-                height: "36px",
-                fontSize: "14px",
-                fontWeight: 500,
-                borderRadius: "6px",
-                border: `1px solid ${
-                  activeTab === "credentials" 
-                    ? theme.colors.primary 
-                    : theme.colors.inputBorder
-                }`,
-                backgroundColor: activeTab === "credentials" 
-                  ? theme.colors.primary 
-                  : theme.colors.inputBackground,
-                color: activeTab === "credentials" 
-                  ? "white" 
-                  : theme.colors.textPrimary,
-              }}
+              height="36px"
+              fontSize="14px"
+              fontWeight={500}
+              borderRadius="6px"
             >
+              <IconKey size={16} style={{ marginRight: '8px' }} />
               Password
-            </Button>
-            <Button
-              variant={activeTab === "face" ? "filled" : "light"}
+            </ActionButton>
+            <ActionButton
+              variant={activeTab === "face" ? "primary" : "outline"}
               onClick={() => setActiveTab("face")}
-              leftSection={<IconFaceId size={16} />}
               size="sm"
-              style={{
-                height: "36px",
-                fontSize: "14px",
-                fontWeight: 500,
-                borderRadius: "6px",
-                border: `1px solid ${
-                  activeTab === "face" 
-                    ? theme.colors.primary 
-                    : theme.colors.inputBorder
-                }`,
-                backgroundColor: activeTab === "face" 
-                  ? theme.colors.primary 
-                  : theme.colors.inputBackground,
-                color: activeTab === "face" 
-                  ? "white" 
-                  : theme.colors.textPrimary,
-              }}
+              height="36px"
+              fontSize="14px"
+              fontWeight={500}
+              borderRadius="6px"
             >
+              <IconFaceId size={16} style={{ marginRight: '8px' }} />
               Face ID
-            </Button>
+            </ActionButton>
           </Group>
 
-          {/* Login Components */}
           {activeTab === "credentials" ? (
             <CredentialsLogin onSuccess={handleLoginSuccess} />
           ) : (
             <FaceLogin onSwitchToCredentials={handleSwitchToCredentials} />
           )}
 
-          {/* Footer */}
           <Box mt={24} style={{ textAlign: "center" }}>
-            <Text size="xs" c={theme.colors.textSecondary}>
+            <CustomText size="xs" color="secondary">
               Secure authentication • Food Ordering System
-            </Text>
+            </CustomText>
           </Box>
         </Box>
       </Box>

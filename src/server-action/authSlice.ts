@@ -39,8 +39,9 @@ export const loginUser = createAsyncThunk<
     return res.data;
   } catch (err: unknown) {
     const error = err as AxiosError<{ message: string }>;
+    console.log(err,"er")
     return thunkAPI.rejectWithValue(
-      error.response?.data?.message || "Login failed"
+      (error as any)?.response?.data?.error?.message || "Login failed manoj"
     );
   }
 });

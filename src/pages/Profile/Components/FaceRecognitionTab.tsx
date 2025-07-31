@@ -1,15 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Paper,
+  Box,
   Title,
-  Text,
-  Button,
-  Stack,
   Group,
   Alert,
-  Card,
   Badge,
 } from '@mantine/core';
+import { CustomText, ActionButton } from '../../../components/ui';
 import {
   IconCamera,
   IconCheck,
@@ -449,69 +446,140 @@ const FaceRecognitionTab: React.FC = () => {
   };
 
   return (
-    <Stack gap="lg">
-      <Paper p="xl" withBorder style={{ backgroundColor: theme.colors.surface }}>
-        <Stack gap="md">
-          <Group justify="space-between">
-            <div>
-              <Title order={3} style={{ color: theme.colors.textPrimary }}>
-                Face Recognition
-              </Title>
-            </div>
-            <Badge
-              color={faceEnabled ? 'green' : 'gray'}
-              size="lg"
-              leftSection={<IconFaceId size={16} />}
+    <Box style={{
+      backgroundColor: theme.colors.surface,
+      minHeight: '100vh',
+      padding: 0,
+      margin: 0
+    }}>
+      {/* Header Section */}
+      <Box style={{
+        borderBottom: `1px solid ${theme.colors.border || '#e9ecef'}`,
+        padding: '16px 20px',
+        backgroundColor: theme.colors.surface
+      }}>
+        <Group justify="space-between" gap={0}>
+          <Box>
+            <Title
+              order={2}
+              style={{
+                color: theme.colors.textPrimary,
+                fontSize: '18px',
+                fontWeight: 600,
+                margin: 0,
+                lineHeight: 1.4
+              }}
             >
-              {faceEnabled ? 'Enabled' : 'Disabled'}
-            </Badge>
-          </Group>
-
-          {!faceModelsLoaded && (
-            <Alert color="orange" icon={<IconAlertCircle size={16} />}>
-              <Group justify="space-between">
-                <Text size="sm">⏳ Loading face recognition models...</Text>
-                <Button
-                  size="xs"
-                  variant="light"
-                  onClick={loadFaceModels}
-                  loading={loading}
-                >
-                  Retry
-                </Button>
-              </Group>
-            </Alert>
-          )}
-
-          <Group justify="center">
-            <Button
-              onClick={toggleFaceRecognition}
-              disabled={loading || !faceModelsLoaded}
-              color={faceEnabled ? 'red' : 'green'}
-              leftSection={faceEnabled ? <IconTrash size={16} /> : <IconFaceId size={16} />}
-              loading={loading}
+              Face Recognition
+            </Title>
+            <CustomText
+              size="sm"
+              color="secondary"
+              margin="2px 0 0 0"
             >
-              {loading ? 'Processing...' : faceEnabled ? 'Disable' : !faceModelsLoaded ? 'Loading Models...' : 'Enable'}
-            </Button>
+              Secure login with facial recognition
+            </CustomText>
+          </Box>
+          <Badge
+            color={faceEnabled ? 'green' : 'gray'}
+            size="sm"
+            variant="light"
+            style={{
+              textTransform: 'none',
+              fontWeight: 500
+            }}
+          >
+            <IconFaceId size={12} style={{ marginRight: '4px' }} />
+            {faceEnabled ? 'Active' : 'Inactive'}
+          </Badge>
+        </Group>
+      </Box>
 
-          </Group>
-        </Stack>
-      </Paper>
+      {/* Content Section */}
+      <Box style={{ padding: '20px' }}>
+        {!faceModelsLoaded && (
+          <Alert
+            color="orange"
+            icon={<IconAlertCircle size={16} />}
+            style={{
+              marginBottom: '16px',
+              border: 'none',
+              borderRadius: '6px'
+            }}
+          >
+            <Group justify="space-between" gap={8}>
+              <CustomText size="sm">Loading face recognition models...</CustomText>
+              <ActionButton
+                size="xs"
+                variant="outline"
+                onClick={loadFaceModels}
+                loading={loading}
+                height="24px"
+                fontSize="11px"
+              >
+                Retry
+              </ActionButton>
+            </Group>
+          </Alert>
+        )}
 
-      {/* Face Setup Camera Modal */}
+        <Group justify="flex-start" gap={12}>
+          <ActionButton
+            onClick={toggleFaceRecognition}
+            disabled={loading || !faceModelsLoaded}
+            variant={faceEnabled ? 'error' : 'primary'}
+            loading={loading}
+            height="36px"
+            borderRadius="6px"
+            fontWeight={500}
+          >
+            {loading ? 'Processing...' : faceEnabled ? 'Disable' : !faceModelsLoaded ? 'Loading...' : 'Enable Face ID'}
+          </ActionButton>
+        </Group>
+      </Box>
+
+      {/* Face Setup Camera Section */}
       {showCamera && (
-        <Card withBorder>
-          <Stack gap="md">
-            <Title order={4} ta="center">Setup Face Recognition</Title>
+        <Box style={{
+          borderTop: `1px solid ${theme.colors.border || '#e9ecef'}`,
+          padding: '20px',
+          backgroundColor: theme.colors.surface
+        }}>
+          <Box style={{ marginBottom: '16px' }}>
+            <Title
+              order={3}
+              style={{
+                color: theme.colors.textPrimary,
+                fontSize: '16px',
+                fontWeight: 600,
+                margin: 0,
+                marginBottom: '4px'
+              }}
+            >
+              Setup Face Recognition
+            </Title>
+            <CustomText
+              size="sm"
+              color="secondary"
+            >
+              Position your face clearly in the camera frame
+            </CustomText>
+          </Box>
 
-            <div style={{ position: 'relative', textAlign: 'center' }}>
+          <Box style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: '16px'
+          }}>
+            <Box style={{ position: 'relative' }}>
               <video
                 ref={videoRef}
-                width="320"
-                height="240"
+                width="280"
+                height="210"
                 style={{
                   borderRadius: '8px',
-                  border: `2px solid ${theme.colors.primary}`,
+                  border: `1px solid ${theme.colors.border || '#e9ecef'}`,
+                  backgroundColor: '#000'
                 }}
                 autoPlay
                 muted
@@ -519,45 +587,49 @@ const FaceRecognitionTab: React.FC = () => {
               />
 
               {/* Face detection overlay guide */}
-              <div 
+              <Box
                 style={{
                   position: 'absolute',
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: '192px',
-                  height: '192px',
-                  border: '2px solid green',
+                  width: '140px',
+                  height: '140px',
+                  border: '2px solid #22c55e',
                   borderRadius: '50%',
-                  opacity: 0.5,
+                  opacity: 0.6,
                   pointerEvents: 'none',
                 }}
               />
-            </div>
-            <Group justify="center">
-              <Button
-                onClick={captureFace}
-                disabled={loading || !faceModelsLoaded}
-                color="green"
-                leftSection={<IconCamera size={16} />}
-                loading={loading}
-              >
-                {loading ? 'Processing...' : !faceModelsLoaded ? 'Loading Models...' : 'Capture Face'}
-              </Button>
-              <Button
-                onClick={cancelFaceSetup}
-                disabled={loading}
-                variant="outline"
-                leftSection={<IconX size={16} />}
-              >
-                Cancel
-              </Button>
-            </Group>
-          </Stack>
-        </Card>
-      )}
+            </Box>
+          </Box>
 
-    </Stack>
+          <Group justify="center" gap={12}>
+            <ActionButton
+              onClick={captureFace}
+              disabled={loading || !faceModelsLoaded}
+              variant="success"
+              loading={loading}
+              height="36px"
+              borderRadius="6px"
+              fontWeight={500}
+            >
+              {loading ? 'Processing...' : !faceModelsLoaded ? 'Loading...' : 'Capture Face'}
+            </ActionButton>
+            <ActionButton
+              onClick={cancelFaceSetup}
+              disabled={loading}
+              variant="ghost"
+              height="36px"
+              borderRadius="6px"
+              fontWeight={500}
+            >
+              Cancel
+            </ActionButton>
+          </Group>
+        </Box>
+      )}
+    </Box>
   );
 };
 

@@ -1,7 +1,8 @@
 import React from "react";
-import { Group, Text, ActionIcon, Select } from "@mantine/core";
+import { Group, ActionIcon, Select } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { CustomText } from "../ui";
 
 interface PaginationData {
   page: number;
@@ -35,11 +36,11 @@ const TablePagination: React.FC<TablePaginationProps> = ({
     // Virtualized mode info
     return (
       <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
-        <Text size="sm" c="dimmed">
+        <CustomText size="sm" color="secondary">
           Showing {filteredCount} of {totalCount} entries
           {filteredCount !== totalCount && " (filtered)"}
           {" • Virtualized mode for optimal performance"}
-        </Text>
+        </CustomText>
       </div>
     );
   }
@@ -48,10 +49,10 @@ const TablePagination: React.FC<TablePaginationProps> = ({
   if (!pagination) {
     return (
       <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
-        <Text size="sm" c="dimmed">
+        <CustomText size="sm" color="secondary">
           Showing {filteredCount} of {totalCount} entries
           {filteredCount !== totalCount && " (filtered)"}
-        </Text>
+        </CustomText>
       </div>
     );
   }
@@ -105,19 +106,19 @@ const TablePagination: React.FC<TablePaginationProps> = ({
     <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
       <Group justify="space-between" align="center">
         {/* Info Text */}
-        <Text size="sm" c="dimmed">
+        <CustomText size="sm" color="secondary">
           Showing {startItem} to {endItem} of {total} entries
           {filteredCount !== totalCount && totalCount !== undefined && (
             <span> (filtered from {totalCount} total)</span>
           )}
-        </Text>
+        </CustomText>
 
         {/* Controls */}
         <Group gap="sm">
           {/* Page Size Selector */}
           {showPageSizeSelector && onLimitChange && (
             <Group gap="xs">
-              <Text size="sm" c="dimmed">Show:</Text>
+              <CustomText size="sm" color="secondary">Show:</CustomText>
               <Select
                 data={[
                   { value: "10", label: "10" },
@@ -160,9 +161,9 @@ const TablePagination: React.FC<TablePaginationProps> = ({
               {pageNumbers.map((pageNum, index) => (
                 <React.Fragment key={index}>
                   {pageNum === "..." ? (
-                    <Text size="sm" c="dimmed" px="xs">
+                    <CustomText size="sm" color="secondary" padding="0 8px">
                       ...
-                    </Text>
+                    </CustomText>
                   ) : (
                     <ActionIcon
                       variant={pageNum === page ? "filled" : "subtle"}

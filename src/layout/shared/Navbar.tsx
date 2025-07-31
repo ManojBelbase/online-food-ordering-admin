@@ -6,7 +6,6 @@ import {
   TextInput,
   Avatar,
   Menu,
-  Text,
   Divider,
   Badge,
   Indicator,
@@ -14,8 +13,8 @@ import {
   Popover,
   Stack,
   ScrollArea,
-  Button,
 } from "@mantine/core";
+import { CustomText, ActionButton } from "../../components/ui";
 import {
   IconMenu2,
   IconSearch,
@@ -30,6 +29,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../redux/useAuth";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../components/ThemeToggle";
+import VoiceNavigation from "../../components/VoiceNavigation";
 import { FRONTENDROUTES } from "../../constants/frontendRoutes";
 import { logout } from "../../server-action/authSlice";
 
@@ -175,6 +175,8 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
 
         <ThemeToggle />
 
+        <VoiceNavigation />
+
         {/* Notifications */}
         <Popover
           width={320}
@@ -219,9 +221,9 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
             }}
           >
             <Group justify="space-between" mb="sm">
-              <Text fw={600} style={{ color: theme.colors.textPrimary }}>
+              <CustomText fontWeight={600} color="primary">
                 Notifications
-              </Text>
+              </CustomText>
               <Badge variant="light" size="sm">
                 {unreadCount} new
               </Badge>
@@ -244,15 +246,15 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
                   >
                     <Group justify="space-between" align="flex-start">
                       <div style={{ flex: 1 }}>
-                        <Text size="sm" fw={500} style={{ color: theme.colors.textPrimary }}>
+                        <CustomText size="sm" fontWeight={500} color="primary">
                           {notification.title}
-                        </Text>
-                        <Text size="xs" style={{ color: theme.colors.textSecondary }}>
+                        </CustomText>
+                        <CustomText size="xs" color="secondary">
                           {notification.message}
-                        </Text>
-                        <Text size="xs" style={{ color: theme.colors.textTertiary }}>
+                        </CustomText>
+                        <CustomText size="xs" color="tertiary">
                           {notification.time}
-                        </Text>
+                        </CustomText>
                       </div>
                       {!notification.read && (
                         <ActionIcon size="xs" variant="subtle">
@@ -266,11 +268,11 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
             </ScrollArea.Autosize>
             <Divider my="sm" />
             <Group justify="space-between">
-              <Button variant="subtle" size="xs">
+              <ActionButton variant="ghost" size="xs">
                 Mark all as read
-              </Button>
-              <Button
-                variant="subtle"
+              </ActionButton>
+              <ActionButton
+                variant="ghost"
                 size="xs"
                 onClick={() => {
                   setNotificationsOpened(false);
@@ -278,7 +280,7 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
                 }}
               >
                 View all
-              </Button>
+              </ActionButton>
             </Group>
           </Popover.Dropdown>
         </Popover>
@@ -306,9 +308,9 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
               />
               {!isMobile && (
                 <Group gap={4}>
-                  <Text size="sm" fw={500} style={{ color: theme.colors.textPrimary }}>
+                  <CustomText size="sm" fontWeight={500} color="primary">
                     {user?.name || user?.email?.split('@')[0] || 'User'}
-                  </Text>
+                  </CustomText>
                   <IconChevronDown size={14} style={{ color: theme.colors.textSecondary }} />
                 </Group>
               )}
@@ -322,11 +324,11 @@ const Navbar: React.FC<NavbarProps> = ({ onHamburgerClick }) => {
             }}
           >
             <Menu.Label style={{ color: theme.colors.textSecondary }}>
-              <Text size="sm">{user?.email}</Text>
+              <CustomText size="sm">{user?.email}</CustomText>
               {user?.role && (
-                <Text size="xs" style={{ color: theme.colors.textTertiary }}>
+                <CustomText size="xs" color="tertiary">
                   Role: {user?.role}
-                </Text>
+                </CustomText>
               )}
             </Menu.Label>
             <Menu.Item

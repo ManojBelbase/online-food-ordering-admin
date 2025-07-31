@@ -1,10 +1,11 @@
 import { useForm } from "@mantine/form";
-import { Button, MultiSelect, SimpleGrid, Stack } from "@mantine/core";
+import { MultiSelect, SimpleGrid, Stack } from "@mantine/core";
 import { FormImageUpload, FormInput } from "../../../components/Forms";
 import { categoryApi, type ICategory } from "../../../server-action/api/category";
 import { globalCategoryApi } from "../../../server-action/api/global-category";
 import { useAuth } from "../../../redux/useAuth";
 import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
+import { ActionButton } from "../../../components/ui";
 
 interface ICategoryFormProps {
   edit?: ICategory;
@@ -95,9 +96,14 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
 
        
 
-        <Button type="submit" style={{ alignSelf: "end" }} loading={form.submitting}>
+        <ActionButton
+          type="submit"
+          variant="primary"
+          loading={form.submitting}
+          style={{ alignSelf: "end" }}
+        >
           Submit
-        </Button>
+        </ActionButton>
       </Stack>
     </form>
   );

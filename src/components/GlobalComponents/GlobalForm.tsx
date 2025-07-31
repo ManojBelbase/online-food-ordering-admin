@@ -8,7 +8,6 @@ import {
   Checkbox,
   Switch,
   FileInput,
-  Button,
   Group,
   Stack,
   Paper,
@@ -18,6 +17,7 @@ import {
 import { DatePickerInput } from "@mantine/dates";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { FormField, FormBuilderProps } from "../../types/ui";
+import { CustomText, ActionButton } from "../ui";
 
 const GlobalForm: React.FC<FormBuilderProps> = ({
   form,
@@ -179,14 +179,12 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
             {title}
           </Title>
           {description && (
-            <div
-              style={{
-                color: theme.colors.textSecondary,
-                marginBottom: "24px",
-              }}
+            <CustomText
+              color="secondary"
+              margin="0 0 24px 0"
             >
               {description}
-            </div>
+            </CustomText>
           )}
           <Divider mb="xl" />
         </>
@@ -206,15 +204,13 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
                     {section.title}
                   </Title>
                   {section.description && (
-                    <div
-                      style={{
-                        color: theme.colors.textSecondary,
-                        marginBottom: "16px",
-                        fontSize: "14px",
-                      }}
+                    <CustomText
+                      color="secondary"
+                      fontSize="14px"
+                      margin="0 0 16px 0"
                     >
                       {section.description}
-                    </div>
+                    </CustomText>
                   )}
                 </>
               )}
@@ -245,29 +241,21 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
 
           <Group justify="flex-end" gap="md">
             {showReset && (
-              <Button
-                variant="subtle"
+              <ActionButton
+                variant="ghost"
                 onClick={() => form.reset()}
                 disabled={loading}
-                style={{
-                  color: theme.colors.textSecondary,
-                }}
               >
                 {resetLabel}
-              </Button>
+              </ActionButton>
             )}
-            <Button
+            <ActionButton
               type="submit"
               loading={loading}
-              style={{
-                backgroundColor: theme.colors.primary,
-                "&:hover": {
-                  backgroundColor: theme.colors.primaryHover,
-                },
-              }}
+              variant="primary"
             >
               {submitLabel}
-            </Button>
+            </ActionButton>
           </Group>
         </Stack>
       </form>

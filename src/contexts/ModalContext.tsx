@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Modal } from "@mantine/core";
 import type { ModalProps } from "@mantine/core";
 import { useTheme } from "./ThemeContext";
+import { CustomText, ActionButton } from "../components/ui";
 
 interface ModalConfig
   extends Omit<ModalProps, "opened" | "onClose" | "children" | "content"> {
@@ -156,41 +157,28 @@ export const useConfirmModal = () => {
       centered: true,
       body: (
         <div>
-          <p style={{ marginBottom: "20px" }}>{message}</p>
+          <CustomText margin="0 0 20px 0">{message}</CustomText>
           <div
             style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}
           >
-            <button
+            <ActionButton
+              variant="outline"
               onClick={() => {
                 onCancel?.();
                 closeModal(modalId);
               }}
-              style={{
-                padding: "8px 16px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                background: "transparent",
-                cursor: "pointer",
-              }}
             >
               {cancelLabel}
-            </button>
-            <button
+            </ActionButton>
+            <ActionButton
+              variant={confirmColor === "red" ? "error" : "primary"}
               onClick={() => {
                 onConfirm();
                 closeModal(modalId);
               }}
-              style={{
-                padding: "8px 16px",
-                border: "none",
-                borderRadius: "4px",
-                background: confirmColor === "red" ? "#e03131" : "#228be6",
-                color: "white",
-                cursor: "pointer",
-              }}
             >
               {confirmLabel}
-            </button>
+            </ActionButton>
           </div>
         </div>
       ),

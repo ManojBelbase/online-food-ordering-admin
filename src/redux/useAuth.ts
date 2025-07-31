@@ -11,7 +11,6 @@ export const useAuth = () => {
   const auth = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
-  // Listen for refreshToken and logout events
   useEffect(() => {
     const handleRefreshToken = (event: Event) => {
       const { user, accessToken } = (event as CustomEvent).detail;

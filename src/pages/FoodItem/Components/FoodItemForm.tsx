@@ -1,5 +1,5 @@
 import { useForm } from '@mantine/form';
-import { Button, SimpleGrid, Stack } from '@mantine/core';
+import { SimpleGrid, Stack } from '@mantine/core';
 import { FormImageUpload, FormInput, FormSelect } from '../../../components/Forms';
 import { foodItemApi, type IFoodItem } from '../../../server-action/api/food-item';
 import { categoryApi } from '../../../server-action/api/category';
@@ -7,6 +7,7 @@ import { useCloudinaryUpload } from '../../../hooks/useCloudinaryUpload';
 import { CuisineType } from '../../../constants/cuisine-type';
 import { FormTags } from '../../../components/Forms/FormTags';
 import { useRestaurantByUser } from '../../../hooks/useRestaurantByUser';
+import { ActionButton } from '../../../components/ui';
 
 interface IFoodItemFormProps {
   edit?: IFoodItem;
@@ -141,9 +142,14 @@ const {restaurant}= useRestaurantByUser();
           />
         </SimpleGrid>
 
-        <Button type="submit" style={{ alignSelf: 'end' }} loading={form.submitting}>
+        <ActionButton
+          type="submit"
+          variant="primary"
+          loading={form.submitting}
+          style={{ alignSelf: 'end' }}
+        >
           Submit
-        </Button>
+        </ActionButton>
       </Stack>
     </form>
   );

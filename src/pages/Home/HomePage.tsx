@@ -4,12 +4,10 @@ import { useTheme } from "../../contexts/ThemeContext";
 import {
   Card,
   Title,
-  Text,
   Group,
   Badge,
   Grid,
   Stack,
-  Button,
 } from "@mantine/core";
 import {
   IconChartBar,
@@ -19,6 +17,7 @@ import {
   IconComponents,
   IconForms,
 } from "@tabler/icons-react";
+import { CustomText, ActionButton } from "../../components/ui";
 
 
 const HomePage: React.FC = () => {
@@ -90,31 +89,26 @@ const HomePage: React.FC = () => {
             >
               🚀 Explore All Components & Forms
             </Title>
-            <Text style={{ color: theme.colors.textSecondary }}>
+            <CustomText color="secondary">
               Access all available pages, forms, tables, and components in one
               place
-            </Text>
+            </CustomText>
           </div>
           <Group gap="md">
-            <Button
-              leftSection={<IconComponents size={16} />}
+            <ActionButton
               onClick={() => navigate("/components")}
-              style={{
-                backgroundColor: theme.colors.primary,
-                "&:hover": {
-                  backgroundColor: theme.colors.primaryHover,
-                },
-              }}
+              variant="primary"
             >
+              <IconComponents size={16} style={{ marginRight: '8px' }} />
               View All Components
-            </Button>
-            <Button
-              leftSection={<IconForms size={16} />}
+            </ActionButton>
+            <ActionButton
               onClick={() => navigate("/orders/create")}
               variant="outline"
             >
+              <IconForms size={16} style={{ marginRight: '8px' }} />
               Create Order
-            </Button>
+            </ActionButton>
           </Group>
         </Group>
       </Card>
@@ -138,19 +132,19 @@ const HomePage: React.FC = () => {
               >
                 <Group justify="space-between" mb="xs">
                   <div>
-                    <Text
+                    <CustomText
                       size="sm"
-                      style={{ color: theme.colors.textSecondary }}
+                      color="secondary"
                     >
                       {stat.title}
-                    </Text>
-                    <Text
+                    </CustomText>
+                    <CustomText
                       size="xl"
-                      fw={700}
-                      style={{ color: theme.colors.textPrimary }}
+                      fontWeight={700}
+                      color="primary"
                     >
                       {stat.value}
-                    </Text>
+                    </CustomText>
                   </div>
                   <div
                     style={{
@@ -190,9 +184,9 @@ const HomePage: React.FC = () => {
             >
               Recent Activity
             </Title>
-            <Text style={{ color: theme.colors.textSecondary }}>
+            <CustomText color="secondary">
               Activity chart and recent orders will be displayed here.
-            </Text>
+            </CustomText>
           </Card>
         </Grid.Col>
 
@@ -214,15 +208,15 @@ const HomePage: React.FC = () => {
               >
                 Quick Actions
               </Title>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+              <CustomText size="sm" color="secondary">
                 • View all orders
-              </Text>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+              </CustomText>
+              <CustomText size="sm" color="secondary">
                 • Manage menu items
-              </Text>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+              </CustomText>
+              <CustomText size="sm" color="secondary">
                 • Customer support
-              </Text>
+              </CustomText>
             </Card>
 
             <Card
@@ -241,10 +235,10 @@ const HomePage: React.FC = () => {
               >
                 Theme System
               </Title>
-              <Text size="sm" style={{ color: theme.colors.textSecondary }}>
+              <CustomText size="sm" color="secondary">
                 The theme system is now active! Use the toggle in the navbar to
                 switch between dark and light modes.
-              </Text>
+              </CustomText>
             </Card>
           </Stack>
         </Grid.Col>

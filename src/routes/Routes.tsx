@@ -1,4 +1,3 @@
-// routes.tsx
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 import ProtectedRoute from "../auth/ProtectedRoute.tsx";
@@ -76,7 +75,7 @@ const protectedRoutes: RouteObject[] = [
       {path:FRONTENDROUTES.GLOBAL_CATEGORY, element:<GlobalCategoryIndex/>},
       {path:FRONTENDROUTES.CATEGORY, element:<CategoryPageIndex/>},
       { path: FRONTENDROUTES.CUSTOMER, element: <CustomerPageIndex /> },
-      { path: FRONTENDROUTES.RESTAURAT, element: <RestaurantPageIndex /> },
+      { path: FRONTENDROUTES.RESTAURANT, element: <RestaurantPageIndex /> },
 
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
       { path: FRONTENDROUTES.CATEGORY, element: <CategoryPageIndex /> },

@@ -1,11 +1,9 @@
 import type React from "react";
 import { useForm } from "@mantine/form";
 import {
-  Button,
   Select,
   SimpleGrid,
   Stack,
-  Text,
   Card,
   Group,
   Switch,
@@ -25,6 +23,7 @@ import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
 import { restaurantApi } from "../../../server-action/api/restaurant";
 import LocationSelectorMap from "../../../components/LocationSelectorMap";
 import { useNavigate } from "react-router-dom";
+import { CustomText, ActionButton } from "../../../components/ui";
 const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
 const RestaurantOnboardingForm: React.FC = () => {
@@ -111,7 +110,6 @@ const handleSubmit = async (values: typeof form.values) => {
     form.setErrors({
       restaurantName: errMsg,
     });
-    console.error("API Error:", error);
   }
 };
 
@@ -125,7 +123,6 @@ const handleSubmit = async (values: typeof form.values) => {
     </Title>
 
     <Grid>
-      {/* LEFT: Basic Info */}
       <Grid.Col span={{ base: 12, md: 6 }}>
         <Card shadow="sm" padding="md" radius="md" withBorder>
           <Title order={3} mb="md">
@@ -178,28 +175,27 @@ const handleSubmit = async (values: typeof form.values) => {
           <Title order={3} mb="xs">
             Location
           </Title>
-          <Text size="sm" c="dimmed" mb="md">
+          <CustomText size="sm" color="secondary" margin="0 0 16px 0">
             Click on the map to select your restaurant's location
-          </Text>
+          </CustomText>
           <LocationSelectorMap
             onLocationSelect={handleLocationSelect}
             selectedLocation={selectedLocation}
           />
           {selectedLocation && (
-            <Text size="sm" mt="sm" c="green">
+            <CustomText size="sm" color="success" margin="8px 0 0 0">
               Selected: {selectedLocation[0].toFixed(6)}, {selectedLocation[1].toFixed(6)}
-            </Text>
+            </CustomText>
           )}
           {form.errors.location && (
-            <Text size="sm" c="red" mt="xs">
+            <CustomText size="sm" color="error" margin="8px 0 0 0">
               {form.errors.location}
-            </Text>
+            </CustomText>
           )}
         </Card>
       </Grid.Col>
     </Grid>
 
-    {/* Weekly Schedule */}
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Title order={3} mb="md">
         Weekly Schedule
@@ -212,9 +208,9 @@ const handleSubmit = async (values: typeof form.values) => {
             <Paper key={day} p="xs" withBorder>
               <Grid align="center">
                 <Grid.Col span={{ base: 12, sm: 3 }}>
-                  <Text fw={500} tt="capitalize">
+                  <CustomText fontWeight={500} style={{ textTransform: 'capitalize' }}>
                     {day}
-                  </Text>
+                  </CustomText>
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, sm: 2 }}>
@@ -250,7 +246,6 @@ const handleSubmit = async (values: typeof form.values) => {
       </Stack>
     </Card>
 
-    {/* Manual Override */}
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Title order={3} mb="md">
         Manual Override
@@ -277,15 +272,13 @@ const handleSubmit = async (values: typeof form.values) => {
     </Card>
 
     <Divider />
-
     <Group justify="flex-end">
-      <Button type="submit" loading={form.submitting}>
+      <ActionButton type="submit" loading={form.submitting} variant="primary">
         Create Restaurant
-      </Button>
+      </ActionButton>
     </Group>
   </Stack>
 </form>
-
       </Paper>
     </Container>
   );

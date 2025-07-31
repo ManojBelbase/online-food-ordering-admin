@@ -1,6 +1,7 @@
 import React from 'react';
-import { Radio, Checkbox, Group, Stack, Text } from '@mantine/core';
+import { Radio, Checkbox, Group, Stack } from '@mantine/core';
 import { useTheme } from '../../contexts/ThemeContext';
+import { CustomText } from '../ui';
 
 export interface RadioCheckboxOption {
   value: string;
@@ -54,27 +55,27 @@ export const FormRadioGroup = React.forwardRef<HTMLDivElement, FormRadioGroupPro
     return (
       <div ref={ref} className={className} {...other}>
         {label && (
-          <Text
+          <CustomText
             size={size}
-            fw={500}
-            mb="xs"
-            style={{ color: theme.colors.textPrimary }}
+            fontWeight={500}
+            color="primary"
+            margin="0 0 8px 0"
           >
             {label}
             {(withAsterisk ?? required) && (
               <span style={{ color: theme.colors.error }}> *</span>
             )}
-          </Text>
+          </CustomText>
         )}
-        
+
         {description && (
-          <Text
+          <CustomText
             size="sm"
-            mb="xs"
-            style={{ color: theme.colors.textSecondary }}
+            color="secondary"
+            margin="0 0 8px 0"
           >
             {description}
-          </Text>
+          </CustomText>
         )}
 
         <Radio.Group
@@ -182,27 +183,27 @@ export const FormCheckboxGroup = React.forwardRef<HTMLDivElement, FormCheckboxGr
     return (
       <div ref={ref} className={className} {...other}>
         {label && (
-          <Text
+          <CustomText
             size={size}
-            fw={500}
-            mb="xs"
-            style={{ color: theme.colors.textPrimary }}
+            fontWeight={500}
+            color="primary"
+            margin="0 0 8px 0"
           >
             {label}
             {(withAsterisk ?? required) && (
               <span style={{ color: theme.colors.error }}> *</span>
             )}
-          </Text>
+          </CustomText>
         )}
-        
+
         {description && (
-          <Text
+          <CustomText
             size="sm"
-            mb="xs"
-            style={{ color: theme.colors.textSecondary }}
+            color="secondary"
+            margin="0 0 8px 0"
           >
             {description}
-          </Text>
+          </CustomText>
         )}
 
         <Container gap={spacing}>
@@ -242,13 +243,13 @@ export const FormCheckboxGroup = React.forwardRef<HTMLDivElement, FormCheckboxGr
         </Container>
 
         {error && (
-          <Text
+          <CustomText
             size="sm"
-            mt="xs"
-            style={{ color: theme.colors.error }}
+            color="error"
+            margin="8px 0 0 0"
           >
             {error}
-          </Text>
+          </CustomText>
         )}
       </div>
     );

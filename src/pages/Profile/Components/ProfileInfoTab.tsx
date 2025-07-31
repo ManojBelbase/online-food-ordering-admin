@@ -2,11 +2,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useForm } from "@mantine/form";
 import {
-  Button,
   Select,
   SimpleGrid,
   Stack,
-  Text,
   Card,
   Group,
   Switch,
@@ -15,6 +13,7 @@ import {
   Grid,
   Paper,
 } from "@mantine/core";
+import { CustomText, ActionButton } from "../../../components/ui";
 import { TimeInput } from "@mantine/dates";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
@@ -208,13 +207,13 @@ const ProfileInfoTab: React.FC = () => {
     <Card shadow="sm" padding="xl" style={{ margin: "auto" }}>
       <Group justify="space-between" mb="md">
         <Title order={3}>Profile Information</Title>
-        <Button
+        <ActionButton
           variant="outline"
           onClick={() => setIsEditing(!isEditing)}
           disabled={uploadLoading || updateLoading}
         >
           {isEditing ? "Cancel" : "Edit Profile"}
-        </Button>
+        </ActionButton>
       </Group>
 
       <form onSubmit={form.onSubmit(handleSave)}>
@@ -273,17 +272,17 @@ const ProfileInfoTab: React.FC = () => {
                 <Title order={3} mb="xs">
                   Location
                 </Title>
-                <Text size="sm" c="dimmed" mb="md">
+                <CustomText size="sm" color="secondary" margin="0 0 16px 0">
                   Click on the map to select your restaurant's location
-                </Text>
+                </CustomText>
                 <LocationSelectorMap
                   onLocationSelect={handleLocationSelect}
                   selectedLocation={selectedLocation}
                 />
                 {selectedLocation && (
-                  <Text size="sm" mt="sm" c="green">
+                  <CustomText size="sm" color="success" margin="8px 0 0 0">
                     Selected: {selectedLocation[0].toFixed(6)}, {selectedLocation[1].toFixed(6)}
-                  </Text>
+                  </CustomText>
                 )}
            
               </Card>
@@ -302,9 +301,9 @@ const ProfileInfoTab: React.FC = () => {
                   <Paper key={day} p="xs" withBorder>
                     <Grid align="center">
                       <Grid.Col span={{ base: 12, sm: 3 }}>
-                        <Text fw={500} tt="capitalize">
+                        <CustomText fontWeight={500} style={{ textTransform: 'capitalize' }}>
                           {day}
-                        </Text>
+                        </CustomText>
                       </Grid.Col>
                       <Grid.Col span={{ base: 12, sm: 2 }}>
                         <Switch
@@ -370,20 +369,21 @@ const ProfileInfoTab: React.FC = () => {
             <>
               <Divider />
               <Group justify="flex-end" mt="md">
-                <Button
+                <ActionButton
                   variant="outline"
                   onClick={handleCancel}
                   disabled={uploadLoading || updateLoading}
                 >
                   Cancel
-                </Button>
-                <Button
+                </ActionButton>
+                <ActionButton
                   type="submit"
                   loading={updateLoading}
                   disabled={uploadLoading || updateLoading}
+                  variant="primary"
                 >
                   Save
-                </Button>
+                </ActionButton>
               </Group>
             </>
           )}

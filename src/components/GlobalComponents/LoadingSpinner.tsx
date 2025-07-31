@@ -3,7 +3,6 @@ import {
   Center,
   Loader,
   Stack,
-  Text,
   Box,
   Paper,
   ThemeIcon,
@@ -12,6 +11,7 @@ import {
 } from '@mantine/core';
 import { IconChefHat, IconToolsKitchen2 } from '@tabler/icons-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { CustomText } from '../ui';
 
 interface LoadingSpinnerProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -54,13 +54,12 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           type="dots"
         />
         {message && (
-          <Text
+          <CustomText
             size="sm"
-            c="dimmed"
-            style={{ color: theme.colors.textSecondary }}
+            color="secondary"
           >
             {message}
-          </Text>
+          </CustomText>
         )}
         {showProgress && (
           <Progress
@@ -107,20 +106,19 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           </Box>
 
           <Stack gap="sm" align="center">
-            <Text
+            <CustomText
               size="lg"
-              fw={600}
-              style={{ color: theme.colors.textPrimary }}
+              fontWeight={600}
+              color="primary"
             >
               Food Ordering Admin
-            </Text>
-            <Text
+            </CustomText>
+            <CustomText
               size="sm"
-              c="dimmed"
-              style={{ color: theme.colors.textSecondary }}
+              color="secondary"
             >
               {message}
-            </Text>
+            </CustomText>
           </Stack>
 
           <Loader
@@ -139,15 +137,14 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
                 striped
                 animated
               />
-              <Text
+              <CustomText
                 size="xs"
-                c="dimmed"
-                ta="center"
-                mt="xs"
-                style={{ color: theme.colors.textSecondary }}
+                color="secondary"
+                textAlign="center"
+                margin="8px 0 0 0"
               >
                 {progress}% Complete
-              </Text>
+              </CustomText>
             </Box>
           )}
         </Stack>
@@ -218,11 +215,10 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           </Group>
 
           <Stack gap="sm" align="center">
-            <Text
+            <CustomText
               size="xl"
-              fw={700}
+              fontWeight={700}
               style={{
-                color: theme.colors.textPrimary,
                 background: `linear-gradient(45deg, ${theme.colors.primary}, ${theme.colors.secondary})`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -230,14 +226,14 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
               }}
             >
               Food Ordering
-            </Text>
-            <Text
+            </CustomText>
+            <CustomText
               size="md"
-              fw={500}
-              style={{ color: theme.colors.textPrimary }}
+              fontWeight={500}
+              color="primary"
             >
               {message}
-            </Text>
+            </CustomText>
           </Stack>
 
           <Loader
@@ -256,21 +252,20 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
                 striped
                 animated
               />
-              <Group justify="space-between" mt="xs">
-                <Text
+              <Group justify="space-between" style={{ marginTop: '8px' }}>
+                <CustomText
                   size="xs"
-                  c="dimmed"
-                  style={{ color: theme.colors.textSecondary }}
+                  color="secondary"
                 >
                   Loading...
-                </Text>
-                <Text
+                </CustomText>
+                <CustomText
                   size="xs"
-                  fw={500}
+                  fontWeight={500}
                   style={{ color: theme.colors.primary }}
                 >
                   {progress}%
-                </Text>
+                </CustomText>
               </Group>
             </Box>
           )}

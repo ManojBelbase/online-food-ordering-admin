@@ -1,18 +1,22 @@
 // pages/Unauthorized.tsx
-import { Text, Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import { CustomText, ActionButton } from "../ui";
 
 const UnauthorizedPage = () => {
   const navigate = useNavigate();
 
   return (
     <div style={{ padding: "3rem", textAlign: "center", margin:"auto"}}>
-      <Text size="xl">
+      <CustomText size="xl">
         🚫 You are not authorized to access this page.
-      </Text>
-      <Button mt="md" onClick={() => navigate("/")}>
+      </CustomText>
+      <ActionButton
+        onClick={() => navigate("/")}
+        variant="primary"
+        style={{ marginTop: "16px" }}
+      >
         Go to Dashboard
-      </Button>
+      </ActionButton>
     </div>
   );
 };
