@@ -11,7 +11,7 @@ interface SidebarProps {
   toggleSidebar: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
