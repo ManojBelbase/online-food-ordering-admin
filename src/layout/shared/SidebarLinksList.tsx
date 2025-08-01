@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Box, UnstyledButton, Tooltip, Collapse } from "@mantine/core";
+import React, { useEffect, useState } from "react";
+import { Box, UnstyledButton, Tooltip, Collapse, Popover, Stack } from "@mantine/core";
 import { IconChevronDown } from "@tabler/icons-react";
 import { NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const SidebarLinksList: React.FC<Props> = ({
-  isCollapsed,  
+  isCollapsed,
   openDropdown,
   setOpenDropdown,
 }) => {
@@ -22,6 +22,7 @@ export const SidebarLinksList: React.FC<Props> = ({
   const { theme } = useTheme();
   const { filterItemsByRole, hasPermission } = useRolePermissions();
   const filteredLinks = filterItemsByRole(sidebarLinks);
+  const [popoverOpened, setPopoverOpened] = useState<string | null>(null);
 
   useEffect(() => {
     filteredLinks.forEach((item) => {
@@ -58,33 +59,104 @@ export const SidebarLinksList: React.FC<Props> = ({
         return (
           <Box key={item.label} style={{ marginBottom: '4px' }}>
             {isCollapsed ? (
-              <Tooltip label={item.label} position="right">
-                <UnstyledButton
-                  style={{
-                    width: '100%',
-                    height: '40px',
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginBottom: "2px",
-                    backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : "transparent",
-                    color: isActive ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.sidebarText || '#6c757d',
-                    borderRadius: "2px",
-                    transition: 'all 0.15s ease',
-                    '&:hover': {
-                      backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : theme.colors.sidebarHover || '#f8f9fa'
-                    }
-                  }}
-                  onClick={() => {
-                    const targetPath = filteredChildren[0]?.to || item.to;
-                    if (hasPermission(targetPath)) {
-                      window.location.href = targetPath;
-                    }
-                  }}
+              // Collapsed state - show icon with popover for dropdowns
+              item.children && filteredChildren.length > 0 ? (
+                <Popover
+                  width={200}
+                  position="right-start"
+                  withArrow
+                  shadow="md"
+                  opened={popoverOpened === item.label}
+                  onChange={(opened) => setPopoverOpened(opened ? item.label : null)}
+                  zIndex={10000}
                 >
-                  {Icon && <Icon size={18} />}
-                </UnstyledButton>
-              </Tooltip>
+                  <Popover.Target>
+                    <UnstyledButton
+                      style={{
+                        width: '100%',
+                        height: '40px',
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginBottom: "2px",
+                        backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : "transparent",
+                        color: isActive ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.sidebarText || '#6c757d',
+                        borderRadius: "8px",
+                        transition: 'all 0.15s ease',
+                        '&:hover': {
+                          backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : theme.colors.sidebarHover || '#f8f9fa'
+                        }
+                      }}
+                      onClick={() => setPopoverOpened(popoverOpened === item.label ? null : item.label)}
+                    >
+                      {Icon && <Icon size={18} />}
+                    </UnstyledButton>
+                  </Popover.Target>
+                  <Popover.Dropdown
+                    style={{
+                      backgroundColor: theme.colors.surface,
+                      border: `1px solid ${theme.colors.border}`,
+                      borderRadius: '8px',
+                      padding: '8px',
+                    }}
+                  >
+                    <Stack gap="xs">
+                      <CustomText size="sm" fontWeight={600} color="primary" style={{ padding: '4px 8px' }}>
+                        {item.label}
+                      </CustomText>
+                      {filteredChildren.map((child: any) => (
+                        <RouterNavLink
+                          key={child.to}
+                          to={child.to}
+                          style={{ textDecoration: 'none' }}
+                          onClick={() => setPopoverOpened(null)}
+                        >
+                          <UnstyledButton
+                            style={{
+                              width: '100%',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              backgroundColor: location.pathname === child.to ? theme.colors.sidebarActive || '#e3f2fd' : 'transparent',
+                              color: location.pathname === child.to ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.sidebarText || '#6c757d',
+                              transition: 'all 0.15s ease',
+                              '&:hover': {
+                                backgroundColor: theme.colors.sidebarHover || '#f8f9fa'
+                              }
+                            }}
+                          >
+                            <CustomText size="sm">{child.label}</CustomText>
+                          </UnstyledButton>
+                        </RouterNavLink>
+                      ))}
+                    </Stack>
+                  </Popover.Dropdown>
+                </Popover>
+              ) : (
+                // Single item without dropdown
+                <Tooltip label={item.label} position="right" zIndex={10000}>
+                  <RouterNavLink to={item.to} style={{ textDecoration: 'none' }}>
+                    <UnstyledButton
+                      style={{
+                        width: '100%',
+                        height: '40px',
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginBottom: "2px",
+                        backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : "transparent",
+                        color: isActive ? theme.colors.sidebarTextActive || '#1976d2' : theme.colors.sidebarText || '#6c757d',
+                        borderRadius: "8px",
+                        transition: 'all 0.15s ease',
+                        '&:hover': {
+                          backgroundColor: isActive ? theme.colors.sidebarActive || '#e3f2fd' : theme.colors.sidebarHover || '#f8f9fa'
+                        }
+                      }}
+                    >
+                      {Icon && <Icon size={18} />}
+                    </UnstyledButton>
+                  </RouterNavLink>
+                </Tooltip>
+              )
             ) : item.children && filteredChildren.length > 0 ? (
               <>
                 <UnstyledButton

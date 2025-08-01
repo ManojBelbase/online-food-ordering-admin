@@ -352,6 +352,7 @@ const VoiceNavigation: React.FC = () => {
         position="bottom"
         multiline
         w={300}
+        zIndex={10000}
       >
         <ActionIcon
           variant="subtle"
@@ -371,6 +372,7 @@ const VoiceNavigation: React.FC = () => {
         <Tooltip
           label={isListening ? "Stop Voice Navigation" : "Start Voice Navigation"}
           position="bottom"
+          zIndex={10000}
         >
           <ActionIcon
             variant={isListening ? "filled" : "subtle"}
@@ -387,7 +389,7 @@ const VoiceNavigation: React.FC = () => {
           </ActionIcon>
         </Tooltip>
 
-        <Tooltip label="Voice Commands Help" position="bottom">
+        <Tooltip label="Voice Commands Help" position="bottom" zIndex={10000}>
           <ActionIcon
             variant="subtle"
             size="sm"
@@ -411,6 +413,7 @@ const VoiceNavigation: React.FC = () => {
         }
         size="lg"
         centered
+        zIndex={10001}
         styles={{
           content: {
             maxHeight: '85vh',

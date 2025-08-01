@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Group, Avatar, UnstyledButton } from "@mantine/core";
 import { IconHotelService, IconChevronDown, IconLifebuoy } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -11,57 +11,91 @@ interface SidebarProps {
   toggleSidebar: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
 
-  const isCollapsed = isTablet && !isOpen;
-  const isHidden = (isMobile && !isOpen) || (!isMobile && !isTablet && !isOpen);
-  const sidebarWidth = isCollapsed ? 60 : 300;
+  // Auto-collapse logic:
+  // - On tablet: always collapsed (icon-only)
+  // - On mobile: collapsed (icon-only) when open, hidden when closed
+  // - On desktop: full when open, collapsed when closed (not hidden)
+  const isCollapsed = (isTablet || isMobile || (!isMobile && !isTablet && !isOpen));
+  const isHidden = isMobile && !isOpen;
+  const sidebarWidth = isCollapsed ? 64 : 280;
+
+  // Auto-close dropdown when sidebar collapses
+  useEffect(() => {
+    if (isCollapsed) {
+      setOpenDropdown(null);
+    }
+  }, [isCollapsed]);
 
   if (isHidden) return null;
 
   return (
     <Box
-      style={{
-        backgroundColor: theme.colors.sidebarBackground || '#f8f9fa',
-        height: "100vh",
-        width: `${sidebarWidth}px`,
-        transition: "width 0.2s ease",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: 1000,
-        borderRight: `1px solid ${theme.colors.border || '#e9ecef'}`,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+        style={{
+          backgroundColor: theme.colors.sidebarBackground || '#f8f9fa',
+          height: "100vh",
+          width: `${sidebarWidth}px`,
+          transition: "width 0.2s ease",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          zIndex: 1000,
+          borderRight: `1px solid ${theme.colors.border || '#e9ecef'}`,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
       <Box style={{
         padding: isCollapsed ? '12px 8px' : '16px 16px',
         borderBottom: `1px solid ${theme.colors.border || '#e9ecef'}`,
-        minHeight: '60px',
+        minHeight: '70px', // Match navbar height
         display: 'flex',
         alignItems: 'center',
         justifyContent: isCollapsed ? 'center' : 'flex-start'
       }}>
         {isCollapsed ? (
-          <IconHotelService
-            size={24}
-            style={{ color: theme.colors.textPrimary || '#212529' }}
-          />
-        ) : (
-          <Group gap={8} style={{ cursor: 'pointer' }} onClick={() => window.location.href = "/"}>
+          <Box
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '8px',
+              backgroundColor: theme.colors.primary || '#007bff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <IconHotelService
               size={20}
-              style={{ color: theme.colors.textPrimary || '#212529' }}
+              style={{ color: 'white' }}
             />
+          </Box>
+        ) : (
+          <Group gap={8} style={{ cursor: 'pointer' }} onClick={() => window.location.href = "/"}>
+            <Box
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '8px',
+                backgroundColor: theme.colors.primary || '#007bff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <IconHotelService
+                size={20}
+                style={{ color: 'white' }}
+              />
+            </Box>
             <CustomText
               fontSize="14px"
               fontWeight={600}
               color="primary"
-              
             >
               Food Ordering
             </CustomText>
@@ -86,9 +120,32 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
       <Box style={{
         borderTop: `1px solid ${theme.colors.border || '#e9ecef'}`,
-        padding: isCollapsed ? '8px' : '12px 16px'
+        padding: isCollapsed ? '12px 8px' : '12px 16px'
       }}>
-        {!isCollapsed && (
+        {isCollapsed ? (
+          // Collapsed state - show only support icon and avatar
+          <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            <UnstyledButton
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '8px',
+                backgroundColor: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s ease',
+                '&:hover': {
+                  backgroundColor: theme.colors.sidebarHover || '#f8f9fa'
+                }
+              }}
+            >
+              <IconLifebuoy size={18} style={{ color: theme.colors.textSecondary || '#6c757d' }} />
+            </UnstyledButton>
+            <Avatar size={32} radius="sm" />
+          </Box>
+        ) : (
+          // Expanded state - show full support section and user info
           <>
             <UnstyledButton
               style={{
@@ -129,34 +186,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             >
               Contact us
             </ActionButton>
+
+            <Group gap={8} style={{ justifyContent: 'flex-start' }}>
+              <Avatar size={28} radius="sm" />
+              <Box style={{ flex: 1 }}>
+                <CustomText
+                  fontSize="12px"
+                  fontWeight={500}
+                  color="primary"
+                  lineHeight={1.2}
+                >
+                  Admin User
+                </CustomText>
+                <CustomText
+                  size="xs"
+                  fontSize="11px"
+                  color="secondary"
+                  lineHeight={1.2}
+                >
+                  admin@example.com
+                </CustomText>
+              </Box>
+            </Group>
           </>
         )}
-
-
-
-        <Group gap={isCollapsed ? 0 : 8} style={{ justifyContent: isCollapsed ? 'center' : 'flex-start' }}>
-          <Avatar size={isCollapsed ? 32 : 28} radius="sm" />
-          {!isCollapsed && (
-            <Box style={{ flex: 1 }}>
-              <CustomText
-                fontSize="12px"
-                fontWeight={500}
-                color="primary"
-                lineHeight={1.2}
-              >
-                Admin User
-              </CustomText>
-              <CustomText
-                size="xs"
-                fontSize="11px"
-                color="secondary"
-                lineHeight={1.2}
-              >
-                admin@example.com
-              </CustomText>
-            </Box>
-          )}
-        </Group>
       </Box>
     </Box>
   );

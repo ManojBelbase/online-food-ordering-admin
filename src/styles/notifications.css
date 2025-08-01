@@ -84,3 +84,25 @@
 [data-theme="light"] .mantine-Notification-closeButton:hover {
   background-color: var(--color-surfaceHover) !important;
 }
+
+/* Notification badge styling */
+.mantine-Indicator-indicator {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  border: 2px solid white !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+  z-index: 10 !important;
+}
+
+/* Ensure badge is properly positioned */
+.mantine-ActionIcon-root .mantine-Indicator-root {
+  position: relative;
+}
+
+.mantine-ActionIcon-root .mantine-Indicator-indicator {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+}

@@ -4,7 +4,6 @@ import Sidebar from "./shared/Sidebar";
 import Navbar from "./shared/Navbar";
 import { useTheme } from "../contexts/ThemeContext";
 
-// Custom hook for responsive behavior
 const useResponsive = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -39,16 +38,14 @@ const Layout: React.FC = () => {
     }
   }, [isMobile, isTablet]);
 
-  // Calculate sidebar width based on screen size and state
   const getSidebarWidth = () => {
     if (isMobile) {
-      return isSidebarOpen ? 300 : 0; // Full width or completely hidden on mobile
+      return isSidebarOpen ? 64 : 0;
     }
     if (isTablet) {
-      return isSidebarOpen ? 300 : 80; // Full width or icons only on tablet
+      return 64; 
     }
-    // Desktop: completely close when toggled off
-    return isSidebarOpen ? 300 : 0; // Full width or completely hidden on desktop
+    return isSidebarOpen ? 280 : 64;
   };
 
   const toggleSidebar = () => {

@@ -379,7 +379,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 backgroundColor: "transparent",
               },
               tr: {
-                "&:nth-of-type(even)": alternateRows
+                "&:nthOfType(even)": alternateRows
                   ? { backgroundColor: theme.colors.surface }
                   : {},
                 "&:hover": {

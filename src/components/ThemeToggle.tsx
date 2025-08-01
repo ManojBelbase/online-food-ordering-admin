@@ -10,6 +10,7 @@ const ThemeToggle: React.FC = () => {
     <Tooltip
       label={`Switch to ${themeName === "dark" ? "light" : "dark"} theme`}
       position="bottom"
+      zIndex={10000}
     >
       <ActionIcon
         variant="subtle"
