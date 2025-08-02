@@ -10,13 +10,11 @@ import {
   REGISTER,
 } from 'redux-persist';
 import { rootReducer } from '../reducers';
-import { authApi } from '../../server-action/api/authApi';
 
 const persistConfig = {
   key: "root",
   storage,
   whitelist: ["auth"],
-  blacklist: [authApi.reducerPath], 
   version: 1,
 };
 
@@ -32,7 +30,7 @@ export const appStore = configureStore({
         warnAfter: 128,
       },
       immutableCheck: { warnAfter: 128 },
-    }).concat(authApi.middleware),
+    }),
   devTools: process.env.NODE_ENV !== 'production',
 });
 

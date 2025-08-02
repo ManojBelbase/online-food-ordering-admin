@@ -5,7 +5,7 @@ import { notifications } from "@mantine/notifications";
 import { IconUserPlus, IconMail, IconLock, IconCheck, IconX } from "@tabler/icons-react";
 import { FormInput, FormSelect, type SelectOption } from "../../../components/Forms";
 import { useAppDispatch } from "../../../redux/useAuth";
-import { signupUser, type SignupCredentials } from "../../../server-action/authThunk";
+import { signupUser, type SignupCredentials } from "../../../server-action/authSlice";
 import { customerValidation } from "./CustomerFormValidation";
 import { ActionButton } from "../../../components/ui";
 

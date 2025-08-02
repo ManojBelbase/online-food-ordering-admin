@@ -12,6 +12,13 @@ const initialState: Auth.AuthState = {
   errorSignup: null,
   isInitialized: false,
 };
+export interface SignupCredentials {
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+}
+
 
 export const faceLoginUser = createAsyncThunk<
   { user: Auth.User; accessToken: string; success: boolean; message: string },
@@ -46,19 +53,27 @@ export const loginUser = createAsyncThunk<
   }
 });
 
+
 export const signupUser = createAsyncThunk<
   { user: Auth.User; accessToken: string },
-  { email: string; password: string; role: string },
+  SignupCredentials,
   { rejectValue: string }
->("auth/signupUser", async ({ email, password, role }, thunkAPI) => {
+>("auth/signupUser", async ({ name, email, password, role }, thunkAPI) => {
   try {
-    const res = await makeRequest.post("/auth/signup", { email, password, role });
+    const res = await makeRequest.post("/auth/signup", { name, email, password, role }, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return res.data;
   } catch (err: unknown) {
-    const error = err as AxiosError<{ message: string }>;
-    return thunkAPI.rejectWithValue(
-      error.response?.data?.message || "Signup failed"
-    );
+    const error = err as AxiosError<{ message?: string; error?: { message: string } }>;
+    const errorMessage =
+      error.response?.data?.error?.message || 
+      error.response?.data?.message ||        
+      "Signup failed";
+
+    return thunkAPI.rejectWithValue(errorMessage);
   }
 });
 
