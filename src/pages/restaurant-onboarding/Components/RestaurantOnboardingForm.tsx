@@ -30,7 +30,7 @@ const RestaurantOnboardingForm: React.FC = () => {
   const { user } = useAuth();
   const navigate  = useNavigate();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();
-  const {mutateAsync:createRestaurant}= restaurantApi.useCreate();
+  const {mutateAsync:createRestaurant, isPending: isCreating}= restaurantApi.useCreate();
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
 
   const form = useForm({
@@ -93,20 +93,16 @@ const handleSubmit = async (values: typeof form.values) => {
       },
     };
 
-    const response = await createRestaurant(entityData as any);
+    await createRestaurant(entityData as any);
 
-    if ((response as any)?.success) {
-      navigate("/"); 
-    } else {
-      form.setErrors({
-        restaurantName: (response as any)?.error?.message || "Failed to create restaurant",
-      });
-    }
+    
+    navigate("/");
+
   } catch (error: any) {
     const errMsg =
-      error?.response?.data?.error?.message ||
+      error?.response?.data?.message ||
       error?.message ||
-      "Unexpected error occurred";
+      "Failed to create restaurant. Please try again.";
     form.setErrors({
       restaurantName: errMsg,
     });
@@ -273,8 +269,13 @@ const handleSubmit = async (values: typeof form.values) => {
 
     <Divider />
     <Group justify="flex-end">
-      <ActionButton type="submit" loading={form.submitting} variant="primary">
-        Create Restaurant
+      <ActionButton
+        type="submit"
+        loading={isCreating}
+        disabled={isCreating}
+        variant="primary"
+      >
+        {isCreating ? "Creating Restaurant..." : "Create Restaurant"}
       </ActionButton>
     </Group>
   </Stack>
