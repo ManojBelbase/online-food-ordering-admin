@@ -16,15 +16,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
 
-  // Auto-collapse logic:
-  // - On tablet: always collapsed (icon-only)
-  // - On mobile: collapsed (icon-only) when open, hidden when closed
-  // - On desktop: full when open, collapsed when closed (not hidden)
   const isCollapsed = (isTablet || isMobile || (!isMobile && !isTablet && !isOpen));
   const isHidden = isMobile && !isOpen;
   const sidebarWidth = isCollapsed ? 64 : 280;
 
-  // Auto-close dropdown when sidebar collapses
   useEffect(() => {
     if (isCollapsed) {
       setOpenDropdown(null);

@@ -75,7 +75,7 @@ const VoiceNavigation: React.FC = () => {
       description: 'Go to Categories'
     },
     {
-      keywords: ['global category', 'global categories'],
+      keywords: ['global category', 'global categories' ,"global"],
       route: FRONTENDROUTES.GLOBAL_CATEGORY,
       description: 'Go to Global Categories'
     },

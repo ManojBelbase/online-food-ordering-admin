@@ -178,37 +178,76 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ }) => {
         const payload = result.payload as { user: Auth.User; accessToken: string; success: boolean; message: string }
         if (payload.success) {
           notifications.show({
-            title: "Welcome",
+            title: "Welcome Back!",
             message: `Hello, ${payload.user.name || "User"}!`,
             color: "green",
             icon: <IconCheck size={16} />,
+            autoClose: 3000,
           })
         } else {
           throw new Error(payload.message || "Face login failed")
         }
       } else {
+        // Handle different error types from the backend
+        const payload = result.payload as any;
+        let errorMessage = "Face not recognized. Please try again.";
+        let errorTitle = "Login Failed";
+
+        // Check if we have error details in the payload
+        if (payload?.status === 400 || payload?.message?.includes('Valid face descriptor')) {
+          errorMessage = "Invalid face data captured. Please try again with better lighting.";
+          errorTitle = "Face Data Error";
+        } else if (payload?.status === 401 || payload?.message?.includes('Face not recognized')) {
+          errorMessage = "Face not recognized. Try repositioning or use password login.";
+          errorTitle = "Face Not Recognized";
+        } else if (payload?.status === 500 || payload?.message?.includes('service')) {
+          errorMessage = "Face recognition service temporarily unavailable. Please try password login.";
+          errorTitle = "Service Error";
+        } else if (payload?.message) {
+          errorMessage = payload.message;
+        }
+
         notifications.show({
-          title: "Login Failed",
-          message: "Face not recognized. Try again or use password.",
+          title: errorTitle,
+          message: errorMessage,
           color: "red",
           icon: <IconX size={16} />,
+          autoClose: 5000,
         })
       }
     } catch (error: any) {
-      let message = "Face login failed"
+      let message = "Face login failed";
+      let title = "Error";
+
+      // Handle camera-related errors
       if (error.name === "NotAllowedError") {
-        message = "Camera access denied"
+        message = "Camera access denied. Please allow camera access and try again.";
+        title = "Camera Access Required";
       } else if (error.name === "NotFoundError") {
-        message = "No camera found"
+        message = "No camera found. Please connect a camera and try again.";
+        title = "Camera Not Found";
+      } else if (error.name === "NotReadableError") {
+        message = "Camera is being used by another application. Please close other apps and try again.";
+        title = "Camera Busy";
+      } else if (error.name === "OverconstrainedError") {
+        message = "Camera doesn't support the required settings. Please try with a different camera.";
+        title = "Camera Incompatible";
+      } else if (error.message?.includes('Face not recognized')) {
+        message = "Face not recognized. Please ensure good lighting and try again, or use password login.";
+        title = "Face Not Recognized";
+      } else if (error.message?.includes('service')) {
+        message = "Face recognition service is temporarily unavailable. Please try password login.";
+        title = "Service Unavailable";
       } else if (error.message) {
-        message = error.message
+        message = error.message;
       }
 
       notifications.show({
-        title: "Error",
+        title,
         message,
         color: "red",
         icon: <IconX size={16} />,
+        autoClose: 6000,
       })
     } finally {
       if (streamRef.current) {

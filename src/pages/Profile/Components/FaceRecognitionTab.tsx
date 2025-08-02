@@ -235,12 +235,33 @@ const FaceRecognitionTab: React.FC = () => {
           color: 'green',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      let message = 'Camera access failed. Please try again.';
+      let title = 'Camera Error';
+
+      if (error.name === 'NotAllowedError') {
+        message = 'Camera access denied. Please allow camera access in your browser settings and try again.';
+        title = 'Camera Permission Required';
+      } else if (error.name === 'NotFoundError') {
+        message = 'No camera found. Please connect a camera and try again.';
+        title = 'Camera Not Found';
+      } else if (error.name === 'NotReadableError') {
+        message = 'Camera is being used by another application. Please close other apps and try again.';
+        title = 'Camera Busy';
+      } else if (error.name === 'OverconstrainedError') {
+        message = 'Camera doesn\'t support the required settings. Please try with a different camera.';
+        title = 'Camera Incompatible';
+      } else if (error.name === 'SecurityError') {
+        message = 'Camera access blocked due to security settings. Please check your browser security settings.';
+        title = 'Security Error';
+      }
+
       notifications.show({
-        title: 'Camera Error',
-        message: 'Camera access denied. Please allow camera access to enable face recognition.',
+        title,
+        message,
         color: 'red',
         icon: <IconX size={16} />,
+        autoClose: 6000,
       });
       setShowCamera(false);
     }
@@ -386,7 +407,52 @@ const FaceRecognitionTab: React.FC = () => {
           throw new Error(response.data.message || 'Backend enable failed');
         }
       } catch (apiError: any) {
-        // Fallback to localStorage if backend fails
+        // Handle specific backend errors
+        let errorMessage = 'Face registration failed. Please try again.';
+        let errorTitle = 'Registration Error';
+        let shouldFallback = true;
+
+        if (apiError.response?.status === 400) {
+          errorMessage = 'Invalid face data captured. Please ensure good lighting and try again.';
+          errorTitle = 'Face Data Error';
+          shouldFallback = false;
+        } else if (apiError.response?.status === 409) {
+          errorMessage = 'This face is already registered to another user. Each face can only be used once.';
+          errorTitle = 'Face Already Registered';
+          shouldFallback = false;
+        } else if (apiError.response?.status === 401) {
+          errorMessage = 'Authentication required. Please log in again.';
+          errorTitle = 'Authentication Error';
+          shouldFallback = false;
+        } else if (apiError.response?.status === 404) {
+          errorMessage = 'User account not found. Please contact support.';
+          errorTitle = 'Account Error';
+          shouldFallback = false;
+        } else if (apiError.response?.data?.message) {
+          errorMessage = apiError.response.data.message;
+          errorTitle = 'Server Error';
+        }
+
+        if (!shouldFallback) {
+          // Show error and don't fallback to localStorage
+          notifications.show({
+            title: errorTitle,
+            message: errorMessage,
+            color: 'red',
+            icon: <IconX size={16} />,
+            autoClose: 6000,
+          });
+
+          // Stop camera
+          const stream = videoRef.current?.srcObject as MediaStream;
+          if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+          }
+          setShowCamera(false);
+          return;
+        }
+
+        // Fallback to localStorage only for network/server errors
         const faceData = {
           descriptor: faceDescriptor,
           timestamp: new Date().toISOString(),
@@ -398,10 +464,11 @@ const FaceRecognitionTab: React.FC = () => {
         setFaceEnabled(true);
         setShowCamera(false);
         notifications.show({
-          title: 'Success',
-          message: 'Face recognition enabled successfully! (offline mode)',
-          color: 'green',
+          title: 'Success (Offline Mode)',
+          message: 'Face recognition enabled locally. Will sync when server is available.',
+          color: 'orange',
           icon: <IconCheck size={16} />,
+          autoClose: 5000,
         });
 
         // Stop camera
@@ -412,21 +479,44 @@ const FaceRecognitionTab: React.FC = () => {
       }
 
     } catch (error: any) {
+      let message = 'Face capture failed. Please try again.';
+      let title = 'Capture Error';
+
       if (error.response) {
-        notifications.show({
-          title: 'API Error',
-          message: error.response.data?.message || 'API call failed',
-          color: 'red',
-          icon: <IconX size={16} />,
-        });
-      } else {
-        notifications.show({
-          title: 'Error',
-          message: 'Face detection failed. Please try again.',
-          color: 'red',
-          icon: <IconX size={16} />,
-        });
+        // API-related errors
+        if (error.response.status === 400) {
+          message = 'Invalid face data. Please ensure good lighting and clear face visibility.';
+          title = 'Face Data Error';
+        } else if (error.response.status === 409) {
+          message = 'This face is already registered to another user.';
+          title = 'Face Already Registered';
+        } else if (error.response.status === 401) {
+          message = 'Authentication expired. Please log in again.';
+          title = 'Authentication Error';
+        } else if (error.response.data?.message) {
+          message = error.response.data.message;
+          title = 'Server Error';
+        }
+      } else if (error.name === 'NotAllowedError') {
+        message = 'Camera access denied. Please allow camera access and try again.';
+        title = 'Camera Permission Required';
+      } else if (error.name === 'NotFoundError') {
+        message = 'No camera found. Please connect a camera and try again.';
+        title = 'Camera Not Found';
+      } else if (error.message?.includes('face')) {
+        message = 'Face detection failed. Please ensure good lighting and clear face visibility.';
+        title = 'Face Detection Error';
+      } else if (error.message) {
+        message = error.message;
       }
+
+      notifications.show({
+        title,
+        message,
+        color: 'red',
+        icon: <IconX size={16} />,
+        autoClose: 6000,
+      });
     } finally {
       setLoading(false);
     }
