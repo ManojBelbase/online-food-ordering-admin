@@ -6,8 +6,13 @@ import { Modal } from "@mantine/core";
 import CustomerForm from "./components/CustomerForm";
 
 const CustomerPageIndex = () => {
-  const { data } = userApi.useGetAll();
+  const { data, refetch } = userApi.useGetAll();
   const [openModal, setOpanModal]= useState(false)
+
+  const handleCustomerCreated = () => {
+    setOpanModal(false);
+    refetch(); 
+  };
 
   const tableData = useMemo(() => {
     return {
@@ -35,8 +40,8 @@ const CustomerPageIndex = () => {
         actionVariant="outline"
       />
 <DataTable data={tableData.rows} columns={tableData.columns} searchPlaceholder="Search..." />
-    <Modal opened={openModal} onClose={()=>setOpanModal(false)} title="Add Customer" centered> 
-      <CustomerForm/>
+    <Modal opened={openModal} onClose={()=>setOpanModal(false)} title="Add Customer" centered>
+      <CustomerForm onSuccess={handleCustomerCreated} />
     </Modal>
     </div>
   );
