@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { Table, Paper, LoadingOverlay } from "@mantine/core";
+import { Table, Paper } from "@mantine/core";
 import { useTheme } from "../../../contexts/ThemeContext";
 import TableBody from "./TableBody";
 import TablePagination from "../TablePagination";
 import type { FilterConfig } from "./TableFilter";
 import TableHeader from "./TableHeader";
 import TableFilter from "./TableFilter";
+import TableShimmer from "./TableShimmer";
 import { TableControls } from "..";
 
 // Enhanced column interface
@@ -304,7 +305,7 @@ const DataTable: React.FC<DataTableProps> = ({
         );
       }
 
-      return value; // Fallback to default rendering for non-image fields
+      return value; 
     },
     []
   );
@@ -317,7 +318,6 @@ const DataTable: React.FC<DataTableProps> = ({
       }}
       pos="relative"
     >
-      <LoadingOverlay visible={loading} />
       <TableControls
         title={title}
         searchPlaceholder={searchPlaceholder}
@@ -338,7 +338,14 @@ const DataTable: React.FC<DataTableProps> = ({
         />
       )}
 
-      {virtualized ? (
+      {/* Show shimmer effect when loading or no data */}
+      {loading || (!data || data.length === 0) ? (
+        <TableShimmer
+          columns={columns.length}
+          rows={6}
+          showHeader={true}
+        />
+      ) : virtualized ? (
         <div>
           <TableHeader
             columns={columns}
