@@ -20,7 +20,7 @@ interface TableControlsProps {
   showSearchInput?: boolean;
   showPrintButton?: boolean;
   printTitle?: string;
-  printContent?: string;
+  printContent?: string | React.ReactElement;
 }
 
 const TableControls: React.FC<TableControlsProps> = ({
@@ -48,12 +48,33 @@ const TableControls: React.FC<TableControlsProps> = ({
         borderBottom: `1px solid ${theme.colors.border}`,
       }}
     >
-      <Flex justify="space-between" align="center" mb="md">
-        {/* Title */}
-        {title && (
+      {/* Title */}
+      {title && (
+        <Flex justify="space-between" align="center" mb="md">
           <CustomText size="lg" fontWeight={600} color="primary">
             {title}
           </CustomText>
+        </Flex>
+      )}
+
+      {/* Search and Action Buttons Row */}
+      <Flex justify="space-between" align="center" gap="md">
+        {/* Search Input */}
+        {showSearchInput && onSearchChange && (
+          <TextInput
+            placeholder={searchPlaceholder}
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            leftSection={<IconSearch size={16} />}
+            style={{ flex: 1, maxWidth: '300px' }}
+            styles={{
+              input: {
+                backgroundColor: theme.colors.inputBackground,
+                borderColor: theme.colors.inputBorder,
+                color: theme.colors.inputText,
+              },
+            }}
+          />
         )}
 
         {/* Action Buttons */}
@@ -92,23 +113,6 @@ const TableControls: React.FC<TableControlsProps> = ({
           )}
         </Group>
       </Flex>
-
-      {/* Search Input */}
-      {showSearchInput && onSearchChange && (
-        <TextInput
-          placeholder={searchPlaceholder}
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          leftSection={<IconSearch size={16} />}
-          styles={{
-            input: {
-              backgroundColor: theme.colors.inputBackground,
-              borderColor: theme.colors.inputBorder,
-              color: theme.colors.inputText,
-            },
-          }}
-        />
-      )}
     </div>
   );
 };

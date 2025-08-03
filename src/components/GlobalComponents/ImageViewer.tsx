@@ -78,6 +78,11 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
           margin: 0;
         }
         .no-print { display: none !important; }
+        img {
+          max-width: 100% !important;
+          height: auto !important;
+          page-break-inside: avoid;
+        }
       }
     `,
   });

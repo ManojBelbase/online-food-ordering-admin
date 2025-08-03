@@ -58,6 +58,18 @@ const GlobalPrint: React.FC<GlobalPrintProps> = ({
           margin: 0;
         }
         .no-print { display: none !important; }
+        img {
+          max-width: 100% !important;
+          height: auto !important;
+          page-break-inside: avoid;
+        }
+        table {
+          page-break-inside: auto;
+        }
+        tr {
+          page-break-inside: avoid;
+          page-break-after: auto;
+        }
       }
     `,
   });
@@ -216,7 +228,7 @@ const GlobalPrint: React.FC<GlobalPrintProps> = ({
         </div>
       </div>
 
-      <Tooltip label="Print with Restaurant Letterhead">
+      <Tooltip label="Print">
         <ActionIcon
           variant="subtle"
           size={size}

@@ -9,6 +9,7 @@ import TableFilter from "./TableFilter";
 import TableShimmer from "./TableShimmer";
 import ImageViewer from "../ImageViewer";
 import { TableControls } from "..";
+import TablePrintContent from "./TablePrintContent";
 
 // Enhanced column interface
 interface TableColumn {
@@ -57,11 +58,13 @@ interface DataTableProps {
   // 🖨️ Print props
   showPrintButton?: boolean;
   printTitle?: string;
-  printContent?: string;
+  printShowTitle?: boolean
+  printShowRecordCount?: boolean; // Show record count in print
+  printExcludeColumns?: string[]; 
 }
 
 const DataTable: React.FC<DataTableProps> = ({
-  data = [], // Default to empty array
+  data = [],
   columns,
   pagination: externalPagination,
   onPageChange: externalOnPageChange,
@@ -90,7 +93,9 @@ const DataTable: React.FC<DataTableProps> = ({
   // 🖨️ Print props
   showPrintButton = false,
   printTitle = "Table Report",
-  printContent = "",
+  printShowTitle = false,
+  printShowRecordCount = false,
+  printExcludeColumns = [],
 }) => {
   const { theme } = useTheme();
 
@@ -127,7 +132,6 @@ const DataTable: React.FC<DataTableProps> = ({
     };
   }, [apiMode, externalPagination, data, localPage, localLimit]);
 
-  // 🎯 Smart event handlers for pagination
   const handlePageChange = useCallback(
     (page: number) => {
       if (isFrontendMode) {
@@ -163,10 +167,8 @@ const DataTable: React.FC<DataTableProps> = ({
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [scrollTop, setScrollTop] = useState(0);
 
-  // Detect if we're in API mode
   const isApiMode = apiMode && (onApiSearch || onApiFilter || onApiSort);
 
-  // 🎯 Smart event handlers - API mode vs Frontend mode
   const handleSort = useCallback(
     (column: TableColumn) => {
       if (!column.sortable) return;
@@ -189,12 +191,10 @@ const DataTable: React.FC<DataTableProps> = ({
   const handleSearch = useCallback(
     (query: string) => {
       if (isApiMode && onApiSearch) {
-        // API mode: Call API handler
         onApiSearch(query);
       } else {
-        // Frontend mode: Update local state
         setSearchQuery(query);
-        setLocalPage(1); // Reset to page 1 on search
+        setLocalPage(1); 
       }
     },
     [isApiMode, onApiSearch]
@@ -203,10 +203,8 @@ const DataTable: React.FC<DataTableProps> = ({
   const handleFiltersChange = useCallback(
     (newFilters: Record<string, any>) => {
       if (isApiMode && onApiFilter) {
-        // API mode: Call API handler
         onApiFilter(newFilters);
       } else {
-        // Frontend mode: Update local state
         setFilterValues(newFilters);
         setLocalPage(1); // Reset to page 1 on filter change
       }
@@ -228,6 +226,8 @@ const DataTable: React.FC<DataTableProps> = ({
     [virtualized]
   );
 
+
+
   const processedData = useMemo(() => {
     if (isApiMode) {
       return { data, totalCount: data.length };
@@ -235,7 +235,6 @@ const DataTable: React.FC<DataTableProps> = ({
 
     let result = [...data];
 
-    // Apply search
     if (searchQuery) {
       result = result.filter((row) =>
         columns.some((column) =>
@@ -276,7 +275,6 @@ const DataTable: React.FC<DataTableProps> = ({
 
     const totalCount = result.length;
 
-    // Apply pagination
     if (!virtualized) {
       const startIndex = (pagination.page - 1) * pagination.limit;
       const endIndex = startIndex + pagination.limit;
@@ -298,7 +296,21 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const filteredAndSortedData = processedData.data;
 
-  // Custom renderCell to handle image rendering
+  const printContent = useMemo(() => {
+    const { data: processedTableData } = processedData;
+
+    return (
+      <TablePrintContent
+        data={processedTableData}
+        columns={columns}
+        title={printTitle}
+        showTitle={printShowTitle}
+        showRecordCount={printShowRecordCount}
+        excludeColumns={printExcludeColumns}
+      />
+    );
+  }, [processedData, columns, printTitle, printShowTitle, printShowRecordCount, printExcludeColumns]);
+
   const renderCell = useCallback(
     (column: TableColumn, row: any) => {
       const value = row[column.key];
@@ -309,6 +321,7 @@ const DataTable: React.FC<DataTableProps> = ({
       if (
         isImageField &&
         typeof value === "string" &&
+        value.trim() !== "" &&
         (value.startsWith("data:image") || value.startsWith("http") || value.startsWith("/"))
       ) {
         return (
@@ -341,6 +354,10 @@ const DataTable: React.FC<DataTableProps> = ({
             }}
           />
         );
+      }
+
+      if (value === null || value === undefined || value === '') {
+        return '-';
       }
 
       return value;
@@ -379,7 +396,6 @@ const DataTable: React.FC<DataTableProps> = ({
         />
       )}
 
-      {/* Show shimmer effect when loading or no data */}
       {loading || (!data || data.length === 0) ? (
         <TableShimmer
           columns={columns.length}

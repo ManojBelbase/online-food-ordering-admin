@@ -1,21 +1,20 @@
 import { useMemo } from "react";
-import { PageHeader, StatusBadge } from "../../components/GlobalComponents";
+import { PageHeader } from "../../components/GlobalComponents";
 import { restaurantApi } from "../../server-action/api/restaurant";
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
 
 const RestaurantPageIndex = () => {
   const { data } = restaurantApi.useGetAll();
-  
+
   const tableData = useMemo(() => {
     return {
       columns: [
         { title: "Sn", key: "sn" },
         { title: "Restaurant Name", key: "restaurantName" },
+        { title: "Logo", key: "logo" },
         { title: "Cuisine Type", key: "cuisineType" },
         { title: "Address", key: "address" },
         { title: "License Number", key: "licenseNumber" },
-        { title: "Logo", key: "logo" },
-        { title: "Status", key: "status" },
       ],
       rows: (data as any)?.restaurant?.map((restaurant: any, index: number) => ({
         sn: index + 1,
@@ -24,11 +23,7 @@ const RestaurantPageIndex = () => {
         address: restaurant.address || "N/A",
         licenseNumber: restaurant.licenseNumber || "N/A",
         logo: restaurant.logo,
-        status: (
-          <StatusBadge
-            status={restaurant.manualOverride.isOpen ? "Open" : "Closed"}
-          />
-        ),
+      
       })) || [],
     };
   }, [data]);
@@ -46,7 +41,11 @@ const RestaurantPageIndex = () => {
         searchPlaceholder="Search restaurants..."
         showPrintButton={true}
         printTitle="Restaurant List Report"
-        printContent="This is a restaurant list report with all restaurant information."
+        printShowTitle={true}
+        printShowRecordCount={false}
+        printExcludeColumns={['action', 'logo']}
+    
+
       />
 
     </div>

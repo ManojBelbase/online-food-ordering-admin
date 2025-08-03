@@ -11,11 +11,18 @@ const FoodItemPageIndex = () => {
   const { data } = foodItemApi.useGetAll();
   const { mutateAsync: deleteFoodItem } = foodItemApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: IFoodItem } | null>(null);
+  const [filterValues, setFilterValues] = useState<Record<string, any>>({});
 
   const handleDeleteFoodItem = async (id: string) => {
     await deleteFoodItem(id);
     setModalState(null);
   };
+
+  const handleFiltersChange = (filters: Record<string, any>) => {
+    setFilterValues(filters);
+  };
+
+
 
   const tableData = useMemo(() => {
     return {
@@ -25,6 +32,7 @@ const FoodItemPageIndex = () => {
         { title: 'Cuisine Type', key: 'cuisineType' },
         { title: 'Price', key: 'price' },
         { title: 'Vegetarian', key: 'isVeg' },
+        { title: 'Tags', key: 'tags' },
         { title: 'Action', key: 'action' },
       ],
       rows: (data as any)?.foodItems?.map((item: IFoodItem, index: number) => {
@@ -39,6 +47,7 @@ const FoodItemPageIndex = () => {
           image: item.image || 'N/A',
           cuisineType: item.cuisineType || 'N/A',
           price: item.price ? `$${item.price.toFixed(2)}` : 'N/A',
+          tags: item.tags.join(', '),
           isVeg: item.isVeg ? 'Yes' : 'No',
           action: <TableActions actions={actions} />,
         };
@@ -53,7 +62,30 @@ const FoodItemPageIndex = () => {
         onClick={() => setModalState({ mode: 'create' })}
         actionVariant="outline"
       />
-      <DataTable columns={tableData.columns} data={tableData.rows} />
+      <DataTable
+        columns={tableData.columns}
+        data={tableData.rows}
+        showPrintButton={true}
+        printTitle='Food Item Report'
+        printShowTitle={true}
+        printShowRecordCount={false}
+        printExcludeColumns={['action' ,'image']}
+        filters={[
+       
+          {
+            key: 'isVeg',
+            label: 'Vegetarian',
+            type: 'select',
+            options: [
+              { label: 'All', value: '' },
+              { label: 'Vegetarian', value: 'Yes' },
+              { label: 'Non-Vegetarian', value: 'No' }
+            ]
+          }
+        ]}
+        showFilters={Object.keys(filterValues).length > 0}
+        onFiltersChange={handleFiltersChange}
+      />
 
       <Modal
         opened={modalState?.mode === 'create' || modalState?.mode === 'edit'}
