@@ -27,14 +27,25 @@ const EmailVerificationStatusComponent: React.FC<EmailVerificationStatusProps> =
       try {
         const statusData = await emailVerificationApi.checkEmailVerificationStatus(email);
         setStatus(statusData);
-      } catch (error) {
-        console.error('Error checking email verification status:', error);
-        setStatus({
-          email,
-          isEmailVerified: isEmailVerified || false,
-          isTokenExpired: false,
-          canResendVerification: !isEmailVerified
-        });
+      } catch (error: any) {
+        // Handle 404 errors silently (user not found or verification not needed)
+        if (error?.response?.status === 404) {
+          setStatus({
+            email,
+            isEmailVerified: isEmailVerified || false,
+            isTokenExpired: false,
+            canResendVerification: !isEmailVerified
+          });
+        } else {
+          // Log other errors for debugging
+          console.error('Error checking email verification status:', error);
+          setStatus({
+            email,
+            isEmailVerified: isEmailVerified || false,
+            isTokenExpired: false,
+            canResendVerification: !isEmailVerified
+          });
+        }
       } finally {
         setLoading(false);
       }

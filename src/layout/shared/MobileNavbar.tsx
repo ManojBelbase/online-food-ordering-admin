@@ -5,7 +5,6 @@ import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggle from "../../components/ThemeToggle";
 import VoiceNavigation from "../../components/VoiceNavigation";
 import ProfileMenu from "./ProfileMenu";
-import NotificationMenu from "./NotificationMenu";
 
 interface MobileNavbarProps {
   onHamburgerClick: () => void;
@@ -70,7 +69,6 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ onHamburgerClick }) => {
 
         <ThemeToggle />
         <VoiceNavigation />
-        <NotificationMenu />
         <ProfileMenu isMobile={true} />
       </Group>
     </div>

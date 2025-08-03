@@ -7,6 +7,7 @@ import type { FilterConfig } from "./TableFilter";
 import TableHeader from "./TableHeader";
 import TableFilter from "./TableFilter";
 import TableShimmer from "./TableShimmer";
+import ImageViewer from "../ImageViewer";
 import { TableControls } from "..";
 
 // Enhanced column interface
@@ -53,6 +54,10 @@ interface DataTableProps {
   currentSearch?: string;
   currentFilters?: Record<string, any>;
   currentSort?: { column: string; direction: "asc" | "desc" };
+  // 🖨️ Print props
+  showPrintButton?: boolean;
+  printTitle?: string;
+  printContent?: string;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -82,12 +87,27 @@ const DataTable: React.FC<DataTableProps> = ({
   currentSearch = "",
   currentFilters = {},
   currentSort,
+  // 🖨️ Print props
+  showPrintButton = false,
+  printTitle = "Table Report",
+  printContent = "",
 }) => {
   const { theme } = useTheme();
 
   // 🎯 Local pagination state for frontend mode
   const [localPage, setLocalPage] = useState(externalPagination?.page || 1);
   const [localLimit, setLocalLimit] = useState(externalPagination?.limit || 10);
+
+  // Image viewer state
+  const [imageViewer, setImageViewer] = useState<{
+    opened: boolean;
+    imageUrl: string;
+    title: string;
+  }>({
+    opened: false,
+    imageUrl: "",
+    title: "",
+  });
 
   // Determine pagination settings
   const isFrontendMode = !apiMode;
@@ -282,7 +302,7 @@ const DataTable: React.FC<DataTableProps> = ({
   const renderCell = useCallback(
     (column: TableColumn, row: any) => {
       const value = row[column.key];
-      const isImageField = ["image", "photo", "avatar", "icon"].some((key) =>
+      const isImageField = ["image", "photo", "avatar", "icon", "logo"].some((key) =>
         column.key.toLowerCase().includes(key)
       );
 
@@ -300,14 +320,32 @@ const DataTable: React.FC<DataTableProps> = ({
               height: 40,
               objectFit: "cover",
               borderRadius: 6,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              border: `2px solid transparent`,
+            }}
+            onClick={() => {
+              setImageViewer({
+                opened: true,
+                imageUrl: value,
+                title: `${column.title} - ${row.name || row.restaurantName || 'Image'}`,
+              });
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.border = `2px solid ${theme.colors.primary}`;
+              e.currentTarget.style.transform = "scale(1.05)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.border = "2px solid transparent";
+              e.currentTarget.style.transform = "scale(1)";
             }}
           />
         );
       }
 
-      return value; 
+      return value;
     },
-    []
+    [theme.colors.primary, setImageViewer]
   );
 
   return (
@@ -328,6 +366,9 @@ const DataTable: React.FC<DataTableProps> = ({
         filters={filters}
         filterValues={isApiMode ? currentFilters : filterValues}
         onToggleFilters={toggleFilters}
+        showPrintButton={showPrintButton}
+        printTitle={printTitle}
+        printContent={printContent}
       />
       {filters.length > 0 && (
         <TableFilter
@@ -422,6 +463,14 @@ const DataTable: React.FC<DataTableProps> = ({
         filteredCount={processedData.totalCount}
         totalCount={data.length}
         virtualized={virtualized}
+      />
+
+      {/* Image Viewer Modal */}
+      <ImageViewer
+        opened={imageViewer.opened}
+        onClose={() => setImageViewer({ opened: false, imageUrl: "", title: "" })}
+        imageUrl={imageViewer.imageUrl}
+        title={imageViewer.title}
       />
     </Paper>
   );

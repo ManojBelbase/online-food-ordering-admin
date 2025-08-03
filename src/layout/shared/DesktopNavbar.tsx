@@ -5,7 +5,6 @@ import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggle from "../../components/ThemeToggle";
 import VoiceNavigation from "../../components/VoiceNavigation";
 import ProfileMenu from "./ProfileMenu";
-import NotificationMenu from "./NotificationMenu";
 
 interface DesktopNavbarProps {
   onHamburgerClick: () => void;
@@ -88,7 +87,6 @@ const DesktopNavbar: React.FC<DesktopNavbarProps> = ({ onHamburgerClick, isTable
         {/* Action Buttons */}
         <ThemeToggle />
         <VoiceNavigation />
-        <NotificationMenu />
         <ProfileMenu isMobile={false} />
       </Group>
     </div>

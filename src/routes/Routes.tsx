@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 import ProtectedRoute from "../auth/ProtectedRoute.tsx";
+import RouteGuard from "../auth/RouteGuard.tsx";
 import withSuspense, { withPageLoader } from "../utils/withSuspense";
 import { FRONTENDROUTES } from "../constants/frontendRoutes.ts";
 import CategoryPageIndex from "../pages/Category/CategoryPageIndex.tsx";
@@ -72,15 +73,33 @@ const protectedRoutes: RouteObject[] = [
     children: [
       { index: true, element: <HomePage /> },
       { path: "components", element: <ComponentsIndex /> },
-      {path:FRONTENDROUTES.GLOBAL_CATEGORY, element:<GlobalCategoryIndex/>},
-      {path:FRONTENDROUTES.CATEGORY, element:<CategoryPageIndex/>},
-      { path: FRONTENDROUTES.CUSTOMER, element: <CustomerPageIndex /> },
-      { path: FRONTENDROUTES.RESTAURANT, element: <RestaurantPageIndex /> },
+      {
+        path: FRONTENDROUTES.GLOBAL_CATEGORY.substring(1),
+        element: <RouteGuard><GlobalCategoryIndex /></RouteGuard>
+      },
+      {
+        path: FRONTENDROUTES.CATEGORY.substring(1),
+        element: <RouteGuard><CategoryPageIndex /></RouteGuard>
+      },
+      {
+        path: FRONTENDROUTES.CUSTOMER.substring(1),
+        element: <RouteGuard><CustomerPageIndex /></RouteGuard>
+      },
+      {
+        path: FRONTENDROUTES.RESTAURANT.substring(1),
+        element: <RouteGuard><RestaurantPageIndex /></RouteGuard>
+      },
 
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
-      { path: FRONTENDROUTES.FOOD_ITEM, element: <FoodItemPageIndex /> },
+      {
+        path: FRONTENDROUTES.FOOD_ITEM.substring(1),
+        element: <RouteGuard><FoodItemPageIndex /></RouteGuard>
+      },
 
-      { path: FRONTENDROUTES.NEW_ORDERS, element: <NewOrderPageIndex /> },
+      {
+        path: FRONTENDROUTES.NEW_ORDERS.substring(1),
+        element: <RouteGuard><NewOrderPageIndex /></RouteGuard>
+      },
 
       { path: "menu/items", element: <div>Menu Items</div> },
     ],

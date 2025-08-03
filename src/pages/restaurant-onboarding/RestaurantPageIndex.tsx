@@ -13,13 +13,17 @@ const RestaurantPageIndex = () => {
         { title: "Restaurant Name", key: "restaurantName" },
         { title: "Cuisine Type", key: "cuisineType" },
         { title: "Address", key: "address" },
+        { title: "License Number", key: "licenseNumber" },
+        { title: "Logo", key: "logo" },
         { title: "Status", key: "status" },
       ],
       rows: (data as any)?.restaurant?.map((restaurant: any, index: number) => ({
         sn: index + 1,
-        restaurantName: restaurant.restaurantName,
-        cuisineType: restaurant.cuisineType,
-        address: restaurant.address,
+        restaurantName: restaurant.restaurantName || "N/A",
+        cuisineType: restaurant.cuisineType || "N/A",
+        address: restaurant.address || "N/A",
+        licenseNumber: restaurant.licenseNumber || "N/A",
+        logo: restaurant.logo,
         status: (
           <StatusBadge
             status={restaurant.manualOverride.isOpen ? "Open" : "Closed"}
@@ -35,12 +39,16 @@ const RestaurantPageIndex = () => {
         title="Restaurants"
         actionVariant="outline"
       />
+
       <DataTable
         data={tableData.rows}
         columns={tableData.columns}
         searchPlaceholder="Search restaurants..."
+        showPrintButton={true}
+        printTitle="Restaurant List Report"
+        printContent="This is a restaurant list report with all restaurant information."
       />
-      
+
     </div>
   );
 };

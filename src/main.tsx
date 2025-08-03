@@ -7,13 +7,11 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dropzone/styles.css";
 import "@mantine/dates/styles.css";
-import "./styles/notifications.css";
 import "./styles/global-theme.css";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { MantineThemeProvider } from "./components/MantineThemeProvider";
 import { ModalProvider } from "./contexts/ModalContext";
-import { NotificationProvider } from "./contexts/NotificationContext";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { appStore, persistor } from "./redux/store/store";
@@ -45,23 +43,21 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           >
             <BrowserRouter>
               <QueryProvider >
-                <NotificationProvider>
-                  <ModalProvider>
-                    <Notifications
-                      position="top-right"
-                      zIndex={2077}
-                      limit={5}
-                      containerWidth={400}
-                      styles={{
-                        notification: {
-                          marginTop: "10px",
-                          marginRight: "20px",
-                        },
-                      }}
-                    />
-                    <App />
-                  </ModalProvider>
-                </NotificationProvider>
+                <ModalProvider>
+                  <Notifications
+                    position="top-right"
+                    zIndex={2077}
+                    limit={5}
+                    containerWidth={400}
+                    styles={{
+                      notification: {
+                        marginTop: "10px",
+                        marginRight: "20px",
+                      },
+                    }}
+                  />
+                  <App />
+                </ModalProvider>
               </QueryProvider>
             </BrowserRouter>
           </PersistGate>

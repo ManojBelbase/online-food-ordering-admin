@@ -17,7 +17,8 @@ export const useRolePermissions = () => {
       return false;
     }
 
-    return requiredRoles.includes(user.role);
+    const hasAccess = requiredRoles.includes(user.role);
+    return hasAccess;
   };
 
   const filterItemsByRole = (items: any[]) => {

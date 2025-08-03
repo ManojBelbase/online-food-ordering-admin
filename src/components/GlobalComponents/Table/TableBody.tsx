@@ -41,7 +41,7 @@ const TableBody: React.FC<TableBodyProps> = ({
 
   const defaultRenderCell = useCallback((column: TableColumn, row: any) => {
     const value = row[column.key];
-    const isImageField = ["image", "photo", "avatar", "icon"].some((key) =>
+    const isImageField = ["image", "photo", "avatar", "icon", "logo"].some((key) =>
       column.key.toLowerCase().includes(key)
     );
 

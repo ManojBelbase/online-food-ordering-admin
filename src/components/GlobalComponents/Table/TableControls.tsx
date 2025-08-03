@@ -4,6 +4,7 @@ import { IconSearch, IconRefresh } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
 import FilterButton from "../FilterButton";
 import { CustomText } from "../../ui";
+import { GlobalPrint } from "../index";
 
 interface TableControlsProps {
   title?: string;
@@ -17,6 +18,9 @@ interface TableControlsProps {
   onToggleFilters?: () => void;
   showRefreshButton?: boolean;
   showSearchInput?: boolean;
+  showPrintButton?: boolean;
+  printTitle?: string;
+  printContent?: string;
 }
 
 const TableControls: React.FC<TableControlsProps> = ({
@@ -31,6 +35,9 @@ const TableControls: React.FC<TableControlsProps> = ({
   onToggleFilters,
   showRefreshButton = true,
   showSearchInput = true,
+  showPrintButton = false,
+  printTitle = "Table Report",
+  printContent = "",
 }) => {
   const { theme } = useTheme();
 
@@ -51,6 +58,16 @@ const TableControls: React.FC<TableControlsProps> = ({
 
         {/* Action Buttons */}
         <Group gap="xs">
+          {/* Print Button */}
+          {showPrintButton && (
+            <GlobalPrint
+              title={printTitle}
+              content={printContent}
+              variant="icon"
+              size="md"
+            />
+          )}
+
           {/* Filter Button */}
           {filters.length > 0 && onToggleFilters && (
             <FilterButton
