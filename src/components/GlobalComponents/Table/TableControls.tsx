@@ -86,6 +86,7 @@ const TableControls: React.FC<TableControlsProps> = ({
               content={printContent}
               variant="icon"
               size="md"
+              
             />
           )}
 
@@ -94,6 +95,7 @@ const TableControls: React.FC<TableControlsProps> = ({
             <FilterButton
               onClick={onToggleFilters}
               activeFilterCount={Object.keys(filterValues ?? {}).length}
+              
             />
           )}
 

@@ -77,8 +77,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       style={{
         backgroundColor: theme.colors.surface,
         border: `1px solid ${theme.colors.border}`,
-        padding: "14px",
-        marginBottom: "14px",
+        paddingInline: "14px",
+        paddingBlock: "8px",
+        marginBottom: "6px",
+        marginTop: "-4px",
         borderRadius: "4px",
       }}
     >
@@ -90,7 +92,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               style={{ color: theme.colors.textTertiary }}
             />
           }
-          mb="md"
+          mb="sm"
           styles={{
             breadcrumb: {
               color: theme.colors.textSecondary,
@@ -123,7 +125,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       )}
 
       {/* Header Content */}
-      <Flex justify="space-between" align="flex-start" gap="md">
+      <Flex justify="space-between" align="flex-start" gap="sm">
         <Group gap="md" align="flex-start">
           {showBackButton && (
             <ActionIcon
@@ -145,7 +147,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               style={{
                 color: theme.colors.textPrimary,
                 fontSize: "24px",
-                fontWeight: 600,
+                fontWeight: 500,
                 lineHeight: 1.2,
                 marginBottom: subtitle ? "4px" : 0,
               }}

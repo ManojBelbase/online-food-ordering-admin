@@ -82,7 +82,6 @@ const DataTable: React.FC<DataTableProps> = ({
   virtualHeight = 400,
   itemHeight = 50,
   onRowClick,
-  // 🎯 API Integration props
   apiMode = false,
   onApiSearch,
   onApiFilter,
@@ -90,7 +89,6 @@ const DataTable: React.FC<DataTableProps> = ({
   currentSearch = "",
   currentFilters = {},
   currentSort,
-  // 🖨️ Print props
   showPrintButton = false,
   printTitle = "Table Report",
   printShowTitle = false,
@@ -146,7 +144,7 @@ const DataTable: React.FC<DataTableProps> = ({
     (limit: number) => {
       if (isFrontendMode) {
         setLocalLimit(limit);
-        setLocalPage(1); // Reset to page 1 when limit changes
+        setLocalPage(1);
       }
       externalOnLimitChange?.(limit);
     },
@@ -370,6 +368,7 @@ const DataTable: React.FC<DataTableProps> = ({
       style={{
         backgroundColor: theme.colors.surface,
         border: `1px solid ${theme.colors.border}`,
+        borderRadius: "4px",
       }}
       pos="relative"
     >

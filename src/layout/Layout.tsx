@@ -78,8 +78,8 @@ const Layout: React.FC = () => {
         <main
           style={{
             flex: 1,
-            padding: "0 10px 10px 10px",
-            marginTop: "14px",
+            padding: "0 6px 6px 6px",
+            marginTop: "10px",
             color: theme.colors.textPrimary,
             backgroundColor: theme.colors.background,
             transition: "color 0.3s ease, background-color 0.3s ease",

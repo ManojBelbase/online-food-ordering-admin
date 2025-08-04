@@ -1,6 +1,7 @@
 import React from "react";
 import { IconFilter } from "@tabler/icons-react";
 import { ActionButton } from "../ui";
+import { Tooltip } from "@mantine/core";
 
 interface FilterButtonProps {
   onClick: () => void;
@@ -18,8 +19,12 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       size="sm"
       fontWeight={500}
     >
-      <IconFilter size={16} style={{ marginRight: '8px' }} />
-      Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+      <Tooltip label="Filter">
+        <IconFilter size={16} style={{ marginRight: '8px' }}  />
+      </Tooltip>
+       {activeFilterCount > 0 && `(${activeFilterCount})`}
+
+       
     </ActionButton>
   );
 };

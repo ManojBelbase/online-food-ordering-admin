@@ -10,7 +10,6 @@ import { IconFilterOff } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { ActionButton } from "../../ui";
 
-// Filter option interface
 export interface FilterOption {
   label: string;
   value: string;
@@ -24,7 +23,6 @@ export interface FilterConfig {
   placeholder?: string;
 }
 
-// TableFilter props
 interface TableFilterProps {
   filters: FilterConfig[];
   visible: boolean;
@@ -49,7 +47,6 @@ const TableFilter: React.FC<TableFilterProps> = ({
     setTempFilterValues(prev => {
       const newValues = { ...prev };
       if (value === null || value === "" || value === undefined) {
-        // Remove the key entirely when clearing
         delete newValues[key];
       } else {
         newValues[key] = value;
@@ -81,7 +78,6 @@ const TableFilter: React.FC<TableFilterProps> = ({
           backgroundColor: theme.colors.backgroundSecondary,
           boxShadow: theme.shadows.sm,
           borderBottom: `1px solid ${theme.colors.border}`,
-          paddingBottom: "8px",
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
@@ -91,7 +87,7 @@ const TableFilter: React.FC<TableFilterProps> = ({
       >
 
         {/* Filter Inputs */}
-        <Group gap="md" grow px="14px" py="14px">
+        <Group gap="md" grow px="14px" py="8px">
           
           {filters.map((filter) => (
             <Box key={filter.key} style={{ flex: 1, minWidth: 200, maxWidth: 300 }}>
@@ -129,6 +125,7 @@ const TableFilter: React.FC<TableFilterProps> = ({
                       backgroundColor: theme.colors.inputBackground,
                       borderColor: theme.colors.inputBorder,
                       color: theme.colors.inputText,
+                      
                     },
                     label: {
                       color: theme.colors.textPrimary,

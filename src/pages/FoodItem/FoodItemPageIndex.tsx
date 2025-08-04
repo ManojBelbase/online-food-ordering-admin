@@ -6,6 +6,7 @@ import { createDeleteAction, createEditAction } from '../../components/GlobalCom
 import DeleteModal from '../../components/GlobalComponents/DeleteModal';
 import { Modal } from '@mantine/core';
 import FoodItemForm from './Components/FoodItemForm';
+import { foodItemsFilter } from './Components/FoodItemFilter';
 
 const FoodItemPageIndex = () => {
   const { data } = foodItemApi.useGetAll();
@@ -70,19 +71,7 @@ const FoodItemPageIndex = () => {
         printShowTitle={true}
         printShowRecordCount={false}
         printExcludeColumns={['action' ,'image']}
-        filters={[
-       
-          {
-            key: 'isVeg',
-            label: 'Vegetarian',
-            type: 'select',
-            options: [
-              { label: 'All', value: '' },
-              { label: 'Vegetarian', value: 'Yes' },
-              { label: 'Non-Vegetarian', value: 'No' }
-            ]
-          }
-        ]}
+        filters={foodItemsFilter || []}
         showFilters={Object.keys(filterValues).length > 0}
         onFiltersChange={handleFiltersChange}
       />
