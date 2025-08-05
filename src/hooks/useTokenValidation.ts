@@ -6,7 +6,7 @@ import { isTokenExpired, getTokenRemainingTime } from '../utils/tokenUtils';
  * Hook to monitor token validity and provide token status information
  */
 export const useTokenValidation = () => {
-  const { accessToken, dispatch } = useAuth();
+  const { accessToken } = useAuth();
   const [tokenStatus, setTokenStatus] = useState<{
     isValid: boolean;
     isExpired: boolean;
