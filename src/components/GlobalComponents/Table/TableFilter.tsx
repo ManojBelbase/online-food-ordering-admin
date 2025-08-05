@@ -25,7 +25,7 @@ export interface FilterConfig {
 
 interface TableFilterProps {
   filters: FilterConfig[];
-  visible: boolean;
+  visible?: boolean; // Make optional - will auto-calculate if not provided
   onFiltersChange: (filters: Record<string, any>) => void;
   appliedFilters: Record<string, any>;
 }
@@ -38,6 +38,9 @@ const TableFilter: React.FC<TableFilterProps> = ({
 }) => {
   const { theme } = useTheme();
   const [tempFilterValues, setTempFilterValues] = useState<Record<string, any>>({});
+
+  // Auto-calculate visibility if not provided
+  const isVisible = visible !== undefined ? visible : Object.keys(appliedFilters).length > 0;
 
   useEffect(() => {
     setTempFilterValues(appliedFilters);
@@ -72,7 +75,7 @@ const TableFilter: React.FC<TableFilterProps> = ({
 
 
   return (
-    <Collapse in={visible}>
+    <Collapse in={isVisible}>
       <Box
         style={{
           backgroundColor: theme.colors.backgroundSecondary,

@@ -8,6 +8,8 @@ import { notifications } from "@mantine/notifications";
 import { emailVerificationApi } from "../../server-action/api/emailVerification";
 import EmailVerificationStatusComponent from "../../components/EmailVerificationStatus";
 import CustomerForm from "./components/CustomerForm";
+import { customerFilters } from "./components/CustomerFilter";
+
 
 const CustomerPageIndex = () => {
   const { data, refetch } = userApi.useGetAll();
@@ -33,7 +35,6 @@ const CustomerPageIndex = () => {
 
       refetch();
     } catch (error: any) {
-      console.error('Error resending verification:', error);
       const errorMessage = error?.response?.data?.error?.message ||
                           error?.response?.data?.message ||
                           "Failed to send verification email";
@@ -62,6 +63,7 @@ const CustomerPageIndex = () => {
         name: `${user.name}`,
         email: user.email,
         role: <StatusBadge status={user?.role}/>,
+        roleValue: user?.role, // Raw role value for filtering
         emailStatus: (
           <EmailVerificationStatusComponent
             email={user.email}
@@ -81,7 +83,16 @@ const CustomerPageIndex = () => {
         onClick={() => setOpanModal(true)}
         actionVariant="outline"
       />
-<DataTable data={tableData.rows} columns={tableData.columns} searchPlaceholder="Search..." />
+<DataTable
+data={tableData.rows}
+columns={tableData.columns}
+showPrintButton={true}
+printTitle="Customer List Report"
+printShowTitle={true}
+printShowRecordCount={false}
+printExcludeColumns={['action', 'emailStatus']}
+filters={customerFilters || []}
+/>
     <Modal opened={openModal} onClose={()=>setOpanModal(false)} title="Add Customer" centered>
       <CustomerForm onSuccess={handleCustomerCreated} />
     </Modal>

@@ -40,7 +40,7 @@ interface DataTableProps {
   alternateRows?: boolean;
   align?: "left" | "center" | "right";
   filters?: FilterConfig[];
-  showFilters?: boolean;
+  showFilters?: boolean; // Optional - will auto-calculate based on active filters
   onFiltersChange?: (filters: Record<string, any>) => void;
   // 🚀 Virtualization props
   virtualized?: boolean;
@@ -389,7 +389,7 @@ const DataTable: React.FC<DataTableProps> = ({
       {filters.length > 0 && (
         <TableFilter
           filters={filters}
-          visible={filtersVisible || showFilters}
+          visible={showFilters !== undefined ? (filtersVisible || showFilters) : undefined}
           onFiltersChange={handleFiltersChange}
           appliedFilters={isApiMode ? currentFilters : filterValues}
         />

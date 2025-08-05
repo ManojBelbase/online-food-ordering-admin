@@ -7,22 +7,13 @@ import DeleteModal from '../../components/GlobalComponents/DeleteModal';
 import { Modal } from '@mantine/core';
 import FoodItemForm from './Components/FoodItemForm';
 import { foodItemsFilter } from './Components/FoodItemFilter';
+import { createDeleteHandler } from '../../utils/globalDeleteHandler';
 
 const FoodItemPageIndex = () => {
   const { data } = foodItemApi.useGetAll();
   const { mutateAsync: deleteFoodItem } = foodItemApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: IFoodItem } | null>(null);
-  const [filterValues, setFilterValues] = useState<Record<string, any>>({});
-
-  const handleDeleteFoodItem = async (id: string) => {
-    await deleteFoodItem(id);
-    setModalState(null);
-  };
-
-  const handleFiltersChange = (filters: Record<string, any>) => {
-    setFilterValues(filters);
-  };
-
+  const handleDeleteFoodItem = createDeleteHandler(deleteFoodItem, setModalState);
 
 
   const tableData = useMemo(() => {
@@ -72,8 +63,6 @@ const FoodItemPageIndex = () => {
         printShowRecordCount={false}
         printExcludeColumns={['action' ,'image']}
         filters={foodItemsFilter || []}
-        showFilters={Object.keys(filterValues).length > 0}
-        onFiltersChange={handleFiltersChange}
       />
 
       <Modal
