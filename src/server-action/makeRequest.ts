@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from "axios";
+import { isTokenExpired, isTokenExpiringSoon } from "../utils/tokenUtils";
 
 let isRefreshing = false;
 let failedQueue: Array<(token: string) => void> = [];
@@ -19,11 +20,61 @@ export const makeRequest: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-makeRequest.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+makeRequest.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("accessToken");
+
     if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+      // Check if token is expired or expiring soon
+      if (isTokenExpired(token)) {
+        console.log('Token is expired, attempting refresh...');
+        try {
+          const { data } = await axios.post(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh-token`,
+            {},
+            { withCredentials: true }
+          );
+
+          const newToken = data.accessToken;
+          localStorage.setItem("accessToken", newToken);
+
+          // Notify components to update Redux state
+          window.dispatchEvent(
+            new CustomEvent("auth:refreshToken", {
+              detail: { user: data.user, accessToken: newToken },
+            })
+          );
+
+          config.headers.Authorization = `Bearer ${newToken}`;
+        } catch (error) {
+          console.log('Token refresh failed, logging out');
+          localStorage.removeItem("accessToken");
+          window.dispatchEvent(new CustomEvent("auth:logout"));
+          return Promise.reject(new Error('Token refresh failed'));
+        }
+      } else if (isTokenExpiringSoon(token, 5)) {
+        // Token is expiring soon, refresh proactively (but don't block the request)
+        console.log('Token expiring soon, refreshing in background...');
+        axios.post(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true }
+        ).then(({ data }) => {
+          const newToken = data.accessToken;
+          localStorage.setItem("accessToken", newToken);
+          window.dispatchEvent(
+            new CustomEvent("auth:refreshToken", {
+              detail: { user: data.user, accessToken: newToken },
+            })
+          );
+        }).catch((error) => {
+          console.log('Background token refresh failed:', error);
+        });
+
+        config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
   }
   return config;
