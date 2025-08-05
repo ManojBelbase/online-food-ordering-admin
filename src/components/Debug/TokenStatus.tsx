@@ -17,7 +17,7 @@ const TokenStatus: React.FC = () => {
 
   if (!accessToken) {
     return (
-      <Paper p="xs" style={{ position: 'fixed', top: 10, right: 10, zIndex: 1000 }}>
+      <Paper p="xs" style={{ position: 'fixed', top: 90, right: 100, zIndex: 1000 }}>
         <Badge color="red" size="sm">No Token</Badge>
       </Paper>
     );

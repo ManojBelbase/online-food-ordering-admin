@@ -16,7 +16,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 export const makeRequest: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_REACT_APP_API_URL || "https://food-ordering-backend-36ba.vercel.app/api/v1/",
+  baseURL: import.meta.env.VITE_REACT_APP_API_URL,
   withCredentials: true,
 });
 
@@ -25,9 +25,9 @@ makeRequest.interceptors.request.use(async (config: InternalAxiosRequestConfig) 
     const token = localStorage.getItem("accessToken");
 
     if (token && config.headers) {
-      // Check if token is expired or expiring soon
+      // Frontend check: Only for UX optimization, not security
+      // The backend will always validate the token regardless
       if (isTokenExpired(token)) {
-        console.log('Token is expired, attempting refresh...');
         try {
           const { data } = await axios.post(
             `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh-token`,
@@ -47,14 +47,12 @@ makeRequest.interceptors.request.use(async (config: InternalAxiosRequestConfig) 
 
           config.headers.Authorization = `Bearer ${newToken}`;
         } catch (error) {
-          console.log('Token refresh failed, logging out');
           localStorage.removeItem("accessToken");
           window.dispatchEvent(new CustomEvent("auth:logout"));
           return Promise.reject(new Error('Token refresh failed'));
         }
       } else if (isTokenExpiringSoon(token, 5)) {
-        // Token is expiring soon, refresh proactively (but don't block the request)
-        console.log('Token expiring soon, refreshing in background...');
+        // Proactive refresh for better UX (non-blocking)
         axios.post(
           `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh-token`,
           {},
@@ -67,8 +65,8 @@ makeRequest.interceptors.request.use(async (config: InternalAxiosRequestConfig) 
               detail: { user: data.user, accessToken: newToken },
             })
           );
-        }).catch((error) => {
-          console.log('Background token refresh failed:', error);
+        }).catch(() => {
+          // Don't logout here, let the backend handle it on next request
         });
 
         config.headers.Authorization = `Bearer ${token}`;

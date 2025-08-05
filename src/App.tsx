@@ -2,8 +2,9 @@ import React, { Suspense } from "react";
 import { useRoutes } from "react-router-dom";
 import { routes } from "./routes/Routes";
 import PageLoader from "./components/GlobalComponents/PageLoader";
-import TokenStatus from "./components/Debug/TokenStatus";
+// import TokenStatus from "./components/Debug/TokenStatus";
 import { useAutoTokenRefresh } from "./hooks/useTokenValidation";
+// import PerformanceMonitor from "./components/PerformanceMonitor";
 // import PerformanceMonitor from "./components/PerformanceMonitor";
 
 const App: React.FC = () => {
@@ -24,7 +25,7 @@ const App: React.FC = () => {
       >
         {routing}
       </Suspense>
-      <TokenStatus />
+      {/* <TokenStatus /> */}
       {/* <PerformanceMonitor /> */}
     </>
   );
