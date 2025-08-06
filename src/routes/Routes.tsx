@@ -67,7 +67,9 @@ const protectedRoutes: RouteObject[] = [
     path: FRONTENDROUTES.HOME,
     element: (
       <ProtectedRoute>
-        <Layout />
+        <RouteGuard>
+          <Layout />
+        </RouteGuard>
       </ProtectedRoute>
     ),
     children: [
@@ -75,30 +77,30 @@ const protectedRoutes: RouteObject[] = [
       { path: "components", element: <ComponentsIndex /> },
       {
         path: FRONTENDROUTES.GLOBAL_CATEGORY.substring(1),
-        element: <RouteGuard><GlobalCategoryIndex /></RouteGuard>
+        element: <GlobalCategoryIndex />
       },
       {
         path: FRONTENDROUTES.CATEGORY.substring(1),
-        element: <RouteGuard><CategoryPageIndex /></RouteGuard>
+        element: <CategoryPageIndex />
       },
       {
         path: FRONTENDROUTES.CUSTOMER.substring(1),
-        element: <RouteGuard><CustomerPageIndex /></RouteGuard>
+        element: <CustomerPageIndex />
       },
       {
         path: FRONTENDROUTES.RESTAURANT.substring(1),
-        element: <RouteGuard><RestaurantPageIndex /></RouteGuard>
+        element: <RestaurantPageIndex />
       },
 
       { path: FRONTENDROUTES.PROFILE.substring(1), element: <ProfilePage /> },
       {
         path: FRONTENDROUTES.FOOD_ITEM.substring(1),
-        element: <RouteGuard><FoodItemPageIndex /></RouteGuard>
+        element: <FoodItemPageIndex />
       },
 
       {
         path: FRONTENDROUTES.NEW_ORDERS.substring(1),
-        element: <RouteGuard><NewOrderPageIndex /></RouteGuard>
+        element: <NewOrderPageIndex />
       },
 
       { path: "menu/items", element: <div>Menu Items</div> },

@@ -11,7 +11,6 @@ const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
   const { hasPermission } = useRolePermissions();
   const location = useLocation();
 
-  // Check permission for the current route
   if (!hasPermission(location.pathname)) {
     return <Navigate to={FRONTENDROUTES.NOT_AUTHORIZED} replace />;
   }
