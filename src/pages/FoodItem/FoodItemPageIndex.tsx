@@ -2,18 +2,16 @@ import { useMemo, useState } from 'react';
 import { PageHeader, TableActions } from '../../components/GlobalComponents';
 import { foodItemApi, type IFoodItem } from '../../server-action/api/food-item';
 import DataTable from '../../components/GlobalComponents/Table/DataTable';
-import { onEdit } from '../../components/GlobalComponents/TableActions';
 import { Modal } from '@mantine/core';
 import FoodItemForm from './Components/FoodItemForm';
 import { foodItemsFilter } from './Components/FoodItemFilter';
-import { createDeleteHandler } from '../../utils/globalDeleteHandler';
-import { onDelete } from '../../utils/createDeleteAction';
+import { onDelete, onEdit } from '../../components/GlobalComponents/TableActions';
 
 const FoodItemPageIndex = () => {
   const { data } = foodItemApi.useGetAll();
   const { mutateAsync: deleteFoodItem } = foodItemApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: IFoodItem } | null>(null);
-  const handleDeleteFoodItem = createDeleteHandler(deleteFoodItem, setModalState);
+
   const tableData = useMemo(() => {
     return {
       columns: [
@@ -36,7 +34,7 @@ const FoodItemPageIndex = () => {
           isVeg: item.isVeg ? 'Yes' : 'No',
           action: <TableActions actions={[
             onEdit(() => setModalState({ mode: 'edit', data: item })),
-            onDelete(handleDeleteFoodItem, item.name, item._id),
+            onDelete(deleteFoodItem, item.name, item._id),
           ]} />,
         };
       }) || [],
@@ -71,6 +69,7 @@ const FoodItemPageIndex = () => {
           onClose={() => setModalState(null)}
         />
       </Modal>
+
     </div>
   );
 };

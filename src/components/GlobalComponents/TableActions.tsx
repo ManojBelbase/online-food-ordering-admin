@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Menu, ActionIcon, rem } from "@mantine/core";
 import {
   IconDots,
@@ -9,8 +9,8 @@ import {
   IconCopy,
 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
+import DeleteModal from "./DeleteModal";
 
-// Action item interface
 export interface ActionItem {
   key: string;
   label: string;
@@ -20,74 +20,104 @@ export interface ActionItem {
   disabled?: boolean;
 }
 
-// TableActions props
 interface TableActionsProps {
   actions: ActionItem[];
   size?: "xs" | "sm" | "md" | "lg";
 }
+
+let globalDeleteModalState: {
+  opened: boolean;
+  itemName: string;
+  onConfirm: () => void;
+} | null = null;
+
+let setGlobalDeleteModalState: React.Dispatch<React.SetStateAction<any>> | null = null;
 
 const TableActions: React.FC<TableActionsProps> = ({
   actions,
   size = "sm",
 }) => {
   const { theme } = useTheme();
+  const [deleteModalState, setDeleteModalState] = useState<{
+    opened: boolean;
+    itemName: string;
+    onConfirm: () => void;
+  } | null>(null);
+
+  // Set global state for other components to use
+  React.useEffect(() => {
+    setGlobalDeleteModalState = setDeleteModalState;
+    globalDeleteModalState = deleteModalState;
+  }, [deleteModalState]);
 
   if (actions.length === 0) {
     return null;
   }
 
   return (
-    <Menu shadow="md" width={180} position="bottom-end">
-      <Menu.Target>
-        <ActionIcon
-          variant="subtle"
-          color="gray"
-          size={size}
+    <>
+      <Menu shadow="md" width={180} position="bottom-end">
+        <Menu.Target>
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            size={size}
+            style={{
+              color: theme.colors.textSecondary,
+            }}
+          >
+            <IconDots size={16} />
+          </ActionIcon>
+        </Menu.Target>
+
+        <Menu.Dropdown
           style={{
-            color: theme.colors.textSecondary,
+            backgroundColor: theme.colors.backgroundSecondary,
+            border: `1px solid ${theme.colors.border}`,
           }}
         >
-          <IconDots size={16} />
-        </ActionIcon>
-      </Menu.Target>
+          {actions.map((action, index) => {
+            const isLastAction = index === actions.length - 1;
+            const nextAction = !isLastAction ? actions[index + 1] : null;
+            const shouldShowDivider = nextAction && nextAction.color === 'red';
 
-      <Menu.Dropdown
-        style={{
-          backgroundColor: theme.colors.backgroundSecondary,
-          border: `1px solid ${theme.colors.border}`,
+            return (
+              <React.Fragment key={action.key}>
+                <Menu.Item
+                  leftSection={action.icon}
+                  onClick={action.onClick}
+                  disabled={action.disabled}
+                  color={action.color}
+                  style={{
+                    color: action.color || theme.colors.textPrimary,
+                    fontSize: rem(14),
+                  }}
+                >
+                  {action.label}
+                </Menu.Item>
+                {/* Add divider before dangerous actions (red color) */}
+                {shouldShowDivider && <Menu.Divider />}
+              </React.Fragment>
+            );
+          })}
+        </Menu.Dropdown>
+      </Menu>
+
+      <DeleteModal
+        opened={deleteModalState?.opened || false}
+        itemName={deleteModalState?.itemName || ''}
+        onClose={() => setDeleteModalState(null)}
+        onConfirm={() => {
+          deleteModalState?.onConfirm();
+          setDeleteModalState(null);
         }}
-      >
-        {actions.map((action, index) => {
-          const isLastAction = index === actions.length - 1;
-          const nextAction = !isLastAction ? actions[index + 1] : null;
-          const shouldShowDivider = nextAction && nextAction.color === 'red';
-
-          return (
-            <React.Fragment key={action.key}>
-              <Menu.Item
-                leftSection={action.icon}
-                onClick={action.onClick}
-                disabled={action.disabled}
-                color={action.color}
-                style={{
-                  color: action.color || theme.colors.textPrimary,
-                  fontSize: rem(14),
-                }}
-              >
-                {action.label}
-              </Menu.Item>
-              {/* Add divider before dangerous actions (red color) */}
-              {shouldShowDivider && <Menu.Divider />}
-            </React.Fragment>
-          );
-        })}
-      </Menu.Dropdown>
-    </Menu>
+      />
+    </>
   );
 };
 
 // Pre-defined action creators for common actions
-export const createViewAction = (onClick: () => void): ActionItem => ({
+export const onView = (onClick: () => void): ActionItem => ({
   key: 'view',
   label: 'View Details',
   icon: <IconEye size={16} />,
@@ -101,6 +131,30 @@ export const onEdit = (onClick: () => void): ActionItem => ({
   onClick,
 });
 
+export const onDelete = (
+  deleteFunction: (id: string) => Promise<any>,
+  itemName: string,
+  itemId: string
+): ActionItem => ({
+  key: 'delete',
+  label: 'Delete',
+  icon: <IconTrash size={16} />,
+  color: 'red',
+  onClick: () => {
+    console.log('Delete clicked for item:', itemName);
+    if (setGlobalDeleteModalState) {
+      setGlobalDeleteModalState({
+        opened: true,
+        itemName,
+        onConfirm: async () => {
+          await deleteFunction(itemId);
+        },
+      });
+    }
+  },
+});
+
+
 export const createDeleteAction = (onClick: () => void): ActionItem => ({
   key: 'delete',
   label: 'Delete',
@@ -109,14 +163,15 @@ export const createDeleteAction = (onClick: () => void): ActionItem => ({
   onClick,
 });
 
-export const createDownloadAction = (onClick: () => void): ActionItem => ({
+
+export const onDownload = (onClick: () => void): ActionItem => ({
   key: 'download',
   label: 'Download',
   icon: <IconDownload size={16} />,
   onClick,
 });
 
-export const createCopyAction = (onClick: () => void): ActionItem => ({
+export const onCopy = (onClick: () => void): ActionItem => ({
   key: 'copy',
   label: 'Copy',
   icon: <IconCopy size={16} />,

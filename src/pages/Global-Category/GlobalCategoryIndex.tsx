@@ -4,18 +4,12 @@ import { globalCategoryApi, type IGlobalCategory } from "../../server-action/api
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
 import { Modal } from "@mantine/core";
 import GlobalCategoryForm from "./Components/GlobalCategoryForm";
-import DeleteModal from "../../components/GlobalComponents/DeleteModal";
-import { createDeleteAction, onEdit } from "../../components/GlobalComponents/TableActions";
+import {  onDelete, onEdit } from "../../components/GlobalComponents/TableActions";
 
 const GlobalCategoryIndex = () => {
   const { data } = globalCategoryApi.useGetAll();
   const { mutateAsync: deleteGlobalCategory } = globalCategoryApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: IGlobalCategory } | null>(null);
-
-  const handleDeleteGlobalCategory = async (id: string) => {
-    await deleteGlobalCategory(id);
-    setModalState(null);
-  };
 
   const tableData = useMemo(() => {
     return {
@@ -38,7 +32,7 @@ const GlobalCategoryIndex = () => {
             <TableActions
               actions={[
                 onEdit(() => setModalState({ mode: "edit", data: item })),
-                createDeleteAction(() => setModalState({ mode: "delete", data: item })),
+                onDelete(deleteGlobalCategory, item.name, item._id || ''),
               ]}
             />
           ),
@@ -66,12 +60,7 @@ const GlobalCategoryIndex = () => {
         />
       </Modal>
 
-      <DeleteModal
-        opened={modalState?.mode === "delete"}
-        itemName={modalState?.data?.name || ""}
-        onClose={() => setModalState(null)}
-        onConfirm={() => modalState?.data?._id && handleDeleteGlobalCategory(modalState.data._id)}
-      />
+
     </div>
   );
 };

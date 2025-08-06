@@ -2,8 +2,7 @@ import { useMemo, useState } from "react";
 import { PageHeader, TableActions } from "../../components/GlobalComponents";
 import { categoryApi, type ICategory } from "../../server-action/api/category";
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
-import { createDeleteAction, onEdit } from "../../components/GlobalComponents/TableActions";
-import DeleteModal from "../../components/GlobalComponents/DeleteModal";
+import { onDelete, onEdit } from "../../components/GlobalComponents/TableActions";
 import CategoryForm from "./Components/CategoryForm";
 import { Modal } from "@mantine/core";
 
@@ -13,10 +12,6 @@ const CategoryPageIndex = () => {
   const { mutateAsync: deleteCategory } = categoryApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: ICategory } | null>(null);
 
-  const handleDeleteCategory = async (id: string) => {
-    await deleteCategory(id);
-    setModalState(null);
-  };
 
   const tableData = useMemo(() => {
     return {
@@ -27,18 +22,17 @@ const CategoryPageIndex = () => {
         { title: "Action", key: "action" },
       ],
       rows: (data as any)?.category?.map((item: ICategory, index: number) => {
-        const actions = [];
-        if (!item?.globalCategoryId || item?.globalCategoryId?.length === 0) {
-          actions.push(onEdit(() => setModalState({ mode: "edit", data: item })));
-        }
-        actions.push(createDeleteAction(() => setModalState({ mode: "delete", data: item })));
+    
 
         return {
           sn: index + 1,
           name: item.name || "N/A",
           image: item.image || "N/A",
           globalCategory: item.globalCategoryId,
-          action: <TableActions actions={actions} />,
+          action: <TableActions actions={[
+            onEdit(() => setModalState({ mode: "edit", data: item })),
+            onDelete(deleteCategory, item.name, item._id || ''),
+          ]} />,
         };
       }) || [],
  
@@ -66,12 +60,7 @@ const CategoryPageIndex = () => {
         />
       </Modal>
 
-      <DeleteModal
-        opened={modalState?.mode === "delete"}
-        itemName={modalState?.data?.name || ""}
-        onClose={() => setModalState(null)}
-        onConfirm={() => modalState?.data?._id && handleDeleteCategory(modalState.data._id)}
-      />
+      
     </div>
   );
 };

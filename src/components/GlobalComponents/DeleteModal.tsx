@@ -9,6 +9,8 @@ interface DeleteModalProps {
 }
 
 const DeleteModal = ({ opened, itemName, onClose, onConfirm }: DeleteModalProps) => {
+  console.log('DeleteModal props:', { opened, itemName });
+
   return (
     <Modal
       opened={opened}
@@ -17,10 +19,10 @@ const DeleteModal = ({ opened, itemName, onClose, onConfirm }: DeleteModalProps)
       size="sm"
     >
       <div>
-        <CustomText margin="0 0 16px 0">
-          Are you sure you want to delete {itemName}?
+        <CustomText margin="10px 0 10px 0">
+          Are you sure you want to delete <span style={{ fontWeight: 600 }}> {itemName}</span>?
         </CustomText>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
           <ActionButton variant="error" onClick={onConfirm}>
             Confirm
           </ActionButton>
