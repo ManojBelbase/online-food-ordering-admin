@@ -94,7 +94,7 @@ export const createViewAction = (onClick: () => void): ActionItem => ({
   onClick,
 });
 
-export const createEditAction = (onClick: () => void): ActionItem => ({
+export const onEdit = (onClick: () => void): ActionItem => ({
   key: 'edit',
   label: 'Edit',
   icon: <IconEdit size={16} />,

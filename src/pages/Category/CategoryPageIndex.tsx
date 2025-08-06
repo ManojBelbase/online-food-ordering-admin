@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { PageHeader, TableActions } from "../../components/GlobalComponents";
 import { categoryApi, type ICategory } from "../../server-action/api/category";
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
-import { createDeleteAction, createEditAction } from "../../components/GlobalComponents/TableActions";
+import { createDeleteAction, onEdit } from "../../components/GlobalComponents/TableActions";
 import DeleteModal from "../../components/GlobalComponents/DeleteModal";
 import CategoryForm from "./Components/CategoryForm";
 import { Modal } from "@mantine/core";
@@ -29,7 +29,7 @@ const CategoryPageIndex = () => {
       rows: (data as any)?.category?.map((item: ICategory, index: number) => {
         const actions = [];
         if (!item?.globalCategoryId || item?.globalCategoryId?.length === 0) {
-          actions.push(createEditAction(() => setModalState({ mode: "edit", data: item })));
+          actions.push(onEdit(() => setModalState({ mode: "edit", data: item })));
         }
         actions.push(createDeleteAction(() => setModalState({ mode: "delete", data: item })));
 

@@ -5,7 +5,7 @@ import DataTable from "../../components/GlobalComponents/Table/DataTable";
 import { Modal } from "@mantine/core";
 import GlobalCategoryForm from "./Components/GlobalCategoryForm";
 import DeleteModal from "../../components/GlobalComponents/DeleteModal";
-import { createDeleteAction, createEditAction } from "../../components/GlobalComponents/TableActions";
+import { createDeleteAction, onEdit } from "../../components/GlobalComponents/TableActions";
 
 const GlobalCategoryIndex = () => {
   const { data } = globalCategoryApi.useGetAll();
@@ -37,7 +37,7 @@ const GlobalCategoryIndex = () => {
           action: (
             <TableActions
               actions={[
-                createEditAction(() => setModalState({ mode: "edit", data: item })),
+                onEdit(() => setModalState({ mode: "edit", data: item })),
                 createDeleteAction(() => setModalState({ mode: "delete", data: item })),
               ]}
             />

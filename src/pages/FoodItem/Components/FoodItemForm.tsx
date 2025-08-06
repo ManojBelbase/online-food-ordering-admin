@@ -44,22 +44,19 @@ const {restaurant}= useRestaurantByUser();
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    try {
-      const entityData = {
-        ...values,
-        resturantId: restaurant?._id ?? '',
-        price: Number(values.price),
-        _id: edit?._id ?? '', 
-      };
-      if (edit?._id) {
-        await updateFoodItem({ _id: edit._id, entityData });
-      } else {
-        await createFoodItem(entityData as any);
-      }
-      onClose();
-    } catch (error) {
-      console.error('Submission error:', error);
+    const entityData = {
+      ...values,
+      resturantId: restaurant?._id ?? '',
+      price: Number(values.price),
+      _id: edit?._id ?? '',
+    };
+
+    if (edit?._id) {
+      await updateFoodItem({ _id: edit._id, entityData });
+    } else {
+      await createFoodItem(entityData as any);
     }
+    onClose();
   };
 
   const categoryOptions =

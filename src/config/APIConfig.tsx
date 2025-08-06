@@ -83,7 +83,25 @@ export function createApiConfig<T>(
         });
       },
       onError: (error: any) => {
-        const errorMessage = PostErrorConfig({ error, entityNameFormatted });
+
+        // Extract the actual error message from the API response
+        let actualErrorMessage = `Error Creating ${entityNameFormatted}`;
+        
+
+        if (error?.response?.data?.error?.message) {
+          // Handle structure: {"success":false,"error":{"message":"Name already exists","status":400}}
+          actualErrorMessage = error.response.data.error.message;
+        } else if (error?.response?.data?.message) {
+          // Handle structure: {"message": "Some error"}
+          actualErrorMessage = error.response.data.message;
+        } else if (error?.message) {
+          // Handle direct error message
+          actualErrorMessage = error.message;
+        } else if (error?.response){
+          actualErrorMessage=error?.response?.data?.error?.message
+        }
+
+        const errorMessage = PostErrorConfig({ error: actualErrorMessage, entityNameFormatted });
         notifications.show({
           title: "Error",
           message: errorMessage,

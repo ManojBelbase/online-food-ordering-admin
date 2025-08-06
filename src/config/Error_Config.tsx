@@ -10,6 +10,10 @@ export const PostErrorConfig = ({ error, entityNameFormatted }: propTypes) => {
     errorMessage = "This email is already registered. Please use another";
   } else if (error.includes("Duplicate entry")) {
     errorMessage = "This entry already exists. Please use another";
+  } else if (error.includes("Name already exists")) {
+    errorMessage = "This name already exists. Please use a different name";
+  } else if (error.includes("already exists")) {
+    errorMessage = "This item already exists. Please use a different name";
   }
 
   return errorMessage;

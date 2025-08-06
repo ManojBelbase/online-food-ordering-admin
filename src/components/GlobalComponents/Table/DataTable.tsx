@@ -59,7 +59,7 @@ interface DataTableProps {
   showPrintButton?: boolean;
   printTitle?: string;
   printShowTitle?: boolean
-  printShowRecordCount?: boolean; // Show record count in print
+  printShowRecordCount?: boolean; 
   printExcludeColumns?: string[]; 
 }
 
@@ -151,7 +151,6 @@ const DataTable: React.FC<DataTableProps> = ({
     [isFrontendMode, externalOnLimitChange]
   );
 
-  // 🎯 Smart state management - API mode vs Frontend mode
   const [searchQuery, setSearchQuery] = useState(apiMode ? currentSearch : "");
   const [sortColumn, setSortColumn] = useState<string | null>(
     apiMode ? currentSort?.column || null : null
@@ -259,7 +258,7 @@ const DataTable: React.FC<DataTableProps> = ({
       }
     });
 
-    // Apply sorting
+
     if (sortColumn) {
       result.sort((a, b) => {
         const aValue = a[sortColumn];
