@@ -25,11 +25,7 @@ interface TableActionsProps {
   size?: "xs" | "sm" | "md" | "lg";
 }
 
-let globalDeleteModalState: {
-  opened: boolean;
-  itemName: string;
-  onConfirm: () => void;
-} | null = null;
+
 
 let setGlobalDeleteModalState: React.Dispatch<React.SetStateAction<any>> | null = null;
 
@@ -44,10 +40,8 @@ const TableActions: React.FC<TableActionsProps> = ({
     onConfirm: () => void;
   } | null>(null);
 
-  // Set global state for other components to use
   React.useEffect(() => {
     setGlobalDeleteModalState = setDeleteModalState;
-    globalDeleteModalState = deleteModalState;
   }, [deleteModalState]);
 
   if (actions.length === 0) {
