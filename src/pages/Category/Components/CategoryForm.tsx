@@ -1,5 +1,6 @@
 import { useForm } from "@mantine/form";
 import { MultiSelect, SimpleGrid, Stack } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { FormImageUpload, FormInput } from "../../../components/Forms";
 import { categoryApi, type ICategory } from "../../../server-action/api/category";
 import { globalCategoryApi } from "../../../server-action/api/global-category";
@@ -14,6 +15,10 @@ interface ICategoryFormProps {
 
 const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
   const { user } = useAuth();
+
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
   const { mutateAsync: createCategory } = categoryApi.useCreate();
   const { mutateAsync: updateCategory } = categoryApi.useUpdate();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();
@@ -24,7 +29,7 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
     initialValues: {
       name: edit?.name ?? "",
       image: edit?.image ?? "",
-      globalCategoryId: edit?.globalCategoryId ?? [],
+      globalCategoryId: Array.isArray(edit?.globalCategoryId) ? edit.globalCategoryId : [],
     },
 
     validate: {
@@ -63,7 +68,7 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md" mt={10}>
-        <SimpleGrid cols={2} spacing="md">
+        <SimpleGrid cols={isMobile ? 1 : 2} spacing={isMobile ? "sm" : "md"}>
           
         <MultiSelect
           label="Global Categories"
@@ -86,10 +91,11 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
             label="Image"
             uploadApi={uploadImage}
             maxSize={5 * 1024 * 1024}
+            responsive
             {...form.getInputProps("image")}
             disabled={form.values.globalCategoryId.length>0}
             error={uploadError?.message}
-            
+
           />
         </SimpleGrid>
 

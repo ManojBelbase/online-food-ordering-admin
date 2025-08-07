@@ -5,6 +5,7 @@ import {
 } from '../../../server-action/api/global-category';
 import { FormImageUpload, FormInput } from '../../../components/Forms';
 import { SimpleGrid, Stack } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { ActionButton } from '../../../components/ui';
 import {
   globalCategoryValidation,
@@ -23,6 +24,9 @@ const GlobalCategoryForm: React.FC<IGlobalCategoryFormProps> = ({ edit, onClose 
   const { mutateAsync: updateGlobalCategory } = globalCategoryApi.useUpdate();
   const { uploadImage, loading: uploadLoading, error: uploadError } = useCloudinaryUpload();
   const [loading, setLoading] = useState(false);
+
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
   const form = useForm<GlobalCategoryFormValues>({
     initialValues: {
       name: edit?.name ?? '',
@@ -52,7 +56,7 @@ const GlobalCategoryForm: React.FC<IGlobalCategoryFormProps> = ({ edit, onClose 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md" mt={10}>
-        <SimpleGrid cols={2} spacing="md">
+        <SimpleGrid cols={isMobile ? 1 : 2} spacing={isMobile ? "sm" : "md"}>
           <FormInput
             label="Category Name"
             type="text"
@@ -61,15 +65,16 @@ const GlobalCategoryForm: React.FC<IGlobalCategoryFormProps> = ({ edit, onClose 
           />
           <FormImageUpload
             label="Image"
-            uploadApi={uploadImage} 
+            uploadApi={uploadImage}
             maxSize={5 * 1024 * 1024}
+            responsive
             {...form.getInputProps('image')}
             error={uploadError?.message}
-            
+
           />
         </SimpleGrid>
 
-        <SimpleGrid cols={2} spacing="md">
+        <SimpleGrid cols={isMobile ? 1 : 2} spacing={isMobile ? "sm" : "md"}>
           <FormInput
             label="Active"
             type="toggle"

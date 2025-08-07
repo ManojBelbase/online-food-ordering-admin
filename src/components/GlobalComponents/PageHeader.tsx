@@ -12,6 +12,7 @@ import {
 import { IconArrowLeft, IconChevronRight, IconPlus } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { CustomText, ActionButton } from "../ui";
+import { useMediaQuery } from "@mantine/hooks";
 
 interface PageHeaderProps {
   title: string;
@@ -35,6 +36,9 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
 
   const generateBreadcrumbs = () => {
     if (breadcrumbs) return breadcrumbs;
@@ -92,11 +96,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               style={{ color: theme.colors.textTertiary }}
             />
           }
-          mb="sm"
+          mb={isMobile ? "8px" : "12px"}
           styles={{
             breadcrumb: {
               color: theme.colors.textSecondary,
-              fontSize: "14px",
+              fontSize: isMobile ? "12px" : isTablet ? "14px" : "16px",
             },
           }}
         >
@@ -146,7 +150,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               order={1}
               style={{
                 color: theme.colors.textPrimary,
-                fontSize: "24px",
+                fontSize: isMobile ? "16px" : isTablet ? "18px" : "24px",
                 fontWeight: 500,
                 lineHeight: 1.2,
                 marginBottom: subtitle ? "4px" : 0,

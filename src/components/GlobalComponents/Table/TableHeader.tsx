@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, Group } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { CustomText } from "../../ui";
 
@@ -30,6 +31,10 @@ const TableHeader: React.FC<TableHeaderProps> = ({
 }) => {
   const { theme } = useTheme();
 
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
+
   if (virtualized) {
     return (
       <div
@@ -46,8 +51,8 @@ const TableHeader: React.FC<TableHeaderProps> = ({
             <div
               key={column.key}
               style={{
-                width: column.width || 150,
-                padding: "14px",
+                width: column.width || (isMobile ? 100 : isTablet ? 120 : 150),
+                padding: isMobile ? "8px" : isTablet ? "10px" : "14px",
                 textAlign: columnAlign,
                 cursor: column.sortable ? "pointer" : "default",
                 borderRight: `1px solid ${theme.colors.border}`,
@@ -56,9 +61,10 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                 fontWeight: 600,
                 display: "flex",
                 alignItems: "center",
-                justifyContent: 
+                justifyContent:
                   columnAlign === "center" ? "center" :
                   columnAlign === "right" ? "flex-end" : "flex-start",
+                fontSize: isMobile ? "12px" : isTablet ? "13px" : "14px",
               }}
               onClick={() => column.sortable && onSort?.(column)}
             >
@@ -91,7 +97,8 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                 color: theme.colors.textPrimary,
                 borderBottom: `1px solid ${theme.colors.border}`,
                 fontWeight: 600,
-                padding: "14px",
+                padding: isMobile ? "8px" : isTablet ? "10px" : "14px",
+                fontSize: isMobile ? "12px" : isTablet ? "13px" : "14px",
               }}
               onClick={() => column.sortable && onSort?.(column)}
             >
@@ -105,7 +112,13 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                     : "flex-start"
                 }
               >
-                <CustomText fontWeight={600}>{column.title}</CustomText>
+                <CustomText
+                  fontWeight={600}
+                  fontSize={isMobile ? "12px" : isTablet ? "13px" : "14px"}
+                  responsive
+                >
+                  {column.title}
+                </CustomText>
                 {column.sortable && sortColumn === column.key && (
                   <CustomText size="sm">
                     {sortDirection === "asc" ? "↑" : "↓"}

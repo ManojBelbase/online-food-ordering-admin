@@ -8,6 +8,7 @@ import {
   IconDownload,
   IconCopy,
 } from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
 import { useTheme } from "../../contexts/ThemeContext";
 import DeleteModal from "./DeleteModal";
 
@@ -34,6 +35,10 @@ const TableActions: React.FC<TableActionsProps> = ({
   size = "sm",
 }) => {
   const { theme } = useTheme();
+
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
     itemName: string;
@@ -50,17 +55,21 @@ const TableActions: React.FC<TableActionsProps> = ({
 
   return (
     <>
-      <Menu shadow="md" width={180} position="bottom-end">
+      <Menu
+        shadow="md"
+        width={isMobile ? 160 : 180}
+        position="bottom-end"
+      >
         <Menu.Target>
           <ActionIcon
             variant="subtle"
             color="gray"
-            size={size}
+            size={isMobile ? "xs" : size}
             style={{
               color: theme.colors.textSecondary,
             }}
           >
-            <IconDots size={16} />
+            <IconDots size={isMobile ? 14 : 16} />
           </ActionIcon>
         </Menu.Target>
 
@@ -84,7 +93,7 @@ const TableActions: React.FC<TableActionsProps> = ({
                   color={action.color}
                   style={{
                     color: action.color || theme.colors.textPrimary,
-                    fontSize: rem(14),
+                    fontSize: rem(isMobile ? 12 : 14),
                   }}
                 >
                   {action.label}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text as MantineText, type TextProps as MantineTextProps } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface CustomTextProps extends Omit<MantineTextProps, 'size' | 'color'> {
@@ -13,6 +14,7 @@ interface CustomTextProps extends Omit<MantineTextProps, 'size' | 'color'> {
   margin?: string | number;
   padding?: string | number;
   children?: React.ReactNode;
+  responsive?: boolean; // Enable responsive sizing
 }
 
 const CustomText: React.FC<CustomTextProps> = ({
@@ -27,17 +29,22 @@ const CustomText: React.FC<CustomTextProps> = ({
   padding,
   children,
   style,
+  responsive = false,
   ...props
 }) => {
   const { theme } = useTheme();
 
-  // Size mapping
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
+
+  // Size mapping with responsive variants
   const sizeMap = {
-    xs: '11px',
-    sm: '12px',
-    md: '14px',
-    lg: '16px',
-    xl: '18px'
+    xs: { desktop: '11px', tablet: '10px', mobile: '9px' },
+    sm: { desktop: '12px', tablet: '11px', mobile: '10px' },
+    md: { desktop: '14px', tablet: '13px', mobile: '12px' },
+    lg: { desktop: '16px', tablet: '15px', mobile: '14px' },
+    xl: { desktop: '18px', tablet: '17px', mobile: '16px' }
   };
 
   // Color mapping
@@ -53,7 +60,11 @@ const CustomText: React.FC<CustomTextProps> = ({
   const getFontSize = () => {
     if (fontSize) return fontSize;
     if (typeof size === 'string' && sizeMap[size as keyof typeof sizeMap]) {
-      return sizeMap[size as keyof typeof sizeMap];
+      const sizeConfig = sizeMap[size as keyof typeof sizeMap];
+      if (responsive && typeof sizeConfig === 'object') {
+        return isMobile ? sizeConfig.mobile : isTablet ? sizeConfig.tablet : sizeConfig.desktop;
+      }
+      return typeof sizeConfig === 'object' ? sizeConfig.desktop : sizeConfig;
     }
     return size;
   };

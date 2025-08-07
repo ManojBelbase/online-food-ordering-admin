@@ -152,17 +152,31 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
         }}>
           {title}
         </div>
-        <img
-          src={imageUrl}
-          alt={title}
-          style={{
-            maxWidth: '100%',
-            maxHeight: '70vh',
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt={title}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '70vh',
             objectFit: 'contain',
             border: '1px solid #ddd',
             borderRadius: '8px'
           }}
-        />
+          />
+        )}
+        {!imageUrl && (
+          <div style={{
+            padding: '40px',
+            textAlign: 'center',
+            color: '#666',
+            border: '1px solid #ddd',
+            borderRadius: '8px',
+            backgroundColor: '#f9f9f9'
+          }}>
+            No image available
+          </div>
+        )}
       </div>
 
       {/* Footer */}

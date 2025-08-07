@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextInput, PasswordInput, NumberInput, Textarea, Switch } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface FormInputProps {
@@ -26,6 +27,7 @@ interface FormInputProps {
   step?: number; // For number input
   withAsterisk?: boolean;
   className?: string;
+  responsive?: boolean; // Enable responsive sizing
 }
 
 export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, FormInputProps>(
@@ -54,11 +56,16 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       step,
       withAsterisk,
       className,
+      responsive = false,
       ...other
     },
     ref
   ) => {
     const { theme } = useTheme();
+
+    // Responsive breakpoints
+    const isMobile = useMediaQuery('(max-width: 480px)');
+    const isTablet = useMediaQuery('(max-width: 768px)');
 
     // Handle onChange for different input types
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,6 +80,12 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       onChange?.(value);
     };
 
+    // Get responsive size
+    const getResponsiveSize = () => {
+      if (!responsive) return size;
+      return isMobile ? 'xs' : isTablet ? 'sm' : size;
+    };
+
     const commonProps = {
       label,
       placeholder,
@@ -82,7 +95,7 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       onBlur,
       disabled,
       readOnly: readonly,
-      size,
+      size: getResponsiveSize(),
       radius,
       leftSection,
       rightSection,
@@ -93,12 +106,15 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
         label: {
           color: theme.colors.textPrimary,
           fontWeight: 400,
-          marginBottom: '4px',
+          marginBottom: isMobile ? '2px' : '4px',
+          fontSize: responsive ? (isMobile ? '12px' : isTablet ? '13px' : '14px') : undefined,
         },
         input: {
           backgroundColor: theme.colors.surface,
           borderColor: error ? theme.colors.error : theme.colors.border,
           color: theme.colors.textPrimary,
+          fontSize: responsive ? (isMobile ? '12px' : isTablet ? '13px' : '14px') : undefined,
+          padding: responsive ? (isMobile ? '6px 8px' : isTablet ? '8px 10px' : undefined) : undefined,
           '&:focus': {
             borderColor: theme.colors.primary,
             boxShadow: `0 0 0 1px ${theme.colors.primary}`,
@@ -114,9 +130,11 @@ export const FormInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
         },
         description: {
           color: theme.colors.textSecondary,
+          fontSize: responsive ? (isMobile ? '11px' : isTablet ? '12px' : '13px') : undefined,
         },
         error: {
           color: theme.colors.error,
+          fontSize: responsive ? (isMobile ? '11px' : isTablet ? '12px' : '13px') : undefined,
         },
       },
       ...other,

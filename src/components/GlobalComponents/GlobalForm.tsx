@@ -15,6 +15,7 @@ import {
   Divider,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
+import { useMediaQuery } from "@mantine/hooks";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { FormField, FormBuilderProps } from "../../types/ui";
 import { CustomText, ActionButton } from "../ui";
@@ -32,11 +33,17 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
 }) => {
   const { theme } = useTheme();
 
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
+
   const getInputStyles = () => ({
     input: {
       backgroundColor: theme.colors.inputBackground,
       borderColor: theme.colors.inputBorder,
       color: theme.colors.inputText,
+      fontSize: isMobile ? '12px' : isTablet ? '13px' : '14px',
+      padding: isMobile ? '6px 8px' : isTablet ? '8px 10px' : undefined,
       "&::placeholder": {
         color: theme.colors.inputPlaceholder,
       },
@@ -46,12 +53,15 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
     },
     label: {
       color: theme.colors.textPrimary,
+      fontSize: isMobile ? '12px' : isTablet ? '13px' : '14px',
     },
     description: {
       color: theme.colors.textSecondary,
+      fontSize: isMobile ? '11px' : isTablet ? '12px' : '13px',
     },
     error: {
       color: theme.colors.error,
+      fontSize: isMobile ? '11px' : isTablet ? '12px' : '13px',
     },
   });
 
@@ -148,8 +158,6 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
         return <DatePickerInput {...commonProps} valueFormat="YYYY-MM-DD" />;
 
       case "time":
-      case "time":
-        // TimeInput is not available in @mantine/core, consider using TextInput or another time picker component
         return <TextInput {...commonProps} type="time" />;
       case "file":
         return (
@@ -191,23 +199,27 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
       )}
 
       <form onSubmit={form.onSubmit(onSubmit)}>
-        <Stack gap="xl">
+        <Stack gap={isMobile ? "md" : "xl"}>
           {sections.map((section, sectionIndex) => (
             <div key={sectionIndex}>
               {section.title && (
                 <>
                   <Title
-                    order={4}
+                    order={isMobile ? 5 : 4}
                     mb="xs"
-                    style={{ color: theme.colors.textPrimary }}
+                    style={{
+                      color: theme.colors.textPrimary,
+                      fontSize: isMobile ? '16px' : isTablet ? '18px' : '20px'
+                    }}
                   >
                     {section.title}
                   </Title>
                   {section.description && (
                     <CustomText
                       color="secondary"
-                      fontSize="14px"
-                      margin="0 0 16px 0"
+                      fontSize={isMobile ? "12px" : isTablet ? "13px" : "14px"}
+                      margin={isMobile ? "0 0 12px 0" : "0 0 16px 0"}
+                      responsive
                     >
                       {section.description}
                     </CustomText>
@@ -218,16 +230,18 @@ const GlobalForm: React.FC<FormBuilderProps> = ({
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: `repeat(${section.columns || 1}, 1fr)`,
-                  gap: "16px",
+                  gridTemplateColumns: isMobile
+                    ? "1fr"
+                    : `repeat(${section.columns || 1}, 1fr)`,
+                  gap: isMobile ? "12px" : "16px",
                 }}
               >
                 {section.fields.map((field) => (
                   <div
                     key={field.name}
                     style={{
-                      gridColumn: field.span ? `span ${field.span}` : undefined,
-                      width: field.width,
+                      gridColumn: isMobile ? undefined : (field.span ? `span ${field.span}` : undefined),
+                      width: isMobile ? "100%" : field.width,
                     }}
                   >
                     {renderField(field)}

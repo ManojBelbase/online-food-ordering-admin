@@ -1,5 +1,6 @@
 import { useForm } from '@mantine/form';
 import { SimpleGrid, Stack } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { FormImageUpload, FormInput, FormSelect } from '../../../components/Forms';
 import { foodItemApi, type IFoodItem } from '../../../server-action/api/food-item';
 import { categoryApi } from '../../../server-action/api/category';
@@ -16,6 +17,10 @@ interface IFoodItemFormProps {
 
 const FoodItemForm: React.FC<IFoodItemFormProps> = ({ edit, onClose }) => {
 const {restaurant}= useRestaurantByUser();
+
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
   const { mutateAsync: createFoodItem } = foodItemApi.useCreate();
   const { mutateAsync: updateFoodItem } = foodItemApi.useUpdate();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();
@@ -73,7 +78,7 @@ const {restaurant}= useRestaurantByUser();
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md" mt={10}>
-        <SimpleGrid cols={2} spacing="md">
+        <SimpleGrid cols={isMobile ? 1 : 2} spacing={isMobile ? "sm" : "md"}>
           <FormInput
             required
             label="Food Item Name"
@@ -88,6 +93,7 @@ const {restaurant}= useRestaurantByUser();
             uploadApi={uploadImage}
             maxSize={5 * 1024 * 1024}
             withAsterisk
+            responsive
             {...form.getInputProps('image')}
             error={uploadError?.message}
           />

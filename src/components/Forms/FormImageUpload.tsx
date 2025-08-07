@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Group, Stack, Image, ActionIcon, Paper, LoadingOverlay } from '@mantine/core';
 import { Dropzone, MIME_TYPES, type FileWithPath } from '@mantine/dropzone';
 import { IconUpload, IconPhoto, IconX, IconTrash, IconEye } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 import { useTheme } from '../../contexts/ThemeContext';
 import { CustomText } from '../ui';
 
 interface FormImageUploadProps {
   label: string;
   description?: string;
-  value?: string | string[]; 
-  onChange?: (value: string | string[]) => void; // Update onChange to handle array or string
+  value?: string | string[];
+  onChange?: (value: string | string[]) => void; 
   uploadApi?: (file: File) => Promise<string | { url?: string; imageUrl?: string }>;
   error?: string;
   required?: boolean;
@@ -18,8 +19,9 @@ interface FormImageUploadProps {
   withAsterisk?: boolean;
   className?: string;
   previewSize?: number;
-  multiple?: boolean; // New prop to enable multiple uploads
+  multiple?: boolean; 
   onBlur?: () => void;
+  responsive?: boolean;
 }
 
 export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadProps>(
@@ -37,13 +39,18 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
       withAsterisk,
       className,
       previewSize = 120,
-      multiple = false, // Default to false
+      multiple = false,
       onBlur,
+      responsive = false,
       ...others
     },
     ref
   ) => {
     const { theme } = useTheme();
+
+    // Responsive breakpoints
+    const isMobile = useMediaQuery('(max-width: 480px)');
+    const isTablet = useMediaQuery('(max-width: 768px)');
     const [dragActive, setDragActive] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [imageUrls, setImageUrls] = useState<string[]>(Array.isArray(value) ? value : value ? [value] : []); // Manage multiple URLs
@@ -106,7 +113,12 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
 
     return (
       <div ref={ref} className={className} {...others}>
-        <CustomText size="sm" color="primary" margin="0 0 4px 0">
+        <CustomText
+          size={responsive ? (isMobile ? "xs" : "sm") : "sm"}
+          color="primary"
+          margin="0 0 4px 0"
+          responsive={responsive}
+        >
           {label}
           {(withAsterisk ?? required) && (
             <span style={{ color: theme.colors.error }}> *</span>
@@ -142,8 +154,8 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
                     backgroundColor: `${theme.colors.primary}05`,
                   },
                   cursor: disabled || uploading ? 'not-allowed' : 'pointer',
-                  width: 300,
-                  height: 120,
+                  width: responsive ? (isMobile ? 200 : isTablet ? 240 : 300) : 300,
+                  height: responsive ? (isMobile ? 80 : isTablet ? 100 : 120) : 120,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -152,24 +164,41 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
             >
               <Group justify="center" gap="xl" style={{ pointerEvents: 'none' }}>
                 <Dropzone.Accept>
-                  <IconUpload size={52} stroke={1.5} color={theme.colors.primary} />
+                  <IconUpload
+                    size={responsive ? (isMobile ? 32 : isTablet ? 40 : 52) : 52}
+                    stroke={1.5}
+                    color={theme.colors.primary}
+                  />
                 </Dropzone.Accept>
                 <Dropzone.Reject>
-                  <IconX size={52} stroke={1.5} color={theme.colors.error} />
+                  <IconX
+                    size={responsive ? (isMobile ? 32 : isTablet ? 40 : 52) : 52}
+                    stroke={1.5}
+                    color={theme.colors.error}
+                  />
                 </Dropzone.Reject>
                 <Dropzone.Idle>
                   <IconPhoto
-                    size={36}
+                    size={responsive ? (isMobile ? 24 : isTablet ? 28 : 36) : 36}
                     stroke={1}
                     color={theme.colors.textSecondary}
                   />
                 </Dropzone.Idle>
 
                 <div>
-                  <CustomText size="xs" color="primary">
-                    {uploading ? 'Uploading...' : 'Drag image here or click to select'}
+                  <CustomText
+                    size={responsive ? (isMobile ? "xs" : "xs") : "xs"}
+                    color="primary"
+                    responsive={responsive}
+                  >
+                    {uploading ? 'Uploading...' : (isMobile ? 'Tap to select' : 'Drag image here or click to select')}
                   </CustomText>
-                  <CustomText size="sm" color="secondary" margin="4px 0 0 0">
+                  <CustomText
+                    size={responsive ? (isMobile ? "xs" : "sm") : "sm"}
+                    color="secondary"
+                    margin="4px 0 0 0"
+                    responsive={responsive}
+                  >
                     {uploading
                       ? 'Please wait while your image is being uploaded'
                       : 'JPG, PNG, HEIF up to 5MB'}
@@ -179,7 +208,12 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
             </Dropzone>
             <LoadingOverlay visible={uploading} />
             {description && (
-              <CustomText size="xs" color="secondary" margin="0 0 16px 0">
+              <CustomText
+                size={responsive ? (isMobile ? "xs" : "xs") : "xs"}
+                color="secondary"
+                margin={responsive ? (isMobile ? "0 0 12px 0" : "0 0 16px 0") : "0 0 16px 0"}
+                responsive={responsive}
+              >
                 {description}
               </CustomText>
             )}
@@ -195,8 +229,8 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
                 backgroundColor: theme.colors.surface,
                 border: `1px solid ${theme.colors.border}`,
                 position: 'relative',
-                width: 300,
-                height: 120,
+                width: responsive ? (isMobile ? 200 : isTablet ? 240 : 300) : 300,
+                height: responsive ? (isMobile ? 80 : isTablet ? 100 : 120) : 120,
               }}
             >
               <Stack
@@ -212,8 +246,8 @@ export const FormImageUpload = React.forwardRef<HTMLDivElement, FormImageUploadP
                         key={index}
                         src={url}
                         alt={`Uploaded image ${index + 1}`}
-                        height={120}
-                        width={70}
+                        height={responsive ? (isMobile ? 80 : isTablet ? 100 : 120) : 120}
+                        width={responsive ? (isMobile ? 50 : isTablet ? 60 : 70) : 70}
                         fit="contain"
                         radius="sm"
                       />

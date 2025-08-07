@@ -27,10 +27,9 @@ export {
 export { FormImageUpload } from './FormImageUpload';
 
 // Container Components
-export { 
-  FormContainer, 
-  FormSection, 
-  FormRow 
+export {
+  FormSection,
+  FormRow
 } from './FormContainer';
 
 // 🚀 Re-export common types for convenience

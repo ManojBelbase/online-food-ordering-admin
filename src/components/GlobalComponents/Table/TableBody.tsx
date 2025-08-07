@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { Table, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useTheme } from "../../../contexts/ThemeContext";
 
 interface TableColumn {
@@ -38,6 +39,10 @@ const TableBody: React.FC<TableBodyProps> = ({
   onScroll,
 }) => {
   const { theme } = useTheme();
+
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
 
   const defaultRenderCell = useCallback((column: TableColumn, row: any) => {
     const value = row[column.key];
@@ -159,13 +164,14 @@ const TableBody: React.FC<TableBodyProps> = ({
                     <div
                       key={column.key}
                       style={{
-                        width: column.width || 150,
-                        padding: "0 14px",
+                        width: column.width || (isMobile ? 100 : isTablet ? 120 : 150),
+                        padding: isMobile ? "0 8px" : isTablet ? "0 10px" : "0 14px",
                         textAlign: columnAlign,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                         color: theme.colors.textPrimary,
+                        fontSize: isMobile ? "12px" : isTablet ? "13px" : "14px",
                       }}
                     >
                       {cellRenderer(column, row)}
@@ -211,7 +217,8 @@ const TableBody: React.FC<TableBodyProps> = ({
                     textAlign: columnAlign,
                     borderBottom: `1px solid ${theme.colors.border}`,
                     color: theme.colors.textPrimary,
-                    paddingInline: 14,
+                    paddingInline: isMobile ? 8 : isTablet ? 10 : 14,
+                    fontSize: isMobile ? "12px" : isTablet ? "13px" : "14px",
                   }}
                 >
                   {cellRenderer(column, row)}

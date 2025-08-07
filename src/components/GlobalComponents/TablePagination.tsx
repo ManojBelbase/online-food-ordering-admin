@@ -1,6 +1,7 @@
 import React from "react";
 import { Group, ActionIcon, Select } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
 import { useTheme } from "../../contexts/ThemeContext";
 import { CustomText } from "../ui";
 
@@ -32,14 +33,25 @@ const TablePagination: React.FC<TablePaginationProps> = ({
 }) => {
   const { theme } = useTheme();
 
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
+
   if (virtualized) {
     // Virtualized mode info
     return (
-      <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
-        <CustomText size="sm" color="secondary">
+      <div style={{
+        padding: isMobile ? "12px" : "16px",
+        borderTop: `1px solid ${theme.colors.border}`
+      }}>
+        <CustomText
+          size={isMobile ? "xs" : "sm"}
+          color="secondary"
+          responsive
+        >
           Showing {filteredCount} of {totalCount} entries
           {filteredCount !== totalCount && " (filtered)"}
-          {" • Virtualized mode for optimal performance"}
+          {!isMobile && " • Virtualized mode for optimal performance"}
         </CustomText>
       </div>
     );
@@ -48,8 +60,15 @@ const TablePagination: React.FC<TablePaginationProps> = ({
   // If no pagination is provided, render nothing
   if (!pagination) {
     return (
-      <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
-        <CustomText size="sm" color="secondary">
+      <div style={{
+        padding: isMobile ? "12px" : "16px",
+        borderTop: `1px solid ${theme.colors.border}`
+      }}>
+        <CustomText
+          size={isMobile ? "xs" : "sm"}
+          color="secondary"
+          responsive
+        >
           Showing {filteredCount} of {totalCount} entries
           {filteredCount !== totalCount && " (filtered)"}
         </CustomText>
@@ -103,8 +122,15 @@ const TablePagination: React.FC<TablePaginationProps> = ({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div style={{ padding: "16px", borderTop: `1px solid ${theme.colors.border}` }}>
-      <Group justify="space-between" align="center">
+    <div style={{
+      padding: isMobile ? "12px" : "16px",
+      borderTop: `1px solid ${theme.colors.border}`
+    }}>
+      <Group
+        justify="space-between"
+        align="center"
+        gap={isMobile ? "xs" : "md"}
+      >
         {/* Info Text */}
         <CustomText size="sm" color="secondary">
           Showing {startItem} to {endItem} of {total} entries

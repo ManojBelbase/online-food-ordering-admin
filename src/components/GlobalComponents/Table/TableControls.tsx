@@ -1,6 +1,7 @@
 import React from "react";
 import { TextInput, Group, Flex, ActionIcon } from "@mantine/core";
 import { IconSearch, IconRefresh } from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
 import { useTheme } from "../../../contexts/ThemeContext";
 import FilterButton from "../FilterButton";
 import { CustomText } from "../../ui";
@@ -41,24 +42,38 @@ const TableControls: React.FC<TableControlsProps> = ({
 }) => {
   const { theme } = useTheme();
 
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
+
   return (
     <div
       style={{
-        padding: "14px",
+        padding: isMobile ? "8px" : isTablet ? "10px" : "14px",
         borderBottom: `1px solid ${theme.colors.border}`,
       }}
     >
       {/* Title */}
       {title && (
-        <Flex justify="space-between" align="center" mb="md">
-          <CustomText size="lg" fontWeight={600} color="primary">
+        <Flex justify="space-between" align="center" mb={isMobile ? "8px" : "md"}>
+          <CustomText
+            size={isMobile ? "md" : "lg"}
+            fontWeight={600}
+            color="primary"
+            responsive
+          >
             {title}
           </CustomText>
         </Flex>
       )}
 
       {/* Search and Action Buttons Row */}
-      <Flex justify="space-between" align="center" gap="md">
+      <Flex
+        justify="space-between"
+        align="center"
+        gap={isMobile ? "xs" : "md"}
+        direction={isMobile ? "column" : "row"}
+      >
         {/* Search Input */}
         {showSearchInput && onSearchChange && (
           <TextInput
@@ -66,7 +81,11 @@ const TableControls: React.FC<TableControlsProps> = ({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             leftSection={<IconSearch size={16} />}
-            style={{ flex: 1, maxWidth: '300px' }}
+            style={{
+              flex: 1,
+              maxWidth: isMobile ? '100%' : '300px',
+              marginBottom: isMobile ? '8px' : '0'
+            }}
             styles={{
               input: {
                 backgroundColor: theme.colors.inputBackground,

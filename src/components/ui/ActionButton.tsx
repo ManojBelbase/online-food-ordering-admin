@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button as MantineButton, type ButtonProps as MantineButtonProps } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface ActionButtonProps extends Omit<MantineButtonProps, 'variant' | 'color' | 'size'> {
@@ -15,6 +16,7 @@ interface ActionButtonProps extends Omit<MantineButtonProps, 'variant' | 'color'
   loading?: boolean;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
+  responsive?: boolean; // Enable responsive sizing
 }
 
 const ActionButton: React.FC<ActionButtonProps> = ({
@@ -28,17 +30,42 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   name,
   children,
   style,
+  responsive = false,
   ...props
 }) => {
   const { theme } = useTheme();
 
-  // Size mapping
+  // Responsive breakpoints
+  const isMobile = useMediaQuery('(max-width: 480px)');
+  const isTablet = useMediaQuery('(max-width: 768px)');
+
+  // Size mapping with responsive variants
   const sizeMap = {
-    xs: { height: '24px', fontSize: '11px', padding: '0 8px' },
-    sm: { height: '32px', fontSize: '12px', padding: '0 12px' },
-    md: { height: '36px', fontSize: '13px', padding: '0 16px' },
-    lg: { height: '42px', fontSize: '14px', padding: '0 20px' },
-    xl: { height: '48px', fontSize: '16px', padding: '0 24px' }
+    xs: {
+      desktop: { height: '24px', fontSize: '11px', padding: '0 8px' },
+      tablet: { height: '22px', fontSize: '10px', padding: '0 6px' },
+      mobile: { height: '20px', fontSize: '9px', padding: '0 4px' }
+    },
+    sm: {
+      desktop: { height: '32px', fontSize: '12px', padding: '0 12px' },
+      tablet: { height: '30px', fontSize: '11px', padding: '0 10px' },
+      mobile: { height: '28px', fontSize: '10px', padding: '0 8px' }
+    },
+    md: {
+      desktop: { height: '36px', fontSize: '13px', padding: '0 16px' },
+      tablet: { height: '34px', fontSize: '12px', padding: '0 14px' },
+      mobile: { height: '32px', fontSize: '11px', padding: '0 12px' }
+    },
+    lg: {
+      desktop: { height: '42px', fontSize: '14px', padding: '0 20px' },
+      tablet: { height: '40px', fontSize: '13px', padding: '0 18px' },
+      mobile: { height: '38px', fontSize: '12px', padding: '0 16px' }
+    },
+    xl: {
+      desktop: { height: '48px', fontSize: '16px', padding: '0 24px' },
+      tablet: { height: '46px', fontSize: '15px', padding: '0 22px' },
+      mobile: { height: '44px', fontSize: '14px', padding: '0 20px' }
+    }
   };
 
   // Variant styles
@@ -125,7 +152,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     return name || 'Button';
   };
 
-  const sizeStyle = sizeMap[size];
+  // Get responsive size style
+  const getSizeStyle = () => {
+    const sizeConfig = sizeMap[size];
+    if (responsive && typeof sizeConfig === 'object' && 'desktop' in sizeConfig) {
+      return isMobile ? sizeConfig.mobile : isTablet ? sizeConfig.tablet : sizeConfig.desktop;
+    }
+    return sizeConfig.desktop || sizeConfig;
+  };
+
+  const sizeStyle = getSizeStyle();
   const variantStyle = variantStyles[variant];
 
   const customStyle = {

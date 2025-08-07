@@ -78,11 +78,13 @@ const Layout: React.FC = () => {
         <main
           style={{
             flex: 1,
-            padding: "0 6px 6px 6px",
-            marginTop: "10px",
+            padding: isMobile ? "10px 8px 8px 8px" : "0 6px 6px 6px",
+            marginTop: isMobile ? "0" : "10px",
             color: theme.colors.textPrimary,
             backgroundColor: theme.colors.background,
             transition: "color 0.3s ease, background-color 0.3s ease",
+            position: "relative",
+            zIndex: 1,
           }}
         >
           <Outlet />
