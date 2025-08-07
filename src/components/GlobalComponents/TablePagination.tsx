@@ -35,7 +35,6 @@ const TablePagination: React.FC<TablePaginationProps> = ({
 
   // Responsive breakpoints
   const isMobile = useMediaQuery('(max-width: 480px)');
-  const isTablet = useMediaQuery('(max-width: 768px)');
 
   if (virtualized) {
     // Virtualized mode info

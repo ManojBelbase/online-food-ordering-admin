@@ -18,7 +18,6 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
 
   // Responsive breakpoints
   const isMobile = useMediaQuery('(max-width: 480px)');
-  const isTablet = useMediaQuery('(max-width: 768px)');
   const { mutateAsync: createCategory } = categoryApi.useCreate();
   const { mutateAsync: updateCategory } = categoryApi.useUpdate();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();

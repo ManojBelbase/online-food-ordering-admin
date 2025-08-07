@@ -20,7 +20,6 @@ const {restaurant}= useRestaurantByUser();
 
   // Responsive breakpoints
   const isMobile = useMediaQuery('(max-width: 480px)');
-  const isTablet = useMediaQuery('(max-width: 768px)');
   const { mutateAsync: createFoodItem } = foodItemApi.useCreate();
   const { mutateAsync: updateFoodItem } = foodItemApi.useUpdate();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();

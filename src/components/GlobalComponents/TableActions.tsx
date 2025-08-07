@@ -38,7 +38,6 @@ const TableActions: React.FC<TableActionsProps> = ({
 
   // Responsive breakpoints
   const isMobile = useMediaQuery('(max-width: 480px)');
-  const isTablet = useMediaQuery('(max-width: 768px)');
   const [deleteModalState, setDeleteModalState] = useState<{
     opened: boolean;
     itemName: string;
