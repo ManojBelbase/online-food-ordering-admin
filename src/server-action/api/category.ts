@@ -6,7 +6,7 @@ export interface ICategory{
    name: string;
   restaurantId?: string;
   image: string;
-  globalCategoryId?: string[];
+  globalCategoryId?: string;
 }
 
 export const categoryApi = createApiConfig<ICategory>("category", "Category")

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { PageHeader, TableActions } from "../../components/GlobalComponents";
+import { PageHeader, StatusBadge, TableActions } from "../../components/GlobalComponents";
 import { categoryApi, type ICategory } from "../../server-action/api/category";
 import DataTable from "../../components/GlobalComponents/Table/DataTable";
 import { onDelete, onEdit } from "../../components/GlobalComponents/TableActions";
@@ -8,11 +8,8 @@ import { Modal } from "@mantine/core";
 
 const CategoryPageIndex = () => {
   const { data } = categoryApi.useGetAll();
-  
   const { mutateAsync: deleteCategory } = categoryApi.useDelete();
   const [modalState, setModalState] = useState<{ mode: string; data?: ICategory } | null>(null);
-
-
   const tableData = useMemo(() => {
     return {
       columns: [
@@ -22,17 +19,21 @@ const CategoryPageIndex = () => {
         { title: "Action", key: "action" },
       ],
       rows: (data as any)?.category?.map((item: ICategory, index: number) => {
-    
-
         return {
           sn: index + 1,
           name: item.name || "N/A",
           image: item.image || "N/A",
-          globalCategory: item.globalCategoryId,
-          action: <TableActions actions={[
-            onEdit(() => setModalState({ mode: "edit", data: item })),
-            onDelete(deleteCategory, item.name, item._id || ''),
-          ]} />,
+          globalCategory: item.globalCategoryId ? <StatusBadge status="From Global"/>:<StatusBadge status="Custom"/>,
+         action: (
+  <TableActions
+    actions={
+      [
+        ...(item.globalCategoryId ? [] : [onEdit(() => setModalState({ mode: "edit", data: item }))]),
+        onDelete(deleteCategory, item.name, item._id || "")
+      ]
+    }
+  />
+),
         };
       }) || [],
  

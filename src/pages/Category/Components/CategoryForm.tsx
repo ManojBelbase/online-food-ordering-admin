@@ -15,8 +15,6 @@ interface ICategoryFormProps {
 
 const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
   const { user } = useAuth();
-
-  // Responsive breakpoints
   const isMobile = useMediaQuery('(max-width: 480px)');
   const { mutateAsync: createCategory } = categoryApi.useCreate();
   const { mutateAsync: updateCategory } = categoryApi.useUpdate();
@@ -53,7 +51,6 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
       }
       onClose();
     } catch (error) {
-      console.error("Submission error:", error);
     } finally {
     }
   };

@@ -50,7 +50,22 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
     }
 
     // General status
-    return { color: "gray", label: status };
+    switch (status.toLowerCase()) {
+      case "active":
+        return { color: "green", label: status };
+      case "inactive":
+        return { color: "red", label: status };
+      case "in use":
+        return { color: "orange", label: status };
+      case "available":
+        return { color: "green", label: status };
+      case "from global":
+        return { color: "blue", label: status };
+      case "custom":
+        return { color: "teal", label: status };
+      default:
+        return { color: "gray", label: status };
+    }
   };
 
   const config = getStatusConfig(status, type);
