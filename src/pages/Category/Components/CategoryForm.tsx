@@ -45,9 +45,9 @@ const CategoryForm: React.FC<ICategoryFormProps> = ({ edit, onClose }) => {
         restaurantId: user?.id, 
       };
       if (edit?._id) {
-        await updateCategory({ _id: edit?._id, entityData:entityData });
+        await updateCategory({ _id: edit?._id, entityData:entityData as any });
       } else {
-        await createCategory(entityData);
+        await createCategory(entityData as any);
       }
       onClose();
     } catch (error) {
