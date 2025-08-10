@@ -27,4 +27,4 @@ export interface IOrder{
   createdAt: Date;
   updatedAt: Date;
 }
-export const orderApi = createApiConfig<IOrder>("order", "Order")
+export const orderApi = createApiConfig<IOrder>("order/restaurant", "Order")
