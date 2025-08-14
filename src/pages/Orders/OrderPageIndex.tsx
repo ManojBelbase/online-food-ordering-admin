@@ -1,13 +1,15 @@
 import { useMemo, useState } from "react";
-import DataTable from "../../../components/GlobalComponents/Table/DataTable";
-import { orderApi, updateOrderStatus } from "../../../server-action/api/orders"
-import { DateFormatter, PageHeader, TableActions } from "../../../components/GlobalComponents";
-import {  onStatusChange } from "../../../components/GlobalComponents/TableActions";
+import DataTable from "../../components/GlobalComponents/Table/DataTable";
+import { orderApi, updateOrderStatus } from "../../server-action/api/orders"
+import { DateFormatter, PageHeader, TableActions } from "../../components/GlobalComponents";
+import {  onStatusChange, onView } from "../../components/GlobalComponents/TableActions";
 import { useQueryClient } from "@tanstack/react-query";
-import StatusChangeModal from "../../../components/GlobalComponents/StatusChangeModal";
+import StatusChangeModal from "../../components/GlobalComponents/StatusChangeModal";
 import { orderFilter } from "./Components/orderFilter";
+import { useNavigate } from "react-router-dom";
 
 const OrderPageIndex = () => {
+  const navigate = useNavigate()
   const {data:newOrder}= orderApi.useGetAll();
   const [statusModalState, setStatusModalState] = useState<{ opened: boolean; orderId: string; currentStatus: string } | null>(null);
   const queryClient = useQueryClient();
@@ -25,6 +27,7 @@ const OrderPageIndex = () => {
         { title: "Order Status", key: "orderStatus" },
         { title: "Total Amount", key: "totalAmount" },
         { title: "Payment Status", key: "paymentStatus" },
+        { title: "Payment Method", key: "paymentMethod" },
         { title: "Order Date", key: "orderDate" },
         {title:"Action", key:"action"
         }
@@ -34,10 +37,12 @@ const OrderPageIndex = () => {
         customerName: order.userId.name,
         orderStatus: order.orderStatus,
         paymentStatus: order.paymentStatus,
+        paymentMethod:order?.paymentMethod,
         totalAmount: `Rs. ${order.totalAmount}`,
         orderDate: <DateFormatter date={order.createdAt} format="iso"/>,
         action:     ( <TableActions
               actions={[
+                onView(()=>{navigate("/order/order-details:id")}),
                 onStatusChange(() => setStatusModalState({
                   opened: true,
                   orderId: order._id,

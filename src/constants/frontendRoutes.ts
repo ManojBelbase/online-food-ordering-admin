@@ -1,4 +1,3 @@
-// constants.ts
 export const FRONTENDROUTES = {
   LOGIN: "/login",
   NOT_AUTHORIZED:'/not-authorized',
@@ -15,6 +14,7 @@ export const FRONTENDROUTES = {
   FOOD_ITEM:'/food-item',
 
   ORDERS: "/orders",
+  ORDER_DETAILS:"/order/order-details",
   NEW_ORDERS:'/new-orders',
   COMPLETED_ORDERS:'/completed-orders',
   CANCELLED_ORDERS:'/cancelled-orders',

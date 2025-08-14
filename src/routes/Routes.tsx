@@ -12,7 +12,8 @@ import RestaurantOnboardingForm from "../pages/restaurant-onboarding/Components/
 import RestaurantPageIndex from "../pages/restaurant-onboarding/RestaurantPageIndex.tsx";
 import FoodItemPageIndex from "../pages/FoodItem/FoodItemPageIndex.tsx";
 import VerifyEmailPage from "../auth/verify-route.tsx";
-import OrderPageIndex from "../pages/Orders/NewOrders/OrderPageIndex.tsx";
+import OrderPageIndex from "../pages/Orders/OrderPageIndex.tsx";
+import OrderDetailsPage from "../pages/Orders/Components/OrderDetailsPage.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
   message: "Loading application layout...",
@@ -101,6 +102,10 @@ const protectedRoutes: RouteObject[] = [
       {
         path: FRONTENDROUTES.ORDERS.substring(1),
         element: <OrderPageIndex />
+      },
+      {
+        path:FRONTENDROUTES.ORDER_DETAILS.substring(1),
+        element:<OrderDetailsPage/>
       },
 
       { path: "menu/items", element: <div>Menu Items</div> },
