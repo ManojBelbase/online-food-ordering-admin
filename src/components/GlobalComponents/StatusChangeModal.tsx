@@ -75,10 +75,10 @@ const StatusChangeModal: React.FC<StatusChangeModalProps> = ({
       size="sm"
       styles={{
         content: {
-          backgroundColor: theme.colors.backgroundPrimary,
+          backgroundColor: theme.colors.primary,
         },
         header: {
-          backgroundColor: theme.colors.backgroundPrimary,
+          backgroundColor: theme.colors.primary,
           borderBottom: `1px solid ${theme.colors.border}`,
         },
         title: {
