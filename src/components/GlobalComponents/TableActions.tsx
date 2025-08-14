@@ -7,6 +7,7 @@ import {
   IconTrash,
   IconDownload,
   IconCopy,
+  IconRefresh,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -114,6 +115,8 @@ const TableActions: React.FC<TableActionsProps> = ({
           setDeleteModalState(null);
         }}
       />
+
+
     </>
   );
 };
@@ -177,6 +180,13 @@ export const onCopy = (onClick: () => void): ActionItem => ({
   key: 'copy',
   label: 'Copy',
   icon: <IconCopy size={16} />,
+  onClick,
+});
+
+export const onStatusChange = (onClick: () => void): ActionItem => ({
+  key: 'status-change',
+  label: 'Change Status',
+  icon: <IconRefresh size={16} />,
   onClick,
 });
 

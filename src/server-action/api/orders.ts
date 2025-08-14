@@ -10,7 +10,8 @@ export interface IOrderItem {
   notes?: string;
 }
 export interface IOrder{
- userId?: string;
+  _id?: string;
+  userId?: string;
   restaurantId: string;
   items: IOrderItem[];
   totalAmount: number;
@@ -28,3 +29,21 @@ export interface IOrder{
   updatedAt: Date;
 }
 export const orderApi = createApiConfig<IOrder>("order/restaurant", "Order")
+
+// Custom API function for updating order status
+export const updateOrderStatus = async (orderId: string, orderStatus: string) => {
+  const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/order/restaurant/${orderId}?orderStatus=${orderStatus}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update order status');
+  }
+
+  return response.json();
+};

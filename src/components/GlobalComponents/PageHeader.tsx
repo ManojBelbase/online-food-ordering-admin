@@ -22,6 +22,7 @@ interface PageHeaderProps {
   onBack?: () => void;
   onClick?: () => void;
   actionVariant?: "filled" | "outline" | "light" | "subtle";
+  showListSuffix?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -32,6 +33,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   onBack,
   onClick,
   actionVariant = "filled",
+  showListSuffix = true,
 }) => {
   const { theme } = useTheme();
   const navigate = useNavigate();
@@ -156,7 +158,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
                 marginBottom: subtitle ? "4px" : 0,
               }}
             >
-              {title} List
+              {title}{showListSuffix ? ' List' : ''}
             </Title>
 
             {subtitle && (
