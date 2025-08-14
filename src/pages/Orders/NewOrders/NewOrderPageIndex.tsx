@@ -5,6 +5,7 @@ import { DateFormatter, PageHeader, TableActions } from "../../../components/Glo
 import {  onStatusChange } from "../../../components/GlobalComponents/TableActions";
 import { useQueryClient } from "@tanstack/react-query";
 import StatusChangeModal from "../../../components/GlobalComponents/StatusChangeModal";
+import { orderFilter } from "./Components/orderFilter";
 
 const NewOrderPageIndex = () => {
   const {data:newOrder}= orderApi.useGetAll();
@@ -27,8 +28,6 @@ const NewOrderPageIndex = () => {
         { title: "Order Date", key: "orderDate" },
         {title:"Action", key:"action"
         }
-
-
       ],
       rows: (newOrder as any)?.data?.map((order: any, index: number) => ({
         sn: index + 1,  
@@ -57,7 +56,7 @@ const NewOrderPageIndex = () => {
         title="New Orders"
         actionVariant="outline"
       />
-      <DataTable columns={tableData.columns} data={tableData.rows} />
+      <DataTable columns={tableData.columns} data={tableData.rows}  filters={orderFilter}/>
 
       <StatusChangeModal
         opened={statusModalState?.opened || false}
