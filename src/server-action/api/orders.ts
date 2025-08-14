@@ -30,10 +30,10 @@ export interface IOrder{
 }
 export const orderApi = createApiConfig<IOrder>("order/restaurant", "Order")
 
-// Custom API function for updating order status
+
 export const updateOrderStatus = async (orderId: string, orderStatus: string) => {
-  const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/order/restaurant/${orderId}?orderStatus=${orderStatus}`, {
-    method: 'PATCH',
+  const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}order/${orderId}?orderStatus=${orderStatus}`, {
+      method: 'PATCH',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',
