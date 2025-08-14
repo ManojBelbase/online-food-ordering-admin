@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import StatusChangeModal from "../../../components/GlobalComponents/StatusChangeModal";
 import { orderFilter } from "./Components/orderFilter";
 
-const NewOrderPageIndex = () => {
+const OrderPageIndex = () => {
   const {data:newOrder}= orderApi.useGetAll();
   const [statusModalState, setStatusModalState] = useState<{ opened: boolean; orderId: string; currentStatus: string } | null>(null);
   const queryClient = useQueryClient();
@@ -56,7 +56,7 @@ const NewOrderPageIndex = () => {
         title="New Orders"
         actionVariant="outline"
       />
-      <DataTable columns={tableData.columns} data={tableData.rows}  filters={orderFilter}/>
+      <DataTable columns={tableData.columns} data={tableData.rows}  filters={orderFilter}   showPrintButton printExcludeColumns={["action"]} printShowTitle={true} printTitle="Order Report"/>
 
       <StatusChangeModal
         opened={statusModalState?.opened || false}
@@ -64,9 +64,10 @@ const NewOrderPageIndex = () => {
         orderId={statusModalState?.orderId || ''}
         onClose={() => setStatusModalState(null)}
         onStatusChange={handleStatusChange}
+        
       />
     </div>
   )
 }
 
-export default NewOrderPageIndex
+export default OrderPageIndex

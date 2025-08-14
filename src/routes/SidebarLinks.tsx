@@ -33,11 +33,11 @@ export const sidebarLinks: ISidebarLinks[] = [
     label: "Orders",
     to: FRONTENDROUTES.ORDERS,
     icon: IconShoppingCart,
-    children:[
-      {label:"New Orders", to:FRONTENDROUTES.NEW_ORDERS},
-      {label:"Completed Orders", to:FRONTENDROUTES.COMPLETED_ORDERS},
-      {label:"Cancelled Orders", to:FRONTENDROUTES.CANCELLED_ORDERS}
-    ]
+    // children:[
+    //   {label:"New Orders", to:FRONTENDROUTES.NEW_ORDERS},
+    //   {label:"Completed Orders", to:FRONTENDROUTES.COMPLETED_ORDERS},
+    //   {label:"Cancelled Orders", to:FRONTENDROUTES.CANCELLED_ORDERS}
+    // ]
   },
 {
   label:"Restaurant",
