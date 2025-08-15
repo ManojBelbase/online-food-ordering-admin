@@ -5,8 +5,8 @@ import { DateFormatter, PageHeader, TableActions } from "../../components/Global
 import {  onStatusChange, onView } from "../../components/GlobalComponents/TableActions";
 import { useQueryClient } from "@tanstack/react-query";
 import StatusChangeModal from "../../components/GlobalComponents/StatusChangeModal";
-import { orderFilter } from "./Components/orderFilter";
 import { useNavigate } from "react-router-dom";
+import { orderFilter } from "./Components/orderFilter";
 
 const OrderPageIndex = () => {
   const navigate = useNavigate()
