@@ -104,7 +104,7 @@ const protectedRoutes: RouteObject[] = [
         element: <OrderPageIndex />
       },
       {
-        path:FRONTENDROUTES.ORDER_DETAILS.substring(1),
+        path:FRONTENDROUTES.ORDER_DETAILS.substring(1) + "/:id",
         element:<OrderDetailsPage/>
       },
 

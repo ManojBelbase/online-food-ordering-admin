@@ -42,7 +42,7 @@ const OrderPageIndex = () => {
         orderDate: <DateFormatter date={order.createdAt} format="iso"/>,
         action:     ( <TableActions
               actions={[
-                onView(()=>{navigate("/order/order-details:id")}),
+                onView(()=>{navigate(`/order/order-details/${order._id}`)}),
                 onStatusChange(() => setStatusModalState({
                   opened: true,
                   orderId: order._id,

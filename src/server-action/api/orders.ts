@@ -28,7 +28,7 @@ export interface IOrder{
   createdAt: Date;
   updatedAt: Date;
 }
-export const orderApi = createApiConfig<IOrder>("order/restaurant", "Order")
+  export const orderApi = createApiConfig<IOrder>("order/restaurant", "Order")
 
 
 export const updateOrderStatus = async (orderId: string, orderStatus: string) => {
