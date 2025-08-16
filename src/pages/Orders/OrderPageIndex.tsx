@@ -6,7 +6,7 @@ import {  onStatusChange, onView } from "../../components/GlobalComponents/Table
 import { useQueryClient } from "@tanstack/react-query";
 import StatusChangeModal from "../../components/GlobalComponents/StatusChangeModal";
 import { useNavigate } from "react-router-dom";
-import { OrderFilter } from "./Components/orderFilter";
+import { OrderFilter } from "./components/OrderFilter";
 
 const OrderPageIndex = () => {
   const navigate = useNavigate()

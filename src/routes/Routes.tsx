@@ -13,7 +13,7 @@ import RestaurantPageIndex from "../pages/restaurant-onboarding/RestaurantPageIn
 import FoodItemPageIndex from "../pages/FoodItem/FoodItemPageIndex.tsx";
 import VerifyEmailPage from "../auth/verify-route.tsx";
 import OrderPageIndex from "../pages/Orders/OrderPageIndex.tsx";
-import OrderDetailsPage from "../pages/Orders/Components/OrderDetailsPage.tsx";
+import OrderDetailsPage from "../pages/Orders/components/OrderDetailsPage.tsx";
 
 const Layout = withSuspense(lazy(() => import("../layout/Layout")), {
   message: "Loading application layout...",
