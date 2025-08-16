@@ -4,26 +4,15 @@ export const OrderFilter: FilterConfig[]=[
     {
         key: "orderStatus",
         label: "Order Status",
+        type: "select",
         options: [
             { label: "All", value: "" },
             { label: "Pending", value: "pending" },
-            {
-                label: "Accepted", value: "accepted"
-            },
-            {
-                label: "Preparing", value: "preparing"
-            },
-            {
-                label: "Ready", value: "ready"
-            },
-            {
-                label: "Cancelled", value: "cancelled"
-            },
-            {
-                label: "Completed",
-                value: "completed"
-            }
+            { label: "Accepted", value: "accepted" },
+            { label: "Preparing", value: "preparing" },
+            { label: "Ready", value: "ready" },
+            { label: "Cancelled", value: "cancelled"},
+            { label: "Completed",value: "completed"}
         ],
-        type: "select"
     }
 ]
