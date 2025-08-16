@@ -123,7 +123,7 @@ const OrderDetailsPage = () => {
           Rs. {order?.totalAmount}
         </div>
       </div>
-    </div>
+    </div>  
   );
 };
 

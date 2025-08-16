@@ -39,7 +39,7 @@ const OrderPageIndex = () => {
         paymentStatus: order.paymentStatus,
         paymentMethod:order?.paymentMethod,
         totalAmount: `Rs. ${order.totalAmount}`,
-        orderDate: <DateFormatter date={order.createdAt} format="iso"/>,
+        orderDate: <DateFormatter date={order.createdAt} format="datetime"/>,
         action:     ( <TableActions
               actions={[
                 onView(()=>{navigate(`/order/order-details/${order._id}`)}),
@@ -58,7 +58,7 @@ const OrderPageIndex = () => {
   return (
     <div>
       <PageHeader
-        title="New Orders"
+        title="Orders"
         actionVariant="outline"
       />
       <DataTable columns={tableData.columns} data={tableData.rows}  filters={OrderFilter}   showPrintButton printExcludeColumns={["action"]} printShowTitle={true} printTitle="Order Report"/>

@@ -1,28 +1,72 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useTheme } from "../../contexts/ThemeContext";
+import { Grid } from "@mantine/core";
 import {
-  Card,
-  Title,
-  Group,
-  Badge,
-  Grid,
-  Stack,
-} from "@mantine/core";
-import {
-  IconChartBar,
   IconUsers,
   IconShoppingCart,
   IconTrendingUp,
-  IconComponents,
-  IconForms,
+  IconCake,
 } from "@tabler/icons-react";
-import { CustomText, ActionButton } from "../../components/ui";
+import { useTheme } from "../../contexts/ThemeContext";
+import {
+  StatsCard,
+  OrderTrendsChart,
+  PopularItemsChart,
+  OrderStatusSummary,
+  DashboardHeader,
+  CategoryChart,
+  PaymentMethodChart,
+} from "./Components";
 
+const orderTrendsData = [
+  { date: "Aug 9", orders: 120 },
+  { date: "Aug 10", orders: 150 },
+  { date: "Aug 11", orders: 130 },
+  { date: "Aug 12", orders: 180 },
+  { date: "Aug 13", orders: 200 },
+  { date: "Aug 14", orders: 160 },
+  { date: "Aug 15", orders: 220 },
+];
+
+const popularItemsData = [
+  { item: "Pizza", count: 300, percentage: 37 },
+  { item: "Burger", count: 250, percentage: 31 },
+  { item: "Sushi", count: 150, percentage: 19 },
+  { item: "Pasta", count: 100, percentage: 13 },
+];
+
+const categoryData = [
+  { category: "Beverages", count: 200, percentage: 40 },
+  { category: "Snacks", count: 150, percentage: 30 },
+  { category: "Meals", count: 100, percentage: 20 },
+  { category: "Desserts", count: 50, percentage: 10 },
+];
+
+const paymentData = [
+  {
+    method: "Credit Card",
+    amount: 25000,
+    percentage: 50,
+    icon: IconShoppingCart,
+    color: "#4caf50",
+  },
+  {
+    method: "PayPal",
+    amount: 15000,
+    percentage: 30,
+    icon: IconUsers,
+    color: "#2196f3",
+  },
+  {
+    method: "Cash",
+    amount: 10000,
+    percentage: 20,
+    icon: IconTrendingUp,
+    color: "#ff9800",
+  },
+];
 
 const HomePage: React.FC = () => {
   const { theme } = useTheme();
-  const navigate = useNavigate();
 
   const stats = [
     {
@@ -47,200 +91,51 @@ const HomePage: React.FC = () => {
       change: "+15%",
     },
     {
-      title: "Analytics",
-      value: "98.5%",
-      icon: IconChartBar,
+      title: "Popular Items",
+      value: "4",
+      icon: IconCake,
       color: theme.colors.secondary,
-      change: "+2%",
+      change: "+5%",
     },
   ];
 
+  const orderStatusSummary = [
+    { status: "Pending", count: 150, color: theme.colors.warning },
+    { status: "Preparing", count: 200, color: theme.colors.primary },
+    { status: "Ready", count: 50, color: theme.colors.success },
+    { status: "Completed", count: 834, color: theme.colors.success },
+  ];
+
   return (
-    <div style={{ padding: "20px" }}>
-
-
-      <Title
-        order={1}
-        style={{
-          color: theme.colors.textPrimary,
-          marginBottom: "30px",
-        }}
-      >
-        Dashboard Overview
-      </Title>
-
-      {/* Quick Access Card */}
-      <Card
-        shadow="sm"
-        padding="xl"
-        radius="md"
-        mb="xl"
-        style={{
-          backgroundColor: theme.colors.surface,
-          border: `1px solid ${theme.colors.border}`,
-          background: `linear-gradient(135deg, ${theme.colors.primary}10, ${theme.colors.secondary}10)`,
-        }}
-      >
-        <Group justify="space-between" align="center">
-          <div>
-            <Title
-              order={3}
-              style={{ color: theme.colors.textPrimary, marginBottom: "8px" }}
-            >
-              🚀 Explore All Components & Forms
-            </Title>
-            <CustomText color="secondary">
-              Access all available pages, forms, tables, and components in one
-              place
-            </CustomText>
-          </div>
-          <Group gap="md">
-            <ActionButton
-              onClick={() => navigate("/components")}
-              variant="primary"
-            >
-              <IconComponents size={16} style={{ marginRight: '8px' }} />
-              View All Components
-            </ActionButton>
-            <ActionButton
-              onClick={() => navigate("/orders/create")}
-              variant="outline"
-            >
-              <IconForms size={16} style={{ marginRight: '8px' }} />
-              Create Order
-            </ActionButton>
-          </Group>
-        </Group>
-      </Card>
-
-
+    <div className="overflow-scroll">
+      <DashboardHeader />
 
       <Grid>
-        {stats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <Grid.Col key={index} span={{ base: 12, sm: 6, lg: 3 }}>
-              <Card
-                shadow="sm"
-                padding="lg"
-                radius="md"
-                style={{
-                  backgroundColor: theme.colors.surface,
-                  border: `1px solid ${theme.colors.border}`,
-                  height: "100%",
-                }}
-              >
-                <Group justify="space-between" mb="xs">
-                  <div>
-                    <CustomText
-                      size="sm"
-                      color="secondary"
-                    >
-                      {stat.title}
-                    </CustomText>
-                    <CustomText
-                      size="xl"
-                      fontWeight={700}
-                      color="primary"
-                    >
-                      {stat.value}
-                    </CustomText>
-                  </div>
-                  <div
-                    style={{
-                      backgroundColor: `${stat.color}20`,
-                      padding: "8px",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <Icon size={24} style={{ color: stat.color }} />
-                  </div>
-                </Group>
-                <Badge color="green" variant="light" size="sm">
-                  {stat.change}
-                </Badge>
-              </Card>
-            </Grid.Col>
-          );
-        })}
+        {stats.map((stat, index) => (
+          <Grid.Col key={index}  span={{ base: 12, sm: 6, lg: 3 }}>
+            <StatsCard {...stat} />
+          </Grid.Col>
+        ))}
       </Grid>
 
-      <Grid mt="xl">
-        <Grid.Col span={{ base: 12, md: 8 }}>
-          <Card
-            shadow="sm"
-            padding="lg"
-            radius="md"
-            style={{
-              backgroundColor: theme.colors.surface,
-              border: `1px solid ${theme.colors.border}`,
-              height: "300px",
-            }}
-          >
-            <Title
-              order={3}
-              mb="md"
-              style={{ color: theme.colors.textPrimary }}
-            >
-              Recent Activity
-            </Title>
-            <CustomText color="secondary">
-              Activity chart and recent orders will be displayed here.
-            </CustomText>
-          </Card>
+      <Grid>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <OrderTrendsChart data={orderTrendsData} />
         </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <PopularItemsChart data={popularItemsData} />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <CategoryChart data={categoryData} />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <PaymentMethodChart data={paymentData} />
+        </Grid.Col>
+      </Grid>
 
-        <Grid.Col span={{ base: 12, md: 4 }}>
-          <Stack>
-            <Card
-              shadow="sm"
-              padding="lg"
-              radius="md"
-              style={{
-                backgroundColor: theme.colors.surface,
-                border: `1px solid ${theme.colors.border}`,
-              }}
-            >
-              <Title
-                order={4}
-                mb="md"
-                style={{ color: theme.colors.textPrimary }}
-              >
-                Quick Actions
-              </Title>
-              <CustomText size="sm" color="secondary">
-                • View all orders
-              </CustomText>
-              <CustomText size="sm" color="secondary">
-                • Manage menu items
-              </CustomText>
-              <CustomText size="sm" color="secondary">
-                • Customer support
-              </CustomText>
-            </Card>
-
-            <Card
-              shadow="sm"
-              padding="lg"
-              radius="md"
-              style={{
-                backgroundColor: theme.colors.surface,
-                border: `1px solid ${theme.colors.border}`,
-              }}
-            >
-              <Title
-                order={4}
-                mb="md"
-                style={{ color: theme.colors.textPrimary }}
-              >
-                Theme System
-              </Title>
-              <CustomText size="sm" color="secondary">
-                The theme system is now active! Use the toggle in the navbar to
-                switch between dark and light modes.
-              </CustomText>
-            </Card>
-          </Stack>
+      <Grid>
+        <Grid.Col span={12}>
+          <OrderStatusSummary data={orderStatusSummary} />
         </Grid.Col>
       </Grid>
     </div>
