@@ -1,6 +1,6 @@
 import type { FilterConfig } from "../../../components/GlobalComponents/Table/TableFilter";
 
-export const orderFilter: FilterConfig[]=[
+export const OrderFilter: FilterConfig[]=[
     {
         key: "orderStatus",
         label: "Order Status",

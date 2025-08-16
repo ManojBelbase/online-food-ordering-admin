@@ -6,7 +6,7 @@ import {  onStatusChange, onView } from "../../components/GlobalComponents/Table
 import { useQueryClient } from "@tanstack/react-query";
 import StatusChangeModal from "../../components/GlobalComponents/StatusChangeModal";
 import { useNavigate } from "react-router-dom";
-import { orderFilter } from "./Components/orderFilter";
+import { OrderFilter } from "./Components/orderFilter";
 
 const OrderPageIndex = () => {
   const navigate = useNavigate()
@@ -61,7 +61,7 @@ const OrderPageIndex = () => {
         title="New Orders"
         actionVariant="outline"
       />
-      <DataTable columns={tableData.columns} data={tableData.rows}  filters={orderFilter}   showPrintButton printExcludeColumns={["action"]} printShowTitle={true} printTitle="Order Report"/>
+      <DataTable columns={tableData.columns} data={tableData.rows}  filters={OrderFilter}   showPrintButton printExcludeColumns={["action"]} printShowTitle={true} printTitle="Order Report"/>
 
       <StatusChangeModal
         opened={statusModalState?.opened || false}
