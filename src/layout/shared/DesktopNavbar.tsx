@@ -1,6 +1,6 @@
 import React from "react";
-import { Group, Title, ActionIcon, TextInput } from "@mantine/core";
-import { IconMenu2, IconSearch } from "@tabler/icons-react";
+import { Group, Title, ActionIcon } from "@mantine/core";
+import { IconMenu2 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggle from "../../components/ThemeToggle";
 import VoiceNavigation from "../../components/VoiceNavigation";
@@ -54,14 +54,14 @@ const DesktopNavbar: React.FC<DesktopNavbarProps> = ({ onHamburgerClick, isTable
             textOverflow: "ellipsis",
           }}
         >
-          {isTablet ? "Food Admin" : "Food Ordering Admin"}
+          {isTablet ? "Food Admin" : "Food Ordering System"}
         </Title>
       </Group>
 
       {/* Right side - Search and Actions */}
       <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
         {/* Search Input */}
-        <TextInput
+        {/* <TextInput
           placeholder="Search..."
           leftSection={<IconSearch size={18} />}
           styles={{
@@ -82,7 +82,7 @@ const DesktopNavbar: React.FC<DesktopNavbarProps> = ({ onHamburgerClick, isTable
             minWidth: isTablet ? "140px" : "180px",
             flexShrink: 0
           }}
-        />
+        /> */}
 
         {/* Action Buttons */}
         <ThemeToggle />

@@ -19,7 +19,7 @@ const App: React.FC = () => {
         fallback={
           <PageLoader
             type="spinner"
-            message="Loading Food Ordering Admin..."
+            message="Loading Food Ordering ..."
           />
         }
       >

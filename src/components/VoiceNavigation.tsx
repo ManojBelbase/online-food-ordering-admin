@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ActionIcon, Tooltip, Modal, Stack, Group, Badge } from '@mantine/core';
-import { IconMicrophone, IconMicrophoneOff, IconVolume, IconHelp } from '@tabler/icons-react';
+import { IconMicrophone, IconMicrophoneOff, IconVolume } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { useTheme } from '../contexts/ThemeContext';
@@ -299,7 +299,6 @@ const VoiceNavigation: React.FC = () => {
               return;
             }
           }).catch(() => {
-            // Permission API not supported, continue anyway
           });
         }
 
@@ -389,7 +388,7 @@ const VoiceNavigation: React.FC = () => {
           </ActionIcon>
         </Tooltip>
 
-        <Tooltip label="Voice Commands Help" position="bottom" zIndex={10000}>
+        {/* <Tooltip label="Voice Commands Help" position="bottom" zIndex={10000}>
           <ActionIcon
             variant="subtle"
             size="sm"
@@ -398,7 +397,7 @@ const VoiceNavigation: React.FC = () => {
           >
             <IconHelp size={16} />
           </ActionIcon>
-        </Tooltip>
+        </Tooltip> */}
       </Group>
 
       {/* Help Modal */}

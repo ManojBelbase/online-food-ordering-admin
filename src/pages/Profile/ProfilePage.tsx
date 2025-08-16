@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Container,
   Tabs,
 } from "@mantine/core";
 import {
@@ -21,18 +20,16 @@ const ProfilePageIndex: React.FC = () => {
   const {user}= useAuth();
 
   return (
-    <Container py="md" size="xl">
+    <div>
       <PageHeader
         title="Profile Settings"
         breadcrumbs={[
           { label: "Profile", href: "/profile" },
         ]}
       />
-
       <Tabs 
-        value={activeTab} 
+        value={activeTab}
         onChange={(value) => setActiveTab(value || "profile")} 
-        mt="md"
         styles={{
           list: {
             backgroundColor: theme.colors.surface,
@@ -50,7 +47,7 @@ const ProfilePageIndex: React.FC = () => {
       >
         <Tabs.List>
           <Tabs.Tab value="profile" leftSection={<IconUser size={16} />}>
-          {user?.role ?"Restaurant Information":"Profile Information"}
+          {user?.role==="restaurant" ?"Restaurant Information":"Profile Information"}
           </Tabs.Tab>
           <Tabs.Tab value="security" leftSection={<IconShield size={16} />}>
             Security Settings
@@ -68,11 +65,11 @@ const ProfilePageIndex: React.FC = () => {
           <SecurityTab />
         </Tabs.Panel>
 
-        <Tabs.Panel value="face-recognition" pt="md">
+        <Tabs.Panel value="face-recognition" pt="sm">
           <FaceRecognitionTab />
         </Tabs.Panel>
       </Tabs>
-    </Container>
+    </div>
   );
 };
 

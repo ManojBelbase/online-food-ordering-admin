@@ -1,7 +1,6 @@
 import {
   IconDashboard,
   IconShoppingCart,
-  IconCreditCard,
   IconUser,
   IconCategory2,
   IconCategoryFilled,
@@ -49,16 +48,7 @@ export const sidebarLinks: ISidebarLinks[] = [
   {
     label:"Food Item", to:FRONTENDROUTES.FOOD_ITEM, icon:Icon24Hours
   },
-  {
-    label: "Payments",
-    to: "/payments",
-    icon: IconCreditCard,
-    children: [
-      { label: "Transactions", to: "/payments/transactions" },
-      { label: "Payment Methods", to: "/payments/methods" },
-      { label: "Refunds", to: "/payments/refunds" },
-    ],
-  },
+
 
   { label: "Profile", to: FRONTENDROUTES.PROFILE, icon: IconUser },
 ];

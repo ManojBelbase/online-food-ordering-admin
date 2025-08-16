@@ -35,7 +35,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             loading={
               <LoadingSpinner
                 variant="detailed"
-                message="Initializing Food Ordering Admin..."
+                message="Initializing Food Ordering ..."
                 fullScreen={true}
               />
             }

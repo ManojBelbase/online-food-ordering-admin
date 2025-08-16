@@ -5,6 +5,8 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useResponsive } from "../../styles/useResponsive";
 import { SidebarLinksList } from "./SidebarLinksList";
 import { CustomText, ActionButton } from "../../components/ui";
+import ThemeToggle from "../../components/ThemeToggle";
+import VoiceNavigation from "../../components/VoiceNavigation";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -142,6 +144,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         ) : (
           // Expanded state - show full support section and user info
           <>
+              <div style={{display:"flex"}}>
+                    <ThemeToggle />
+                            <VoiceNavigation />
+
+            </div>
             <UnstyledButton
               style={{
                 width: '100%',
@@ -155,7 +162,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
               <IconLifebuoy size={16} style={{ color: theme.colors.textSecondary || '#6c757d' }} />
               <CustomText
                 size="sm"
-                fontSize="13px"
+                fontSize="16px"
                 fontWeight={500}
                 color="secondary"
               >
@@ -174,19 +181,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
             <ActionButton
               variant="primary"
-              size="xs"
+              size="sm"
               width="100%"
-              fontSize="11px"
+              fontSize="14px"
               style={{ marginBottom: '12px' }}
             >
               Contact us
             </ActionButton>
+        
+
 
             <Group gap={8} style={{ justifyContent: 'flex-start' }}>
               <Avatar size={28} radius="sm" />
               <Box style={{ flex: 1 }}>
                 <CustomText
-                  fontSize="12px"
+                  fontSize="16px"
                   fontWeight={500}
                   color="primary"
                   lineHeight={1.2}
