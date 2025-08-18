@@ -17,7 +17,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { appStore, persistor } from "./redux/store/store";
 import LoadingSpinner from "./components/GlobalComponents/LoadingSpinner";
 import { QueryProvider } from "./providers/QueryProvider";
-import OrderNotificationListener from "./Notification/Components/OrderNotificationListener.tsx";
+// import OrderNotificationListener from "./Notification/Components/OrderNotificationListener.tsx";
 
 const preloadCriticalComponents = () => {
   if (window.location.pathname === '/login' || !localStorage.getItem('auth-token')) {
@@ -57,7 +57,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                       },
                     }}
                   />
-                  <OrderNotificationListener/>
+                  {/* <OrderNotificationListener/> */}
                   <App />
                 </ModalProvider>
               </QueryProvider>
