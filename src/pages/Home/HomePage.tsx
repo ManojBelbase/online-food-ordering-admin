@@ -11,7 +11,6 @@ import {
 import { useTheme } from "../../contexts/ThemeContext";
 import {
   StatsCard,
-  OrderTrendsChart,
   PopularItemsChart,
   OrderStatusSummary,
   DashboardHeader,
@@ -87,14 +86,6 @@ const HomePage: React.FC = () => {
     ];
   }, [dashboardData, theme]);
 
-  const orderTrendsData = useMemo(() => {
-    if (!dashboardData?.data?.trends?.dailyRevenue) return [];
-    return dashboardData.data.trends.dailyRevenue.map((item) => ({
-      date: item.date,
-      revenue: item.revenue,
-      orderCount: item.orderCount,
-    }));
-  }, [dashboardData]);
 
   const popularItemsData = useMemo(() => {
     if (!dashboardData?.data?.topSellingItems) return [];

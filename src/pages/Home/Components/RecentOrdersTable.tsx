@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Title, Table, Badge, Group } from "@mantine/core";
+import { Card, Title, Table, Badge } from "@mantine/core";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { CustomText } from "../../../components/ui";
 

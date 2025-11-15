@@ -23,14 +23,17 @@ import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
 import { restaurantApi } from "../../../server-action/api/restaurant";
 import LocationSelectorMap from "../../../components/LocationSelectorMap";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { CustomText, ActionButton } from "../../../components/ui";
+import { FRONTENDROUTES } from "../../../constants/frontendRoutes";
 const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
 const RestaurantOnboardingForm: React.FC = () => {
   const { user } = useAuth();
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { uploadImage, error: uploadError } = useCloudinaryUpload();
-  const {mutateAsync:createRestaurant, isPending: isCreating}= restaurantApi.useCreate();
+  const { mutateAsync: createRestaurant, isPending: isCreating } = restaurantApi.useCreate();
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
 
   const form = useForm({
@@ -95,8 +98,14 @@ const handleSubmit = async (values: typeof form.values) => {
 
     await createRestaurant(entityData as any);
 
-    
-    navigate("/");
+    // Invalidate restaurant queries to refetch the new restaurant data
+    if (user?.id) {
+      queryClient.invalidateQueries({ queryKey: ["restaurant/user", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["restaurant"] });
+    }
+
+    // Navigate to dashboard after successful creation
+    navigate(FRONTENDROUTES.HOME);
 
   } catch (error: any) {
     const errMsg =

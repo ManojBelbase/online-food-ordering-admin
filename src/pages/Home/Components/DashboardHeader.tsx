@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Title, Group, SegmentedControl } from "@mantine/core";
-import { IconComponents, IconForms } from "@tabler/icons-react";
+import { IconForms } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { CustomText, ActionButton } from "../../../components/ui";
 import type { DashboardPeriod } from "../../../server-action/api/dashboard";

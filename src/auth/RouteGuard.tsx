@@ -10,7 +10,7 @@ interface RouteGuardProps {
 }
 
 const RouteGuard: React.FC<RouteGuardProps> = ({ children }) => {
-  const { hasPermission } = useRolePermissions();
+  const { hasPermission } = useRolePermissions(); 
   const location = useLocation();
   const { isInitialized } = useAuth();
 
