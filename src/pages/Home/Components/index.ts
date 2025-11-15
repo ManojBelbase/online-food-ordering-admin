@@ -7,3 +7,4 @@ export { default as CategoryChart } from './CategoryChart';
 export { default as PaymentMethodChart } from './PaymentMethodChart';
 export { default as HourlyDistributionChart } from './HourlyDistributionChart';
 export { default as RecentOrdersTable } from './RecentOrdersTable';
+export { default as RecentUsersTable } from './RecentUsersTable';

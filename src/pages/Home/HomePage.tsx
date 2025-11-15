@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Grid, Loader, Center, Alert } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,6 +7,8 @@ import {
   IconTrendingUp,
   IconCake,
   IconAlertCircle,
+  IconBuildingStore,
+  IconCategory,
 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import {
@@ -18,18 +20,72 @@ import {
   PaymentMethodChart,
   HourlyDistributionChart,
   RecentOrdersTable,
+  RecentUsersTable,
 } from "./Components";
 import { useDashboardData } from "../../server-action/api/dashboard";
-import type { DashboardPeriod } from "../../server-action/api/dashboard";
 import { FRONTENDROUTES } from "../../constants/frontendRoutes";
+import { useAuth } from "../../redux/useAuth";
+import { Roles } from "../../constants/roles";
+import { restaurantApi } from "../../server-action/api/restaurant";
+import { userApi } from "../../server-action/api/user";
+import { globalCategoryApi } from "../../server-action/api/global-category";
 
 const HomePage: React.FC = () => {
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const [period, setPeriod] = useState<DashboardPeriod>("all");
-  const { data: dashboardData, isLoading, error } = useDashboardData(period);
+  const { user } = useAuth();
+  const isAdmin = user?.role === Roles.ADMIN;
+  const { data: dashboardData, isLoading, error } = useDashboardData("all", !isAdmin);
+  
+  // Admin data
+  const { data: restaurantsData } = restaurantApi.useGetAll(undefined, { enabled: isAdmin });
+  const { data: customersData } = userApi.useGetAll(undefined, { enabled: isAdmin });
+  const { data: globalCategoriesData } = globalCategoryApi.useGetAll(undefined, { enabled: isAdmin });
 
   const stats = useMemo(() => {
+    // Admin dashboard stats
+    if (isAdmin) {
+      const restaurantCount = (restaurantsData as any)?.restaurant?.length || 0;
+      const customerCount = (customersData as any)?.user?.length || 0;
+      const categoryCount = (globalCategoriesData as any)?.globalCategory?.length || 0;
+      
+      return [
+        {
+          title: "Total Restaurants",
+          value: restaurantCount.toLocaleString(),
+          icon: IconBuildingStore,
+      color: theme.colors.primary,
+          change: "Active",
+          onClick: () => navigate(FRONTENDROUTES.RESTAURANT),
+    },
+    {
+          title: "Total Customers",
+          value: customerCount.toLocaleString(),
+      icon: IconUsers,
+      color: theme.colors.success,
+          change: "Registered",
+          onClick: () => navigate(FRONTENDROUTES.CUSTOMER),
+        },
+        {
+          title: "Global Categories",
+          value: categoryCount.toLocaleString(),
+          icon: IconCategory,
+          color: theme.colors.warning,
+          change: "Categories",
+          onClick: () => navigate(FRONTENDROUTES.GLOBAL_CATEGORY),
+        },
+        {
+          title: "Total Orders",
+          value: dashboardData?.data?.overview?.totalOrders?.toLocaleString() || "0",
+          icon: IconShoppingCart,
+          color: theme.colors.secondary,
+          change: "All Restaurants",
+          onClick: () => navigate(FRONTENDROUTES.ORDERS),
+        },
+      ];
+    }
+    
+    // Restaurant dashboard stats
     if (!dashboardData?.data) return [];
     const { overview, revenue, orders } = dashboardData.data;
     return [
@@ -49,8 +105,8 @@ const HomePage: React.FC = () => {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`,
-        icon: IconTrendingUp,
-        color: theme.colors.warning,
+      icon: IconTrendingUp,
+      color: theme.colors.warning,
         change: revenue.growth.isPositive
           ? `+${revenue.growth.percentage.toFixed(1)}%`
           : `${revenue.growth.percentage.toFixed(1)}%`,
@@ -65,13 +121,13 @@ const HomePage: React.FC = () => {
       {
         title: "Food Items",
         value: overview.totalFoodItems.toString(),
-        icon: IconCake,
-        color: theme.colors.secondary,
+      icon: IconCake,
+      color: theme.colors.secondary,
         change: `${overview.totalCategories} categories`,
         onClick: () => navigate(FRONTENDROUTES.FOOD_ITEM),
       },
     ];
-  }, [dashboardData, theme, navigate]);
+  }, [dashboardData, theme, navigate, isAdmin, restaurantsData, customersData, globalCategoriesData]);
 
   const orderStatusSummary = useMemo(() => {
     if (!dashboardData?.data?.orders?.byStatus) return [];
@@ -134,7 +190,34 @@ const HomePage: React.FC = () => {
     return dashboardData.data.recentOrders;
   }, [dashboardData]);
 
-  if (isLoading) {
+  const recentUsers = useMemo(() => {
+    if (!customersData || !isAdmin) return [];
+    // API returns data directly as array or wrapped in response
+    // Based on CustomerPageIndex, data is used directly with data?.map()
+    let users: any[] = [];
+    if (Array.isArray(customersData)) {
+      users = customersData;
+    } else if ((customersData as any)?.user && Array.isArray((customersData as any).user)) {
+      users = (customersData as any).user;
+    } else if ((customersData as any)?.users && Array.isArray((customersData as any).users)) {
+      users = (customersData as any).users;
+    } else if ((customersData as any)?.data && Array.isArray((customersData as any).data)) {
+      users = (customersData as any).data;
+    }
+    
+    const sortedUsers = users
+      .filter((u: any) => u && u._id) 
+      .sort((a: any, b: any) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
+      });
+    return sortedUsers.slice(0, 5);
+  }, [customersData, isAdmin]);
+
+  const showLoading = isAdmin ? false : isLoading; 
+
+  if (showLoading) {
     return (
       <Center style={{ height: "100vh" }}>
         <Loader size="lg" />
@@ -142,7 +225,7 @@ const HomePage: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error && !isAdmin) {
     return (
       <div className="overflow-scroll">
         <Alert
@@ -159,7 +242,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="overflow-scroll">
-      <DashboardHeader period={period} onPeriodChange={setPeriod} />
+      <DashboardHeader />
 
       <Grid>
         {stats.map((stat, index) => (
@@ -169,8 +252,17 @@ const HomePage: React.FC = () => {
         ))}
       </Grid>
 
+      {isAdmin && (
+        <Grid>
+          <Grid.Col span={12}>
+            <RecentUsersTable data={recentUsers} />
+          </Grid.Col>
+        </Grid>
+      )}
+
+      {!isAdmin && (
+        <>
       <Grid>
-       
         <Grid.Col span={{ base: 12, md: 6 }}>
           <PopularItemsChart data={popularItemsData} />
         </Grid.Col>
@@ -180,9 +272,9 @@ const HomePage: React.FC = () => {
         <Grid.Col span={{ base: 12, md: 6 }}>
           <PaymentMethodChart data={paymentData} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <HourlyDistributionChart data={hourlyData} />
-        </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <HourlyDistributionChart data={hourlyData} />
+            </Grid.Col>
       </Grid>
 
       <Grid>
@@ -191,11 +283,13 @@ const HomePage: React.FC = () => {
         </Grid.Col>
       </Grid>
 
-      <Grid>
-        <Grid.Col span={12}>
-          <RecentOrdersTable data={recentOrders} />
-        </Grid.Col>
-      </Grid>
+          <Grid>
+            <Grid.Col span={12}>
+              <RecentOrdersTable data={recentOrders} />
+            </Grid.Col>
+          </Grid>
+        </>
+      )}
     </div>
   );
 };

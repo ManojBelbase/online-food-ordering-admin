@@ -87,7 +87,7 @@ export interface DashboardResponse {
   };
 }
 
-export const useDashboardData = (period: DashboardPeriod = "all") => {
+export const useDashboardData = (period: DashboardPeriod = "all", enabled: boolean = true) => {
   return useQuery({
     queryKey: ["dashboard", period],
     queryFn: async () => {
@@ -99,6 +99,7 @@ export const useDashboardData = (period: DashboardPeriod = "all") => {
       );
       return response.data;
     },
+    enabled,
     staleTime: 30000, // Cache for 30 seconds
   });
 };

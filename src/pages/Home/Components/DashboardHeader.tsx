@@ -1,21 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Title, Group, SegmentedControl } from "@mantine/core";
+import { Card, Title, Group } from "@mantine/core";
 import { IconForms } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { CustomText, ActionButton } from "../../../components/ui";
-import type { DashboardPeriod } from "../../../server-action/api/dashboard";
 import { FRONTENDROUTES } from "../../../constants/frontendRoutes";
 
 interface DashboardHeaderProps {
-  period: DashboardPeriod;
-  onPeriodChange: (period: DashboardPeriod) => void;
+  period?: string;
+  onPeriodChange?: (period: string) => void;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({
-  period,
-  onPeriodChange,
-}) => { 
+const DashboardHeader: React.FC<DashboardHeaderProps> = () => { 
   const { theme } = useTheme();
   const navigate = useNavigate();
 
@@ -44,20 +40,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           </CustomText>
         </div>
         <Group gap="md">
-          <SegmentedControl
-            value={period}
-            onChange={(value) => onPeriodChange(value as DashboardPeriod)}
-            data={[
-              { label: "Today", value: "today" },
-              { label: "Week", value: "week" },
-              { label: "Month", value: "month" },
-              { label: "All", value: "all" },
-            ]}
-            style={{
-              backgroundColor: theme.colors.surface,
-            }}
-          />
-        
           <ActionButton
             onClick={() => navigate(FRONTENDROUTES.FOOD_ITEM)}
             variant="secondary"
