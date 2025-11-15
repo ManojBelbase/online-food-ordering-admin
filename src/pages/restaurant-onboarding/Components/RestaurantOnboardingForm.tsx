@@ -25,7 +25,7 @@ import LocationSelectorMap from "../../../components/LocationSelectorMap";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { CustomText, ActionButton } from "../../../components/ui";
-import { FRONTENDROUTES } from "../../../constants/frontendRoutes";
+// import { FRONTENDROUTES } from "../../../constants/frontendRoutes";
 const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
 const RestaurantOnboardingForm: React.FC = () => {
