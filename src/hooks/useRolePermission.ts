@@ -6,18 +6,41 @@ export const useRolePermissions = () => {
   const { user } = useAuth();
 
   const hasPermission = (path: string): boolean => {
-    const requiredRoles = routePermissions[path] || [];
+    const normalizedPath = path.split('?')[0].replace(/\/$/, '') || '/';
+    
+    let requiredRoles = routePermissions[normalizedPath];
+    
+    if (!requiredRoles) {
+      const matchingKey = Object.keys(routePermissions).find(key => {
+        const normalizedKey = key.replace(/\/$/, '') || '/';
+        return normalizedPath === normalizedKey || normalizedPath.startsWith(normalizedKey + '/');
+      });
+      if (matchingKey) {
+        requiredRoles = routePermissions[matchingKey];
+      }
+    }
+    
+    // If still no match, default to empty array
+    requiredRoles = requiredRoles || [];
 
 
     if (requiredRoles.length === 0) {
+      // No specific roles required, just need to be authenticated
       return !!user;
     }
 
     if (!user || !user.role) {
+      console.log("Permission denied: No user or role");
       return false;
     }
 
     const hasAccess = requiredRoles.includes(user.role);
+    if (!hasAccess) {
+      console.log("Permission denied: Role mismatch", {
+        userRole: user.role,
+        requiredRoles,
+      });
+    }
     return hasAccess;
   };
 

@@ -394,7 +394,7 @@ const DataTable: React.FC<DataTableProps> = ({
         />
       )}
 
-      {loading || (!data || data.length === 0) ? (
+      {loading || (!data ) ? (
         <TableShimmer
           columns={columns.length}
           rows={6}
