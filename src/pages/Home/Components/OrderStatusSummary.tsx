@@ -32,13 +32,37 @@ const OrderStatusSummary: React.FC<OrderStatusSummaryProps> = ({ data }) => {
       </Title>
       <Grid>
         {data.map((item, index) => (
-          <Grid.Col key={index} span={3}>
-            <Group justify="space-between">
-              <CustomText color="secondary">{item.status}</CustomText>
-              <Badge color={item.color} variant="light">
+          <Grid.Col key={index} span={{ base: 6, sm: 4, md: 2 }}>
+            <div
+              style={{
+                padding: "12px",
+                borderRadius: "8px",
+                backgroundColor: `${item.color}10`,
+                border: `1px solid ${item.color}30`,
+                textAlign: "center",
+              }}
+            >
+              <CustomText
+                size="xs"
+                color="secondary"
+                style={{ marginBottom: "8px", textTransform: "uppercase" }}
+              >
+                {item.status}
+              </CustomText>
+              <Badge
+                color={item.color}
+                variant="filled"
+                size="lg"
+                style={{
+                  fontSize: "18px",
+                  fontWeight: 700,
+                  padding: "8px 16px",
+                  minWidth: "60px",
+                }}
+              >
                 {item.count}
               </Badge>
-            </Group>
+            </div>
           </Grid.Col>
         ))}
       </Grid>

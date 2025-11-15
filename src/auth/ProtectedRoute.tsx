@@ -13,8 +13,12 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user } = useAuth();
   const location = useLocation();
-  const { restaurant, isLoading } = useRestaurantByUser();
-  console.log(restaurant,"red")
+  
+  // Only fetch restaurant data if user is RESTAURANT role and not on onboarding page (optimization)
+  const isRestaurantRole = user?.role === Roles.RESTAURANT;
+  const isOnOnboardingPage = location.pathname === FRONTENDROUTES.RESTAURANT_ONBOARDING;
+  const shouldCheckRestaurant = isRestaurantRole && !isOnOnboardingPage;
+  const { restaurant, isLoading } = useRestaurantByUser(shouldCheckRestaurant);
   
   if (!user) {
     return (
@@ -22,7 +26,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (user?.role === Roles.RESTAURANT) {
+  // Only check restaurant for RESTAURANT role users and not on onboarding page
+  if (shouldCheckRestaurant) {
     if (isLoading) return <LoadingOverlay visible />;
 
     if (!restaurant || Object.keys(restaurant).length === 0) {

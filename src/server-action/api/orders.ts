@@ -32,8 +32,13 @@ export interface IOrder{
 
 
 export const updateOrderStatus = async (orderId: string, orderStatus: string) => {
-  const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}order/${orderId}?orderStatus=${orderStatus}`, {
-      method: 'PATCH',
+  const baseUrl = import.meta.env.VITE_REACT_APP_API_URL || '';
+  const url = baseUrl.endsWith('/') 
+    ? `${baseUrl}order/${orderId}?orderStatus=${orderStatus}`
+    : `${baseUrl}/order/${orderId}?orderStatus=${orderStatus}`;
+  
+  const response = await fetch(url, {
+    method: 'PATCH',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       'Content-Type': 'application/json',

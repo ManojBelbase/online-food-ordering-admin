@@ -5,3 +5,5 @@ export { default as OrderStatusSummary } from './OrderStatusSummary';
 export { default as DashboardHeader } from './DashboardHeader';
 export { default as CategoryChart } from './CategoryChart';
 export { default as PaymentMethodChart } from './PaymentMethodChart';
+export { default as HourlyDistributionChart } from './HourlyDistributionChart';
+export { default as RecentOrdersTable } from './RecentOrdersTable';

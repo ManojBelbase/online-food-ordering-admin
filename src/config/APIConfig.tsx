@@ -56,14 +56,15 @@ export function createApiConfig<T>(
   };
 
   // GET entity by ID
-  const useGetById = (id: string) => {
+  const useGetById = (id: string, options?: Partial<UseQueryOptions<any, Error>>) => {
     return useQuery({
       queryKey: [entityName, id],
       queryFn: async () => {
         const { data } = await apiClient.get(`/${entityName}/${id}`);
         return data;
       },
-      enabled: !!id,
+      enabled: !!id && (options?.enabled !== undefined ? options.enabled : true),
+      ...options,
     });
   };
 

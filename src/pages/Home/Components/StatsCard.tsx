@@ -8,6 +8,7 @@ interface StatsCardProps {
   icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
   color: string;
   change: string;
+  onClick?: () => void;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({
@@ -16,6 +17,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   icon: Icon,
   color,
   change,
+  onClick,
 }) => {
   const { theme } = useTheme();
 
@@ -28,6 +30,21 @@ const StatsCard: React.FC<StatsCardProps> = ({
         backgroundColor: theme.colors.surface,
         border: `1px solid ${theme.colors.border}`,
         height: "100%",
+        cursor: onClick ? "pointer" : "default",
+        transition: "all 0.2s ease",
+      }}
+      onClick={onClick}
+      onMouseEnter={(e) => {
+        if (onClick) {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (onClick) {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "";
+        }
       }}
     >
       <Group justify="space-between">

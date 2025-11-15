@@ -22,33 +22,34 @@ export const useAuth = () => {
       dispatch(logout());
     };
 
-    // Initialize auth state and validate token on app startup
+    // Initialize auth state immediately (don't block on token refresh)
     const initializeAuthState = async () => {
       if (!auth.isInitialized) {
-        const storedToken = localStorage.getItem("accessToken");
-
-        if (storedToken) {
-          try {
-            // Try to refresh the token to validate it
-            const { data } = await axios.post(
-              `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh-token`,
-              {},
-              { withCredentials: true }
-            );
-
-            // Token is valid, update the state
-            dispatch(refreshToken({
-              user: data.user,
-              accessToken: data.accessToken
-            }));
-          } catch (error) {
-            // Token is invalid, clear auth state
-            console.log('Token validation failed, logging out');
-            dispatch(logout());
-          }
-        }
-
+        // Set initialized immediately so app doesn't hang
         dispatch(initializeAuth());
+
+        // Try to refresh token in background (non-blocking)
+        const storedToken = localStorage.getItem("accessToken");
+        if (storedToken) {
+          // Don't await - let it run in background
+          axios.post(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/auth/refresh-token`,
+            {},
+            { withCredentials: true }
+          )
+            .then(({ data }) => {
+              // Token is valid, update the state
+              dispatch(refreshToken({
+                user: data.user,
+                accessToken: data.accessToken
+              }));
+            })
+            .catch(() => {
+              // Token is invalid, clear auth state silently
+              // Don't log to avoid console spam on first load
+              dispatch(logout());
+            });
+        }
       }
     };
 

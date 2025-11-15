@@ -4,14 +4,20 @@ import { useTheme } from "../../../contexts/ThemeContext";
 
 interface OrderTrendsData {
   date: string;
-  orders: number;
+  revenue?: number;
+  orderCount?: number;
+  orders?: number; // For backward compatibility
 }
 
 interface OrderTrendsChartProps {
   data: OrderTrendsData[];
+  showRevenue?: boolean;
 }
 
-const OrderTrendsChart: React.FC<OrderTrendsChartProps> = ({ data }) => {
+const OrderTrendsChart: React.FC<OrderTrendsChartProps> = ({
+  data,
+  showRevenue = false,
+}) => {
   const { theme } = useTheme();
 
   const classes = useMemo(
@@ -35,15 +41,27 @@ const OrderTrendsChart: React.FC<OrderTrendsChartProps> = ({ data }) => {
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    const yMax = Math.max(...data.map((d) => d.orders)) * 1.1;
+    const getValue = (d: OrderTrendsData) => {
+      if (showRevenue) {
+        return d.revenue || 0;
+      }
+      return d.orderCount || d.orders || 0;
+    };
+
+    const yMax = Math.max(...data.map(getValue), 1) * 1.1;
 
     const linePath = data
       .map((d, i) => {
-        const x = (i / (data.length - 1)) * innerWidth;
-        const y = innerHeight - (d.orders / yMax) * innerHeight;
+        const x = (i / (data.length - 1 || 1)) * innerWidth;
+        const y = innerHeight - (getValue(d) / yMax) * innerHeight;
         return `${i === 0 ? "M" : "L"} ${x} ${y}`;
       })
       .join(" ");
+
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    };
 
     return (
       <svg style={classes.lineChart} viewBox={`0 0 ${width} ${height}`}>
@@ -55,16 +73,21 @@ const OrderTrendsChart: React.FC<OrderTrendsChartProps> = ({ data }) => {
             strokeWidth={2}
           />
           {data.map((d, i) => {
-            const x = (i / (data.length - 1)) * innerWidth;
-            const y = innerHeight - (d.orders / yMax) * innerHeight;
+            const x = (i / (data.length - 1 || 1)) * innerWidth;
+            const y = innerHeight - (getValue(d) / yMax) * innerHeight;
             return (
-              <circle
-                key={i}
-                cx={x}
-                cy={y}
-                r={4}
-                fill={theme.colors.primary}
-              />
+              <g key={i}>
+                <circle cx={x} cy={y} r={4} fill={theme.colors.primary} />
+                <text
+                  x={x}
+                  y={innerHeight + 20}
+                  textAnchor="middle"
+                  fontSize="9"
+                  fill={theme.colors.textSecondary}
+                >
+                  {formatDate(d.date)}
+                </text>
+              </g>
             );
           })}
         </g>
@@ -84,7 +107,7 @@ const OrderTrendsChart: React.FC<OrderTrendsChartProps> = ({ data }) => {
       }}
     >
       <Title order={3} mb="md" style={{ color: theme.colors.textPrimary }}>
-        Order Trends (Last 7 Days)
+        {showRevenue ? "Revenue Trends" : "Order Trends"}
       </Title>
       <div style={classes.chartContainer}>{renderLineChart()}</div>
     </Card>

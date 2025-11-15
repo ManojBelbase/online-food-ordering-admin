@@ -2,6 +2,7 @@ import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 import ProtectedRoute from "../auth/ProtectedRoute.tsx";
 import RouteGuard from "../auth/RouteGuard.tsx";
+import OnboardingRouteGuard from "../auth/OnboardingRouteGuard.tsx";
 import withSuspense, { withPageLoader } from "../utils/withSuspense";
 import { FRONTENDROUTES } from "../constants/frontendRoutes.ts";
 import CategoryPageIndex from "../pages/Category/CategoryPageIndex.tsx";
@@ -118,11 +119,14 @@ const notFoundRoute: RouteObject = {
   element: <NotFoundPage />,
 };
 
-const restautantOnBoardingRoute: RouteObject=
-  {
-    path:FRONTENDROUTES.RESTAURANT_ONBOARDING,
-    element:<RestaurantOnboardingForm />
-  }
+const restautantOnBoardingRoute: RouteObject = {
+  path: FRONTENDROUTES.RESTAURANT_ONBOARDING,
+  element: (
+    <OnboardingRouteGuard>
+      <RestaurantOnboardingForm />
+    </OnboardingRouteGuard>
+  ),
+};
 
 
 
