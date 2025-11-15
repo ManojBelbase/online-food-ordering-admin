@@ -4,7 +4,7 @@ import {
 } from "@mantine/core";
 import {
   IconUser,
-  IconShield,
+  // IconShield,
   IconFaceId,
 } from "@tabler/icons-react";
 import { useTheme } from "../../contexts/ThemeContext";
