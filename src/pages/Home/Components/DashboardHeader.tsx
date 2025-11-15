@@ -15,7 +15,7 @@ interface DashboardHeaderProps {
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   period,
   onPeriodChange,
-}) => {
+}) => { 
   const { theme } = useTheme();
   const navigate = useNavigate();
 

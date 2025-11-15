@@ -1,11 +1,12 @@
 // hooks/useRolePermissions.ts
+import { useCallback } from "react";
 import { useAuth } from "../redux/useAuth";
 import { routePermissions } from "../routes/permission";
 
 export const useRolePermissions = () => {
   const { user } = useAuth();
 
-  const hasPermission = (path: string): boolean => {
+  const hasPermission = useCallback((path: string): boolean => {
     const normalizedPath = path.split('?')[0].replace(/\/$/, '') || '/';
     
     let requiredRoles = routePermissions[normalizedPath];
@@ -20,31 +21,21 @@ export const useRolePermissions = () => {
       }
     }
     
-    // If still no match, default to empty array
     requiredRoles = requiredRoles || [];
 
 
     if (requiredRoles.length === 0) {
-      // No specific roles required, just need to be authenticated
       return !!user;
     }
 
     if (!user || !user.role) {
-      console.log("Permission denied: No user or role");
       return false;
     }
 
-    const hasAccess = requiredRoles.includes(user.role);
-    if (!hasAccess) {
-      console.log("Permission denied: Role mismatch", {
-        userRole: user.role,
-        requiredRoles,
-      });
-    }
-    return hasAccess;
-  };
+    return requiredRoles.includes(user.role);
+  }, [user]);
 
-  const filterItemsByRole = (items: any[]) => {
+  const filterItemsByRole = useCallback((items: any[]) => {
     return items.filter((item) => {
       if (item.to && !hasPermission(item.to)) {
         return false;
@@ -59,7 +50,7 @@ export const useRolePermissions = () => {
 
       return true;
     });
-  };
+  }, [hasPermission]);
 
   return { hasPermission, filterItemsByRole };
 };
