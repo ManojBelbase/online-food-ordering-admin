@@ -105,7 +105,8 @@ const handleSubmit = async (values: typeof form.values) => {
     }
 
     // Navigate to dashboard after successful creation
-    navigate(FRONTENDROUTES.HOME);
+    navigate("/")
+    // navigate(FRONTENDROUTES.HOME);
 
   } catch (error: any) {
     const errMsg =

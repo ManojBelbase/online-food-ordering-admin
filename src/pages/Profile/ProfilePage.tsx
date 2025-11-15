@@ -46,12 +46,12 @@ const ProfilePageIndex: React.FC = () => {
         }}
       >
         <Tabs.List>
-          <Tabs.Tab value="profile" leftSection={<IconUser size={16} />}>
+          <Tabs.Tab value="profile" style={{display: user?.role==="admin" ? "none" : "block"}} leftSection={<IconUser size={16} />}>
           {user?.role==="restaurant" ?"Restaurant Information":"Profile Information"}
           </Tabs.Tab>
-          <Tabs.Tab value="security" leftSection={<IconShield size={16} />}>
+          {/* <Tabs.Tab value="security" leftSection={<IconShield size={16} />}>
             Security Settings
-          </Tabs.Tab>
+          </Tabs.Tab> */}
           <Tabs.Tab value="face-recognition" leftSection={<IconFaceId size={16} />}>
             Face Recognition
           </Tabs.Tab>
