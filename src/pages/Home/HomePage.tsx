@@ -74,14 +74,14 @@ const HomePage: React.FC = () => {
           change: "Categories",
           onClick: () => navigate(FRONTENDROUTES.GLOBAL_CATEGORY),
         },
-        {
-          title: "Total Orders",
-          value: dashboardData?.data?.overview?.totalOrders?.toLocaleString() || "0",
-          icon: IconShoppingCart,
-          color: theme.colors.secondary,
-          change: "All Restaurants",
-          onClick: () => navigate(FRONTENDROUTES.ORDERS),
-        },
+        // {
+        //   title: "Total Orders",
+        //   value: dashboardData?.data?.overview?.totalOrders?.toLocaleString() || "0",
+        //   icon: IconShoppingCart,
+        //   color: theme.colors.secondary,
+        //   change: "All Restaurants",
+        //   onClick: () => navigate(FRONTENDROUTES.ORDERS),
+        // },
       ];
     }
     
