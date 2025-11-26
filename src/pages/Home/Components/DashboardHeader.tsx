@@ -1,19 +1,15 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, Title, Group } from "@mantine/core";
-import { IconForms } from "@tabler/icons-react";
 import { useTheme } from "../../../contexts/ThemeContext";
-import { CustomText, ActionButton } from "../../../components/ui";
-import { FRONTENDROUTES } from "../../../constants/frontendRoutes";
+import { CustomText } from "../../../components/ui";
 
 interface DashboardHeaderProps {
   period?: string;
   onPeriodChange?: (period: string) => void;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = () => { 
+const DashboardHeader: React.FC<DashboardHeaderProps> = () => {
   const { theme } = useTheme();
-  const navigate = useNavigate();
 
   return (
     <Card
@@ -33,21 +29,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = () => {
             order={3}
             style={{ color: theme.colors.textPrimary, marginBottom: "8px" }}
           >
-            🚀 Food Ordering Dashboard
+            Food Ordering Dashboard
           </Title>
           <CustomText color="secondary">
             Monitor orders, revenue, and manage your food ordering system
           </CustomText>
         </div>
-        <Group gap="md">
-          <ActionButton
-            onClick={() => navigate(FRONTENDROUTES.FOOD_ITEM)}
-            variant="secondary"
-          >
-            <IconForms size={16} style={{ marginRight: "8px" }} />
-            Manage Menu
-          </ActionButton>
-        </Group>
+
       </Group>
     </Card>
   );

@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === Roles.ADMIN;
   const { data: dashboardData, isLoading, error } = useDashboardData("all", !isAdmin);
-  
+
   // Admin data
   const { data: restaurantsData } = restaurantApi.useGetAll(undefined, { enabled: isAdmin });
   const { data: customersData } = userApi.useGetAll(undefined, { enabled: isAdmin });
@@ -48,21 +48,21 @@ const HomePage: React.FC = () => {
       const restaurantCount = (restaurantsData as any)?.restaurant?.length || 0;
       const customerCount = (customersData as any)?.user?.length || 0;
       const categoryCount = (globalCategoriesData as any)?.globalCategory?.length || 0;
-      
+
       return [
         {
           title: "Total Restaurants",
           value: restaurantCount.toLocaleString(),
           icon: IconBuildingStore,
-      color: theme.colors.primary,
+          color: theme.colors.primary,
           change: "Active",
           onClick: () => navigate(FRONTENDROUTES.RESTAURANT),
-    },
-    {
+        },
+        {
           title: "Total Customers",
           value: customerCount.toLocaleString(),
-      icon: IconUsers,
-      color: theme.colors.success,
+          icon: IconUsers,
+          color: theme.colors.success,
           change: "Registered",
           onClick: () => navigate(FRONTENDROUTES.CUSTOMER),
         },
@@ -74,17 +74,10 @@ const HomePage: React.FC = () => {
           change: "Categories",
           onClick: () => navigate(FRONTENDROUTES.GLOBAL_CATEGORY),
         },
-        // {
-        //   title: "Total Orders",
-        //   value: dashboardData?.data?.overview?.totalOrders?.toLocaleString() || "0",
-        //   icon: IconShoppingCart,
-        //   color: theme.colors.secondary,
-        //   change: "All Restaurants",
-        //   onClick: () => navigate(FRONTENDROUTES.ORDERS),
-        // },
+
       ];
     }
-    
+
     // Restaurant dashboard stats
     if (!dashboardData?.data) return [];
     const { overview, revenue, orders } = dashboardData.data;
@@ -105,8 +98,8 @@ const HomePage: React.FC = () => {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`,
-      icon: IconTrendingUp,
-      color: theme.colors.warning,
+        icon: IconTrendingUp,
+        color: theme.colors.warning,
         change: revenue.growth.isPositive
           ? `+${revenue.growth.percentage.toFixed(1)}%`
           : `${revenue.growth.percentage.toFixed(1)}%`,
@@ -121,8 +114,8 @@ const HomePage: React.FC = () => {
       {
         title: "Food Items",
         value: overview.totalFoodItems.toString(),
-      icon: IconCake,
-      color: theme.colors.secondary,
+        icon: IconCake,
+        color: theme.colors.secondary,
         change: `${overview.totalCategories} categories`,
         onClick: () => navigate(FRONTENDROUTES.FOOD_ITEM),
       },
@@ -192,8 +185,6 @@ const HomePage: React.FC = () => {
 
   const recentUsers = useMemo(() => {
     if (!customersData || !isAdmin) return [];
-    // API returns data directly as array or wrapped in response
-    // Based on CustomerPageIndex, data is used directly with data?.map()
     let users: any[] = [];
     if (Array.isArray(customersData)) {
       users = customersData;
@@ -204,9 +195,9 @@ const HomePage: React.FC = () => {
     } else if ((customersData as any)?.data && Array.isArray((customersData as any).data)) {
       users = (customersData as any).data;
     }
-    
+
     const sortedUsers = users
-      .filter((u: any) => u && u._id) 
+      .filter((u: any) => u && u._id)
       .sort((a: any, b: any) => {
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
@@ -215,7 +206,7 @@ const HomePage: React.FC = () => {
     return sortedUsers.slice(0, 5);
   }, [customersData, isAdmin]);
 
-  const showLoading = isAdmin ? false : isLoading; 
+  const showLoading = isAdmin ? false : isLoading;
 
   if (showLoading) {
     return (
@@ -246,7 +237,7 @@ const HomePage: React.FC = () => {
 
       <Grid>
         {stats.map((stat, index) => (
-          <Grid.Col key={index} span={{ base: 12, sm: 6, lg: 3 }}>
+          <Grid.Col key={index} span={{ base: 12, sm: 6, lg: 4 }}>
             <StatsCard {...stat} />
           </Grid.Col>
         ))}
@@ -262,26 +253,26 @@ const HomePage: React.FC = () => {
 
       {!isAdmin && (
         <>
-      <Grid>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <PopularItemsChart data={popularItemsData} />
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <CategoryChart data={categoryData} />
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <PaymentMethodChart data={paymentData} />
-        </Grid.Col>
+          <Grid>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <PopularItemsChart data={popularItemsData} />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <CategoryChart data={categoryData} />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <PaymentMethodChart data={paymentData} />
+            </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6 }}>
               <HourlyDistributionChart data={hourlyData} />
             </Grid.Col>
-      </Grid>
+          </Grid>
 
-      <Grid>
-        <Grid.Col span={12}>
-          <OrderStatusSummary data={orderStatusSummary} />
-        </Grid.Col>
-      </Grid>
+          <Grid>
+            <Grid.Col span={12}>
+              <OrderStatusSummary data={orderStatusSummary} />
+            </Grid.Col>
+          </Grid>
 
           <Grid>
             <Grid.Col span={12}>

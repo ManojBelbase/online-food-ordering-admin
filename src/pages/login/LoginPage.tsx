@@ -1,7 +1,7 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Title, LoadingOverlay, Box, Group, Image, Stack } from "@mantine/core"
+import { Title, LoadingOverlay, Box, Group, Stack } from "@mantine/core"
 import { IconFaceId, IconKey, IconShieldCheck } from "@tabler/icons-react"
 import { useMediaQuery } from "@mantine/hooks"
 import { useTheme } from "../../contexts/ThemeContext"
@@ -13,7 +13,7 @@ import { CustomText, ActionButton } from "../../components/ui"
 const LoginPage: React.FC = () => {
   const { theme } = useTheme()
   const navigate = useNavigate()
-  const location = useLocation()  
+  const location = useLocation()
   const [activeTab, setActiveTab] = useState("credentials")
   const { loadingLogin, isAuthenticated } = useAuth()
   const from = location.state?.from?.pathname || "/"
@@ -56,19 +56,7 @@ const LoginPage: React.FC = () => {
           minHeight: isMobile ? "40vh" : "100vh",
         }}
       >
-        <Image
-          src="/images/restaurant-hero.png"
-          alt="Restaurant Interior"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            opacity: 0.3,
-          }}
-        />
+
         <Box
           style={{
             position: "relative",
@@ -79,25 +67,25 @@ const LoginPage: React.FC = () => {
             padding: "20px",
           }}
         >
-          <IconShieldCheck 
-            size={isMobile ? 48 : 64} 
-            style={{ 
-              marginBottom: isMobile ? "16px" : "24px", 
-              opacity: 0.9,
-            }} 
-          />
-          <Title 
-            order={1} 
+          <IconShieldCheck
+            size={isMobile ? 48 : 64}
             style={{
-              fontSize: isMobile ? "28px" : "36px",
-              fontWeight: 700,
+              marginBottom: isMobile ? "16px" : "24px",
+              opacity: 0.9,
+            }}
+          />
+          <Title
+            order={1}
+            style={{
+              fontSize: isMobile ? "20px" : "30px",
+              fontWeight: 600,
               marginBottom: isMobile ? "12px" : "16px",
             }}
           >
-            Restaurant Admin
+            Restaurant Management
           </Title>
           <CustomText
-            fontSize={isMobile ? "16px" : "18px"}
+            fontSize={isMobile ? "12px" : "16px"}
             lineHeight={1.6}
             style={{
               opacity: 0.9,
@@ -119,15 +107,15 @@ const LoginPage: React.FC = () => {
           padding: isMobile ? "20px" : "40px",
         }}
       >
-        <Box 
-          style={{ 
-            width: "100%", 
+        <Box
+          style={{
+            width: "100%",
             maxWidth: isMobile ? "400px" : "450px",
           }}
         >
           <Stack gap={8} mb={24}>
-            <Title 
-              order={2} 
+            <Title
+              order={2}
               style={{
                 fontSize: isMobile ? "20px" : "24px",
                 fontWeight: 600,
