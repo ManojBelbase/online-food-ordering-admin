@@ -134,7 +134,7 @@ const PaymentMethodChart: React.FC<PaymentMethodChartProps> = ({ data }) => {
                     </Group>
                     <Group gap="xs">
                       <Text size="sm" fw={600} c={theme.colors.textPrimary}>
-                        ${item.amount.toLocaleString()}
+                        Rs.{item.amount.toLocaleString()}
                       </Text>
                       <Text size="xs" c={theme.colors.textSecondary}>
                         ({item.percentage}%)

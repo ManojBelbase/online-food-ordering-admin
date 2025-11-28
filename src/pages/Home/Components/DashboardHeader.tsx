@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Title, Group } from "@mantine/core";
 import { useTheme } from "../../../contexts/ThemeContext";
 import { CustomText } from "../../../components/ui";
+import { useAuth } from "../../../redux/useAuth";
 
 interface DashboardHeaderProps {
   period?: string;
@@ -10,6 +11,7 @@ interface DashboardHeaderProps {
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = () => {
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   return (
     <Card
@@ -29,7 +31,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = () => {
             order={3}
             style={{ color: theme.colors.textPrimary, marginBottom: "8px" }}
           >
-            Food Ordering Dashboard
+            Food Ordering {user?.role} Dashboard
           </Title>
           <CustomText color="secondary">
             Monitor orders, revenue, and manage your food ordering system

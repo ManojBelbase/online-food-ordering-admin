@@ -15,7 +15,7 @@ import {
   StatsCard,
   PopularItemsChart,
   OrderStatusSummary,
-  DashboardHeader,
+  // DashboardHeader,
   CategoryChart,
   PaymentMethodChart,
   HourlyDistributionChart,
@@ -94,7 +94,7 @@ const HomePage: React.FC = () => {
       },
       {
         title: "Total Revenue",
-        value: `$${overview.totalRevenue.toLocaleString(undefined, {
+        value: `Rs.${overview.totalRevenue.toLocaleString(undefined, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}`,
@@ -106,7 +106,7 @@ const HomePage: React.FC = () => {
       },
       {
         title: "Average Order Value",
-        value: `$${overview.averageOrderValue.toFixed(2)}`,
+        value: `Rs.${overview.averageOrderValue.toFixed(2)}`,
         icon: IconUsers,
         color: theme.colors.success,
         change: `${overview.totalFoodItems} items`,
@@ -233,11 +233,11 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="overflow-scroll">
-      <DashboardHeader />
+      {/* <DashboardHeader /> */}
 
       <Grid>
         {stats.map((stat, index) => (
-          <Grid.Col key={index} span={{ base: 12, sm: 6, lg: 4 }}>
+          <Grid.Col key={index} span={{ base: 12, sm: 6, lg: 3 }}>
             <StatsCard {...stat} />
           </Grid.Col>
         ))}

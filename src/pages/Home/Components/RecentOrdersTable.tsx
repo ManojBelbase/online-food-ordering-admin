@@ -62,7 +62,7 @@ const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ data }) => {
       </Table.Td>
       <Table.Td>
         <CustomText size="sm" color="primary">
-          ${order.totalAmount.toFixed(2)}
+          Rs.{order.totalAmount.toFixed(2)}
         </CustomText>
       </Table.Td>
       <Table.Td>

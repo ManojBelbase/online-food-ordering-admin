@@ -5,8 +5,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useResponsive } from "../../styles/useResponsive";
 import { SidebarLinksList } from "./SidebarLinksList";
 import { CustomText, ActionButton } from "../../components/ui";
-import ThemeToggle from "../../components/ThemeToggle";
-import VoiceNavigation from "../../components/VoiceNavigation";
+import { useAuth } from "../../redux/useAuth";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,6 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { theme } = useTheme();
   const { isMobile, isTablet } = useResponsive();
+  const { user } = useAuth();
 
   const isCollapsed = (isTablet || isMobile || (!isMobile && !isTablet && !isOpen));
   const isHidden = isMobile && !isOpen;
@@ -32,20 +32,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
 
   return (
     <Box
-        style={{
-          backgroundColor: theme.colors.sidebarBackground || '#f8f9fa',
-          height: "100vh",
-          width: `${sidebarWidth}px`,
-          transition: "width 0.2s ease",
-          position: "fixed",
-          top: 0,
-          left: 0,
-          zIndex: 1000,
-          borderRight: `1px solid ${theme.colors.border || '#e9ecef'}`,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+      style={{
+        backgroundColor: theme.colors.sidebarBackground || '#f8f9fa',
+        height: "100vh",
+        width: `${sidebarWidth}px`,
+        transition: "width 0.2s ease",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 1000,
+        borderRight: `1px solid ${theme.colors.border || '#e9ecef'}`,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <Box style={{
         padding: isCollapsed ? '12px 8px' : '16px 16px',
         borderBottom: `1px solid ${theme.colors.border || '#e9ecef'}`,
@@ -94,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
               fontWeight={600}
               color="primary"
             >
-              Food Ordering
+              {user?.name || 'FoodOrderAdmin'}
             </CustomText>
             <IconChevronDown
               size={16}
@@ -144,9 +144,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         ) : (
           // Expanded state - show full support section and user info
           <>
-              <div style={{display:"flex"}}>
-                    <ThemeToggle />
-                            <VoiceNavigation />
+            <div style={{ display: "flex" }}>
+              {/* <ThemeToggle /> */}
+              {/* <VoiceNavigation /> */}
 
             </div>
             <UnstyledButton
@@ -159,15 +159,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                 marginBottom: '8px'
               }}
             >
-              <IconLifebuoy size={16} style={{ color: theme.colors.textSecondary || '#6c757d' }} />
-              <CustomText
-                size="sm"
-                fontSize="16px"
-                fontWeight={500}
-                color="secondary"
-              >
-                Need support?
-              </CustomText>
+
             </UnstyledButton>
 
             <CustomText
@@ -188,7 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
             >
               Contact us
             </ActionButton>
-        
+
 
 
             <Group gap={8} style={{ justifyContent: 'flex-start' }}>
@@ -200,7 +192,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                   color="primary"
                   lineHeight={1.2}
                 >
-                  Admin User
+                  {user?.name || 'Admin User'}
                 </CustomText>
                 <CustomText
                   size="xs"
@@ -208,7 +200,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                   color="secondary"
                   lineHeight={1.2}
                 >
-                  admin@example.com
+                  {user?.role || 'Admin'}
                 </CustomText>
               </Box>
             </Group>

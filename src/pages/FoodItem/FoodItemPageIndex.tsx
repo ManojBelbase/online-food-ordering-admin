@@ -29,7 +29,7 @@ const FoodItemPageIndex = () => {
           name: item.name || 'N/A',
           image: item.image || 'N/A',
           cuisineType: item.cuisineType || 'N/A',
-          price: item.price ? `$${item.price.toFixed(2)}` : 'N/A',
+          price: item.price ? `Rs.${item.price.toFixed(2)}` : 'N/A',
           tags: item.tags.join(', '),
           isVeg: item.isVeg ? 'Yes' : 'No',
           action: <TableActions actions={[
@@ -55,7 +55,7 @@ const FoodItemPageIndex = () => {
         printTitle='Food Item Report'
         printShowTitle={true}
         printShowRecordCount={false}
-        printExcludeColumns={['action' ,'image']}
+        printExcludeColumns={['action', 'image']}
         filters={foodItemsFilter || []}
       />
       <Modal

@@ -5,6 +5,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggle from "../../components/ThemeToggle";
 import VoiceNavigation from "../../components/VoiceNavigation";
 import ProfileMenu from "./ProfileMenu";
+import { useAuth } from "../../redux/useAuth";
 
 interface DesktopNavbarProps {
   onHamburgerClick: () => void;
@@ -13,6 +14,7 @@ interface DesktopNavbarProps {
 
 const DesktopNavbar: React.FC<DesktopNavbarProps> = ({ onHamburgerClick, isTablet }) => {
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   return (
     <div
@@ -43,7 +45,7 @@ const DesktopNavbar: React.FC<DesktopNavbarProps> = ({ onHamburgerClick, isTable
         >
           <IconMenu2 size={24} />
         </ActionIcon>
-        
+
         <Title
           order={3}
           style={{
@@ -52,9 +54,10 @@ const DesktopNavbar: React.FC<DesktopNavbarProps> = ({ onHamburgerClick, isTable
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
+            textTransform: "capitalize",
           }}
         >
-          {isTablet ? "Food Admin" : "Food Ordering System"}
+          {isTablet ? "Food Admin" : `Food Ordering System - ${user?.role}`}
         </Title>
       </Group>
 
