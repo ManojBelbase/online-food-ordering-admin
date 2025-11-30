@@ -24,3 +24,17 @@ export interface LoginCredentials {
   email: string;
   password: string;
 }
+export interface LivenessResult {
+  isLive: boolean;
+  confidence: number;
+  details: {
+    sizeVariation: boolean;
+    movementDetected: boolean;
+    textureValid: boolean;
+  };
+}
+
+export interface BlinkResult {
+  blinkDetected: boolean;
+  blinkCount: number;
+}

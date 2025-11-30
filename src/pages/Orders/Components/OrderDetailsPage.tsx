@@ -3,7 +3,7 @@ import { orderApi, type IOrder, type IOrderItem } from "../../../server-action/a
 import { useTheme } from "../../../contexts/ThemeContext";
 import { DateFormatter } from "../../../components/GlobalComponents/DateFormatter";
 import StatusBadge from "../../../components/GlobalComponents/StatusBadge";
-import { IconArrowLeft, IconShoppingCart, IconUser, IconMapPin, IconCreditCard, IconCurrencyRupee } from "@tabler/icons-react";
+import { IconArrowLeft, IconShoppingCart, IconUser, IconMapPin, IconCreditCard } from "@tabler/icons-react";
 import type { CSSProperties, JSX } from "react";
 
 const OrderDetailsPage = () => {
@@ -85,7 +85,7 @@ const OrderDetailsPage = () => {
         </h2>
         <div style={{ marginTop: 10 }}>
           {order?.items?.length ? (
-            order.items.map((item: IOrderItem, i:string) => (
+            order.items.map((item: IOrderItem, i: string) => (
               <div key={i} style={{
                 display: "flex",
                 padding: 10,
@@ -102,10 +102,10 @@ const OrderDetailsPage = () => {
                   <h3 style={{ fontSize: 16, fontWeight: 600, margin: "0 0 8px 0" }}>{item.name}</h3>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
                     <span>Quantity: {item.quantity}</span>
-                    <span><IconCurrencyRupee size={14} />{item.priceAtTime} each</span>
+                    <span>Rs.{item.priceAtTime} each</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                    <span>Total: <IconCurrencyRupee size={14} />{item.quantity * item.priceAtTime}</span>
+                    <span>Total: Rs.{item.quantity * item.priceAtTime}</span>
                     <span>{item.isVeg ? "Vegetarian" : "Non-Vegetarian"}</span>
                   </div>
                   {item.notes && <div style={{ fontSize: 14, fontStyle: "italic", marginTop: 8 }}>Notes: {item.notes}</div>}
@@ -123,7 +123,7 @@ const OrderDetailsPage = () => {
           Rs. {order?.totalAmount}
         </div>
       </div>
-    </div>  
+    </div>
   );
 };
 

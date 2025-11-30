@@ -1,26 +1,11 @@
 import * as faceapi from 'face-api.js';
-
-// Types for validation results
-export interface LivenessResult {
-  isLive: boolean;
-  confidence: number;
-  details: {
-    sizeVariation: boolean;
-    movementDetected: boolean;
-    textureValid: boolean;
-  };
-}
-
-export interface BlinkResult {
-  blinkDetected: boolean;
-  blinkCount: number;
-}
+import type { BlinkResult, LivenessResult } from '../types/auth';
 
 // Advanced Anti-spoofing: Multiple validation techniques
 export const detectLiveness = async (video: HTMLVideoElement): Promise<LivenessResult> => {
   const frames: number[] = [];
   const positions: { x: number; y: number }[] = [];
-  
+
   // Capture 6 frames over 1.2 seconds
   for (let i = 0; i < 6; i++) {
     await new Promise(resolve => setTimeout(resolve, 200));
@@ -32,31 +17,31 @@ export const detectLiveness = async (video: HTMLVideoElement): Promise<LivenessR
         details: { sizeVariation: false, movementDetected: false, textureValid: false }
       };
     }
-    
+
     frames.push(detection.box.width * detection.box.height);
     positions.push({ x: detection.box.x, y: detection.box.y });
   }
-  
+
   // 1. Size variation check (depth movement)
   const avgSize = frames.reduce((a, b) => a + b) / frames.length;
   const sizeVariance = frames.reduce((sum, val) => sum + Math.pow(val - avgSize, 2), 0) / frames.length;
   const sizeCheck = sizeVariance > 100;
-  
+
   // 2. Position variation check (lateral movement)
   const avgX = positions.reduce((sum, pos) => sum + pos.x, 0) / positions.length;
   const avgY = positions.reduce((sum, pos) => sum + pos.y, 0) / positions.length;
-  const posVariance = positions.reduce((sum, pos) => 
+  const posVariance = positions.reduce((sum, pos) =>
     sum + Math.pow(pos.x - avgX, 2) + Math.pow(pos.y - avgY, 2), 0) / positions.length;
   const movementCheck = posVariance > 50;
-  
+
   // 3. Texture analysis (basic screen detection)
   const textureCheck = await analyzeTexture(video);
-  
+
   // Combined validation: Must pass at least 2 out of 3 checks
   const passedChecks = (sizeCheck ? 1 : 0) + (movementCheck ? 1 : 0) + (textureCheck ? 1 : 0);
   const isLive = passedChecks >= 2;
   const confidence = passedChecks / 3;
-  
+
   return {
     isLive,
     confidence,
@@ -76,7 +61,7 @@ const analyzeTexture = async (video: HTMLVideoElement): Promise<boolean> => {
   canvas.height = video.videoHeight;
   ctx.drawImage(video, 0, 0);
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  
+
   // Check for screen refresh patterns (simplified)
   let screenPattern = 0;
   for (let i = 0; i < imageData.data.length; i += 4) {
@@ -86,7 +71,7 @@ const analyzeTexture = async (video: HTMLVideoElement): Promise<boolean> => {
     if (Math.abs(r - g) < 5 && Math.abs(g - b) < 5) screenPattern++;
   }
   const screenRatio = screenPattern / (imageData.data.length / 4);
-  
+
   return screenRatio < 0.8; // Less than 80% uniform color indicates real face
 };
 
@@ -159,7 +144,6 @@ const calculateSingleEyeRatio = (eyePoints: faceapi.Point[]): number => {
   return (vertical1 + vertical2) / (2 * horizontal);
 };
 
-// Validation presets - only BASIC and STANDARD
 export const ValidationPresets = {
   BASIC: { liveness: true, blink: false },
   STANDARD: { liveness: true, blink: true }
