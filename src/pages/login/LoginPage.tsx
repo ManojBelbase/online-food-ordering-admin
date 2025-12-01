@@ -167,15 +167,7 @@ const LoginPage: React.FC = () => {
               Secure authentication • Food Ordering System
             </CustomText>
           </Box>
-          <Box style={{ textAlign: "center", color: theme.colors.error }} mt={16}>
-            <CustomText size="xs" color="warning" mt={12} c={"blue"}>
-              Test Account(Admin) - Email: thisisme2077@gmail.com | Password: manoj123
-            </CustomText>
 
-            <CustomText size="xs" c="yellow">
-              Test Account(Restaurant) - Email: manojbelbase56@gmail.com | Password: 12345678
-            </CustomText>
-          </Box>
 
 
         </Box>
