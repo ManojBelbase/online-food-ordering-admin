@@ -24,11 +24,9 @@ export const preloadFaceRecognitionModels = (): Promise<void> => {
     .then(() => {
       modelsLoaded = true;
       modelsLoading = false;
-      console.log('Face recognition models preloaded successfully');
     })
     .catch((error) => {
       modelsLoading = false;
-      console.error('Failed to preload face recognition models:', error);
       throw error;
     });
 

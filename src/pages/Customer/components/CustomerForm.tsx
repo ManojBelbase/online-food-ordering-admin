@@ -14,23 +14,23 @@ interface CustomerFormProps {
 }
 
 const CustomerForm: React.FC<CustomerFormProps> = ({ onSuccess }) => {
-const dispatch = useAppDispatch();
-const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-const roleOptions: SelectOption[] = [
-  { value: "user", label: "User" },
-  { value: "restaurant", label: "Restaurant" },
-  { value: "delivery", label: "Delivery" },
-];
+  const roleOptions: SelectOption[] = [
+    { value: "user", label: "User" },
+    { value: "restaurant", label: "Restaurant" },
+    { value: "delivery", label: "Delivery" },
+  ];
 
   const form = useForm<SignupCredentials>({
     initialValues: {
-      name:"",
+      name: "",
       email: "",
       password: "",
-      role: "", 
+      role: "",
     },
-    validate:customerValidation,
+    validate: customerValidation,
   });
 
   const handleSubmit = async (values: SignupCredentials) => {
@@ -83,13 +83,13 @@ const roleOptions: SelectOption[] = [
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack gap="md">
-          <FormInput
+        <FormInput
           label="Name"
           type="text"
           placeholder="Enter Name"
-          leftSection={<IconMail size={16} />}
+          leftSection={<IconUserPlus size={16} />}
           {...form.getInputProps("name")}
-          
+
         />
         <FormInput
           label="Email"
@@ -114,7 +114,7 @@ const roleOptions: SelectOption[] = [
           data={roleOptions}
           leftSection={<IconUserPlus size={16} />}
           {...form.getInputProps("role")}
-          
+
         />
 
         <ActionButton

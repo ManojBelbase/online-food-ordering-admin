@@ -47,7 +47,7 @@ const CredentialsLogin: React.FC<CredentialsLoginProps> = ({ onSuccess, onSwitch
         onSuccess()
       } else if (loginUser.rejected.match(result)) {
         const errorMessage = (result.payload as string) || "Invalid credentials";
-   
+
         notifications.show({
           title: "Login Failed",
           message: errorMessage,
