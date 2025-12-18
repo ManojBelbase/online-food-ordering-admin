@@ -15,7 +15,7 @@ interface FaceLoginProps {
 }
 
 const FaceLogin: React.FC<FaceLoginProps> = ({ }) => {
-  
+
   const navigate = useNavigate()
   const { theme } = useTheme()
   const { login, isAuthenticated, isLoading } = useAuth()
@@ -36,9 +36,8 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ }) => {
   useEffect(() => {
     const loadModels = async () => {
       try {
-        // Check if models are already preloaded
         const { areFaceRecognitionModelsLoaded, loadFaceRecognitionModels } = await import('../../server-action/api/faceRecognition');
-        
+
         if (areFaceRecognitionModelsLoaded()) {
           setFaceModelsLoaded(true);
           notifications.show({
@@ -67,7 +66,7 @@ const FaceLogin: React.FC<FaceLoginProps> = ({ }) => {
         });
       }
     };
-    
+
     loadModels();
   }, []);
 
